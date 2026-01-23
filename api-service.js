@@ -69,6 +69,7 @@ class APIService {
         const coords = DESTINATION_COORDINATES[destinationId];
         if (!coords) {
             console.warn(`No coordinates for destination ${destinationId}`);
+            // Don't update status to mock if we already have live data from other destinations
             return this.getMockWeather(destinationId);
         }
 
@@ -150,15 +151,17 @@ class APIService {
             }
         }
 
-        // Fallback to mock data
+        // Fallback to mock data - only update status if not already live
         console.warn(`⚠️ Using mock weather for destination ${destinationId}`);
-        this.dataStatus.weather = {
-            source: 'mock',
-            lastUpdate: new Date(),
-            isLive: false
-        };
-        API_CONFIG._weatherSource = 'mock';
-        this.updateDataStatus();
+        if (!this.dataStatus.weather.isLive) {
+            this.dataStatus.weather = {
+                source: 'mock',
+                lastUpdate: new Date(),
+                isLive: false
+            };
+            API_CONFIG._weatherSource = 'mock';
+            this.updateDataStatus();
+        }
         return this.getMockWeather(destinationId);
     }
     
@@ -212,7 +215,12 @@ class APIService {
     async fetchWeatherFromBackend(destinationId) {
         const response = await fetch(`${API_CONFIG.BACKEND_API_URL}/weather/${destinationId}`);
         if (!response.ok) return null;
-        return await response.json();
+        const data = await response.json();
+        // Ensure isLive is set based on backend response
+        if (data && data.temperature) {
+            data.isLive = data.isLive !== false; // Default to true if not explicitly false
+        }
+        return data;
     }
 
     parseWeatherData(data) {
@@ -272,15 +280,17 @@ class APIService {
             }
         }
         
-        // Fallback to algorithm or mock
+        // Fallback to algorithm - only update status if not already live
         console.warn('⚠️ Using fallback crowd data (backend unavailable)');
-        this.dataStatus.crowd = {
-            source: 'algorithm',
-            lastUpdate: new Date(),
-            isLive: false
-        };
-        API_CONFIG._crowdSource = 'algorithm';
-        this.updateDataStatus();
+        if (!this.dataStatus.crowd.isLive) {
+            this.dataStatus.crowd = {
+                source: 'algorithm',
+                lastUpdate: new Date(),
+                isLive: false
+            };
+            API_CONFIG._crowdSource = 'algorithm';
+            this.updateDataStatus();
+        }
         
         return this.estimateCrowdWithAlgorithm(destinationId);
     }
