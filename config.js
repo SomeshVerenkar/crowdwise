@@ -48,11 +48,11 @@ const API_CONFIG = {
     USE_REAL_WEATHER: true,
     
     // Crowd Data: Set to true when backend is running with real data sources
-    USE_REAL_CROWD_DATA: false,
+    USE_REAL_CROWD_DATA: true,
     
     // Mock Data: Simulates real-time changes based on time/day
-    USE_MOCK_DATA: true,
-    ENABLE_DYNAMIC_MOCK: true,
+    USE_MOCK_DATA: false,
+    ENABLE_DYNAMIC_MOCK: false,
     
     // ==================== DATA SOURCE TRACKING ====================
     // These are set automatically - do not modify
