@@ -80,11 +80,36 @@ class APIService {
             return this.weatherCache[destinationId];
         }
 
-        // Try real weather API if configured
+        // Try backend API FIRST (preferred source)
+        if (API_CONFIG.USE_BACKEND_API && API_CONFIG.USE_REAL_WEATHER) {
+            try {
+                console.log(`🌤️ Fetching weather from backend for ${coords.city}...`);
+                const weather = await this.fetchWeatherFromBackend(destinationId);
+                if (weather && weather.temperature) {
+                    console.log(`✅ Live weather fetched from backend: ${weather.formatted}`);
+                    this.weatherCache[destinationId] = weather;
+                    this.lastWeatherUpdate[destinationId] = Date.now();
+                    this.dataStatus.weather = {
+                        source: 'backend',
+                        lastUpdate: new Date(),
+                        isLive: true
+                    };
+                    API_CONFIG._weatherSource = 'backend';
+                    this.updateDataStatus();
+                    return weather;
+                }
+            } catch (error) {
+                console.error('❌ Backend weather error:', error);
+            }
+        }
+
+        // Fallback: Try OpenWeatherMap directly if API key is configured
         if (API_CONFIG.USE_REAL_WEATHER && 
-            API_CONFIG.WEATHER_API_KEY !== 'YOUR_OPENWEATHER_API_KEY') {
+            API_CONFIG.WEATHER_API_KEY && 
+            API_CONFIG.WEATHER_API_KEY !== 'YOUR_OPENWEATHER_API_KEY' &&
+            API_CONFIG.WEATHER_API_KEY !== '') {
             
-            console.log(`🌤️ Attempting to fetch live weather for ${coords.city}...`);
+            console.log(`🌤️ Attempting direct OpenWeatherMap for ${coords.city}...`);
             
             try {
                 const weather = await this.fetchOpenWeatherMap(coords, destinationId);
@@ -125,28 +150,8 @@ class APIService {
             }
         }
 
-        // Try backend API if configured
-        if (API_CONFIG.USE_BACKEND_API && API_CONFIG.USE_REAL_WEATHER) {
-            try {
-                console.log(`🌤️ Fetching weather from backend for destination ${destinationId}...`);
-                const weather = await this.fetchWeatherFromBackend(destinationId);
-                if (weather && weather.temperature) {
-                    console.log(`✅ Live weather fetched: ${weather.formatted}`);
-                    this.dataStatus.weather = {
-                        source: 'backend',
-                        lastUpdate: new Date(),
-                        isLive: true
-                    };
-                    API_CONFIG._weatherSource = 'backend';
-                    this.updateDataStatus();
-                    return weather;
-                }
-            } catch (error) {
-                console.error('❌ Backend weather error:', error);
-            }
-        }
-
         // Fallback to mock data
+        console.warn(`⚠️ Using mock weather for destination ${destinationId}`);
         this.dataStatus.weather = {
             source: 'mock',
             lastUpdate: new Date(),
@@ -283,7 +288,26 @@ class APIService {
     async fetchCrowdFromBackend(destinationId) {
         const response = await fetch(`${API_CONFIG.BACKEND_API_URL}/crowd/${destinationId}`);
         if (!response.ok) return null;
-        return await response.json();
+        const data = await response.json();
+        
+        // Calculate currentEstimate if not provided by backend
+        if (!data.currentEstimate && data.percentageFull !== undefined) {
+            // Get base visitor count from destination data
+            const dest = destinations.find(d => d.id === parseInt(destinationId));
+            const baseVisitors = dest?.avgVisitors || 5000;
+            const crowdMultiplier = data.percentageFull / 100;
+            const estimatedMin = Math.round(baseVisitors * crowdMultiplier * 0.8);
+            const estimatedMax = Math.round(baseVisitors * crowdMultiplier * 1.2);
+            data.currentEstimate = `${this.formatNumber(estimatedMin)}-${this.formatNumber(estimatedMax)}`;
+        }
+        
+        return data;
+    }
+    
+    formatNumber(num) {
+        if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+        if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
+        return num.toString();
     }
 
     estimateCrowdWithAlgorithm(destinationId) {
