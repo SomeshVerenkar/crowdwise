@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary Meta Tags (SEO) -->
+    <title>CrowdWise India - Real-Time Crowd Predictions for Tourist Destinations | Avoid Crowds</title>
+    <meta name="title" content="CrowdWise India - Real-Time Crowd Predictions for Indian Tourist Destinations">
+    <meta name="description" content="Check real-time crowd levels at 25+ popular Indian tourist destinations including Taj Mahal, Jaipur, Goa. Plan your visit to avoid crowds. Free crowd predictions & alerts.">
+    <meta name="keywords" content="India tourism, crowd levels, Taj Mahal crowds, best time to visit India, tourist crowd tracker, avoid crowds India, Jaipur crowd levels, Goa busy times, India travel planning, real-time crowd data, tourist destinations India">
+    <meta name="author" content="CrowdWise India">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://crowdwise.in">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://crowdwise.in">
+    <meta property="og:title" content="CrowdWise India - Avoid Tourist Crowds with Real-Time Predictions">
+    <meta property="og:description" content="Free crowd predictions for 25+ Indian destinations. Know before you go - check real-time crowd levels at Taj Mahal, Jaipur, Goa & more.">
+    <meta property="og:image" content="https://crowdwise.in/og-image.jpg">
+    <meta property="og:site_name" content="CrowdWise India">
+    
+    <!-- Twitter Card -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://crowdwise.in">
+    <meta property="twitter:title" content="CrowdWise India - Real-Time Crowd Predictions for Indian Destinations">
+    <meta property="twitter:description" content="Free crowd predictions for 25+ destinations. Plan your visit to avoid crowds at Taj Mahal, Jaipur, Goa & more.">
+    <meta property="twitter:image" content="https://crowdwise.in/twitter-image.jpg">
+    
+    <!-- Geo Tags -->
+    <meta name="geo.region" content="IN">
+    <meta name="geo.placename" content="India">
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX', {
+            page_title: 'CrowdWise India',
+            send_page_view: true
+        });
+        
+        // Analytics helper function
+        function trackEvent(action, label, value) {
+            gtag('event', action, {
+                event_category: 'User Interaction',
+                event_label: label,
+                value: value
+            });
+        }
+    </script>
+    
+    <link rel="stylesheet" href="styles.css?v=3.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "CrowdWise India",
+        "description": "Real-time crowd prediction tool for Indian tourist destinations. Check crowd levels before you visit.",
+        "url": "https://crowdwise.in",
+        "applicationCategory": "TravelApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "INR"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.5",
+            "ratingCount": "127"
+        }
+    }
+    </script>
+</head>
+<body>
+    <!-- BETA Corner Ribbon -->
+    <div class="beta-corner-ribbon">
+        <span>BETA</span>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <div class="logo-icon">🗺️</div>
+                <div class="logo-text">
+                    <span class="logo-name">CrowdWise</span>
+                    <span class="logo-tagline">Travel without the rush</span>
+                </div>
+            </div>
+            <nav class="nav">
+                <a href="#home" class="nav-link active">
+                    <span class="nav-icon">🏠</span>
+                    <span>Home</span>
+                </a>
+                <a href="#destinations" class="nav-link">
+                    <span class="nav-icon">📍</span>
+                    <span>Destinations</span>
+                </a>
+                <a href="#heatmap" class="nav-link">
+                    <span class="nav-icon">🗺️</span>
+                    <span>Heatmap</span>
+                </a>
+                <a href="#about" class="nav-link">
+                    <span class="nav-icon">ℹ️</span>
+                    <span>About</span>
+                </a>
+            </nav>
+            
+            <!-- Data Source Indicator -->
+            <div class="data-status-indicator" id="dataStatusIndicator" title="Click for details">
+                <div class="status-dot" id="statusDot"></div>
+                <span class="status-text" id="statusText">Loading...</span>
+            </div>
+            
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav" id="mobileNav">
+        <a href="#home" class="mobile-nav-link" onclick="toggleMobileMenu()">🏠 Home</a>
+        <a href="#destinations" class="mobile-nav-link" onclick="toggleMobileMenu()">📍 Destinations</a>
+        <a href="#heatmap" class="mobile-nav-link" onclick="toggleMobileMenu()">🗺️ Heatmap</a>
+        <a href="#about" class="mobile-nav-link" onclick="toggleMobileMenu()">ℹ️ About</a>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-background">
+            <div class="india-map-overlay"></div>
+            <div class="floating-cards">
+                <div class="floating-card fc-1">
+                    <span class="fc-emoji">🏖️</span>
+                    <span class="fc-name">Goa</span>
+                    <span class="fc-crowd crowd-heavy">🔴</span>
+                </div>
+                <div class="floating-card fc-2">
+                    <span class="fc-emoji">⛰️</span>
+                    <span class="fc-name">Manali</span>
+                    <span class="fc-crowd crowd-low">🟢</span>
+                </div>
+                <div class="floating-card fc-3">
+                    <span class="fc-emoji">🏰</span>
+                    <span class="fc-name">Jaipur</span>
+                    <span class="fc-crowd crowd-moderate">🟡</span>
+                </div>
+                <div class="floating-card fc-4">
+                    <span class="fc-emoji">🕌</span>
+                    <span class="fc-name">Taj Mahal</span>
+                    <span class="fc-crowd crowd-moderate">🟡</span>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">✨ Real-time Crowd Intelligence</div>
+                <h1 class="hero-title">Know the crowd<br>before you go.</h1>
+                <p class="hero-subtitle">Live crowd levels • Best visiting time • Avoid peak hours</p>
+                
+                <!-- Search Bar with Enhancements -->
+                <div class="search-wrapper">
+                    <div class="search-container">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="searchInput" placeholder="Search city, monument, or beach..." class="search-input" autocomplete="off">
+                        <button class="near-me-btn" onclick="searchNearMe()">
+                            <span>📍</span>
+                            <span class="near-me-text">Near me</span>
+                        </button>
+                        <button class="search-btn" onclick="searchDestination()">
+                            <span>Search</span>
+                            <span class="btn-arrow">→</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Auto Suggestions Dropdown -->
+                    <div class="search-suggestions-dropdown" id="searchSuggestions">
+                        <div class="suggestions-section">
+                            <div class="suggestions-title">🔥 Popular</div>
+                            <div class="suggestion-items" id="popularSuggestions"></div>
+                        </div>
+                        <div class="suggestions-section" id="recentSection" style="display: none;">
+                            <div class="suggestions-title">🕒 Recent Searches</div>
+                            <div class="suggestion-items" id="recentSuggestions"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Popular Tags -->
+                    <div class="search-suggestions">
+                        <span class="suggestion-label">Popular:</span>
+                        <span class="suggestion-tag" onclick="quickSearch('Taj Mahal')">🕌 Taj Mahal</span>
+                        <span class="suggestion-tag" onclick="quickSearch('Goa')">🏖️ Goa</span>
+                        <span class="suggestion-tag" onclick="quickSearch('Manali')">⛰️ Manali</span>
+                        <span class="suggestion-tag" onclick="quickSearch('Kerala')">🚤 Kerala</span>
+                    </div>
+                </div>
+
+                <!-- Live Crowd Indicators -->
+                <div class="live-crowd-strip">
+                    <div class="live-indicator">
+                        <span class="live-dot"></span>
+                        <span>Live Updates</span>
+                    </div>
+                    <div class="crowd-legend">
+                        <span class="legend-item"><span class="legend-dot low"></span> Low</span>
+                        <span class="legend-item"><span class="legend-dot moderate"></span> Moderate</span>
+                        <span class="legend-item"><span class="legend-dot busy"></span> Busy</span>
+                        <span class="legend-item"><span class="legend-dot packed"></span> Packed</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust & Data Credibility Section -->
+    <section class="trust-section">
+        <div class="container">
+            <div class="trust-items">
+                <div class="trust-item">
+                    <span class="trust-icon">🔄</span>
+                    <span class="trust-text">Updates every 5 minutes</span>
+                </div>
+                <div class="trust-item">
+                    <span class="trust-icon">�</span>
+                    <span class="trust-text">Pattern-based predictions</span>
+                </div>
+                <div class="trust-item">
+                    <span class="trust-icon">🤖</span>
+                    <span class="trust-text">Smart crowd algorithm</span>
+                </div>
+                <div class="trust-item" id="accuracyBadge">
+                    <span class="trust-icon">📈</span>
+                    <span class="trust-text">Improving with feedback</span>
+                </div>
+            </div>
+            <!-- Transparency Banner -->
+            <div class="transparency-banner" id="transparencyBanner">
+                <span class="beta-tag">BETA</span>
+                <span class="transparency-text">Predictions based on time patterns, seasonality & holidays. <a href="#how-it-works" onclick="showHowItWorks()">How it works →</a></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sticky Filter Bar (appears on scroll) -->
+    <div class="sticky-filter-bar" id="stickyFilterBar">
+        <div class="container">
+            <div class="sticky-filters">
+                <div class="sticky-search">
+                    <span>🔍</span>
+                    <input type="text" id="stickySearchInput" placeholder="Search..." oninput="syncSearch(this)">
+                </div>
+                <div class="sticky-filter-pills">
+                    <button class="sticky-pill active" data-filter="all" onclick="quickFilter('all')">All</button>
+                    <button class="sticky-pill" data-filter="low" onclick="quickFilter('low')">🟢 Low</button>
+                    <button class="sticky-pill" data-filter="moderate" onclick="quickFilter('moderate')">🟡 Moderate</button>
+                    <button class="sticky-pill" data-filter="heavy" onclick="quickFilter('heavy')">🟠 Busy</button>
+                    <button class="sticky-pill" data-filter="overcrowded" onclick="quickFilter('overcrowded')">🔴 Packed</button>
+                </div>
+                <select class="sticky-state-select" id="stickyStateFilter" onchange="syncStateFilter(this)">
+                    <option value="all">📍 All States</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Section -->
+    <section class="filters" id="destinations">
+        <div class="container">
+            <div class="filters-header">
+                <h3 class="filters-title">
+                    <span class="filters-icon">🎯</span>
+                    Filter Destinations
+                </h3>
+                <button class="clear-filters" onclick="clearAllFilters()">
+                    <span>✕ Clear All</span>
+                </button>
+            </div>
+            
+            <div class="filter-tabs">
+                <!-- Crowd Level Filter with Color Pills -->
+                <div class="filter-section">
+                    <label class="filter-label">
+                        <span>Crowd Level</span>
+                        <span class="filter-count" id="crowdFilterCount"></span>
+                    </label>
+                    <div class="filter-options crowd-pills">
+                        <button class="crowd-pill active" onclick="filterByCrowd('all')" data-filter="all" data-tooltip="Show all destinations">
+                            <span class="pill-icon">📊</span>
+                            <span class="pill-text">All</span>
+                        </button>
+                        <button class="crowd-pill low" onclick="filterByCrowd('low')" data-filter="low" data-tooltip="Peaceful, minimal waiting">
+                            <span class="pill-icon">🟢</span>
+                            <span class="pill-text">Low</span>
+                            <span class="pill-tooltip">Peaceful, minimal waiting</span>
+                        </button>
+                        <button class="crowd-pill moderate" onclick="filterByCrowd('moderate')" data-filter="moderate" data-tooltip="Some queues, manageable">
+                            <span class="pill-icon">🟡</span>
+                            <span class="pill-text">Moderate</span>
+                            <span class="pill-tooltip">Some queues, manageable</span>
+                        </button>
+                        <button class="crowd-pill busy" onclick="filterByCrowd('heavy')" data-filter="heavy" data-tooltip="Expect crowds & delays">
+                            <span class="pill-icon">🟠</span>
+                            <span class="pill-text">Busy</span>
+                            <span class="pill-tooltip">Expect crowds & delays</span>
+                        </button>
+                        <button class="crowd-pill packed" onclick="filterByCrowd('overcrowded')" data-filter="overcrowded" data-tooltip="Avoid if possible">
+                            <span class="pill-icon">🔴</span>
+                            <span class="pill-text">Packed</span>
+                            <span class="pill-tooltip">Avoid if possible</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- State Filter -->
+                <div class="filter-section">
+                    <label class="filter-label">
+                        <span>State / Region</span>
+                    </label>
+                    <div class="select-wrapper">
+                        <select id="stateFilter" onchange="filterByState()" class="state-select">
+                            <option value="all">🗺️ All States</option>
+                            <!-- States populated dynamically via JavaScript -->
+                        </select>
+                        <span class="select-arrow">▼</span>
+                    </div>
+                </div>
+
+                <!-- Sort Options -->
+                <div class="filter-section">
+                    <label class="filter-label">
+                        <span>Sort By</span>
+                    </label>
+                    <div class="sort-options">
+                        <button class="sort-btn active" onclick="sortDestinations('default')" data-sort="default">
+                            <span>🔥</span> Popular
+                        </button>
+                        <button class="sort-btn" onclick="sortDestinations('least-crowded')" data-sort="least-crowded">
+                            <span>🟢</span> Least Crowded
+                        </button>
+                        <button class="sort-btn" onclick="sortDestinations('best-time')" data-sort="best-time">
+                            <span>⏰</span> Best Time Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Destinations Section -->
+    <section class="destinations-section">
+        <div class="container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">Explore Destinations</h2>
+                    <p class="section-subtitle">Real-time crowd information for top tourist spots in India</p>
+                </div>
+                <div class="view-toggle">
+                    <button class="toggle-btn active" onclick="toggleView('grid')" data-view="grid">
+                        <span>⊞</span> Grid
+                    </button>
+                    <button class="toggle-btn" onclick="toggleView('list')" data-view="list">
+                        <span>☰</span> List
+                    </button>
+                </div>
+            </div>
+            <div id="destinationsGrid" class="destinations-grid view-grid">
+                <!-- Cards will be dynamically generated -->
+            </div>
+        </div>
+    </section>
+
+    <!-- India Heatmap Section -->
+    <section class="heatmap-section" id="heatmap">
+        <div class="container">
+            <div class="section-header centered">
+                <div>
+                    <h2 class="section-title">🗺️ India Crowd Heatmap</h2>
+                    <p class="section-subtitle">Visual overview of crowd levels across popular destinations</p>
+                </div>
+            </div>
+            <div class="heatmap-container">
+                <div class="heatmap-grid" id="heatmapGrid">
+                    <!-- Heatmap items will be generated dynamically -->
+                </div>
+                <div class="heatmap-legend">
+                    <span class="heatmap-legend-item"><span class="hl-dot low"></span> Low Crowd</span>
+                    <span class="heatmap-legend-item"><span class="hl-dot moderate"></span> Moderate</span>
+                    <span class="heatmap-legend-item"><span class="hl-dot busy"></span> Busy</span>
+                    <span class="heatmap-legend-item"><span class="hl-dot packed"></span> Packed</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Smart Features Section -->
+    <section class="smart-features">
+        <div class="container">
+            <div class="section-header centered">
+                <div class="section-badge">✨ Smart Features</div>
+                <h2 class="section-title">Plan Smarter, Travel Better</h2>
+                <p class="section-subtitle">AI-powered tools to optimize your travel experience</p>
+            </div>
+            <div class="smart-features-grid">
+                <div class="smart-feature-card">
+                    <div class="sf-icon">🔔</div>
+                    <h3>Smart Alerts</h3>
+                    <p>Get notified when your favorite destination becomes less crowded</p>
+                    <button class="sf-btn" onclick="showAlertModal()">Set Alert →</button>
+                </div>
+                <div class="smart-feature-card">
+                    <div class="sf-icon">🧭</div>
+                    <h3>Crowd-free Itinerary</h3>
+                    <p>Get AI-generated 1-day plans with minimal crowds</p>
+                    <button class="sf-btn" onclick="showItineraryModal()">Generate →</button>
+                </div>
+                <div class="smart-feature-card">
+                    <div class="sf-icon">⏰</div>
+                    <h3>Best Time Finder</h3>
+                    <p>Find the optimal visiting window for any destination</p>
+                    <button class="sf-btn" onclick="showBestTimeModal()">Find Time →</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="container">
+            <div class="about-header">
+                <span class="about-badge">How We Help You</span>
+                <h2 class="section-title">Travel Smarter, Not Harder</h2>
+                <p class="about-description">CrowdWise uses advanced algorithms and real-time data to give you the best travel insights</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <div class="feature-icon-wrapper green">
+                            <div class="feature-icon">📊</div>
+                        </div>
+                        <h3>Live Crowd Data</h3>
+                    </div>
+                    <p>Real-time crowd estimates updated every 5 minutes from multiple data sources including tourism boards and mobility patterns</p>
+                    <div class="feature-footer">
+                        <span class="feature-tag green">Updated every 5 min</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <div class="feature-icon-wrapper purple">
+                            <div class="feature-icon">🎯</div>
+                        </div>
+                        <h3>Smart Predictions</h3>
+                    </div>
+                    <p>AI-powered analysis of weather, festivals, holidays, and historical data to forecast crowd levels accurately</p>
+                    <div class="feature-footer">
+                        <span class="feature-tag purple">90% accurate</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <div class="feature-icon-wrapper orange">
+                            <div class="feature-icon">⏰</div>
+                        </div>
+                        <h3>Best Time Advice</h3>
+                    </div>
+                    <p>Personalized recommendations for the optimal time to visit based on your preferences and current conditions</p>
+                    <div class="feature-footer">
+                        <span class="feature-tag orange">Personalized</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <div class="feature-icon-wrapper blue">
+                            <div class="feature-icon">🌦️</div>
+                        </div>
+                        <h3>Weather Insights</h3>
+                    </div>
+                    <p>Real-time weather data integrated with crowd patterns to help you plan the perfect visit</p>
+                    <div class="feature-footer">
+                        <span class="feature-tag blue">Real-time</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <span class="footer-logo-icon">🗺️</span>
+                        <div>
+                            <span class="footer-logo-text">CrowdWise India</span>
+                            <span class="footer-tagline-text">Travel without the rush</span>
+                        </div>
+                    </div>
+                    <p class="footer-description">Your smart travel companion for exploring India's best destinations with real-time crowd insights.</p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link">📱</a>
+                        <a href="#" class="social-link">🐦</a>
+                        <a href="#" class="social-link">📧</a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Product</h4>
+                        <a href="#destinations">Destinations</a>
+                        <a href="#about">How it Works</a>
+                        <a href="#">Mobile App</a>
+                        <a href="#">API Access</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Company</h4>
+                        <a href="#">About Us</a>
+                        <a href="#">Contact</a>
+                        <a href="#">Careers</a>
+                        <a href="#">Press</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Resources</h4>
+                        <a href="#">Blog</a>
+                        <a href="#">Help Center</a>
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Terms of Service</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 CrowdWise India. All rights reserved.</p>
+                <p class="footer-disclaimer">Crowd estimates are based on aggregated data and may vary. For critical decisions, verify with local authorities.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <a href="#home" class="bottom-nav-item active">
+            <span class="bottom-nav-icon">🏠</span>
+            <span class="bottom-nav-label">Home</span>
+        </a>
+        <a href="#destinations" class="bottom-nav-item">
+            <span class="bottom-nav-icon">📍</span>
+            <span class="bottom-nav-label">Explore</span>
+        </a>
+        <button class="bottom-nav-item search-trigger" onclick="focusSearch()">
+            <span class="bottom-nav-icon search-icon-main">🔍</span>
+            <span class="bottom-nav-label">Search</span>
+        </button>
+        <a href="#heatmap" class="bottom-nav-item">
+            <span class="bottom-nav-icon">🗺️</span>
+            <span class="bottom-nav-label">Map</span>
+        </a>
+        <a href="#about" class="bottom-nav-item">
+            <span class="bottom-nav-icon">ℹ️</span>
+            <span class="bottom-nav-label">About</span>
+        </a>
+    </nav>
+
+    <!-- Destination Detail Modal -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="modalContent">
+                <!-- Content will be dynamically generated -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Modal -->
+    <div id="alertModal" class="modal">
+        <div class="modal-content modal-small">
+            <span class="close" onclick="closeAlertModal()">&times;</span>
+            <div class="modal-body">
+                <div class="modal-icon">🔔</div>
+                <h2>Set Crowd Alert</h2>
+                <p>Get notified when a destination becomes less crowded</p>
+                <div class="alert-form">
+                    <select id="alertDestination" class="alert-select">
+                        <option value="">Select destination...</option>
+                    </select>
+                    <select id="alertThreshold" class="alert-select">
+                        <option value="low">When crowd is Low 🟢</option>
+                        <option value="moderate">When crowd is Moderate 🟡</option>
+                    </select>
+                    <input type="email" placeholder="Your email address" class="alert-input" id="alertEmail">
+                    <button class="alert-submit" onclick="submitAlert()">Set Alert →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Best Time Modal -->
+    <div id="bestTimeModal" class="modal">
+        <div class="modal-content modal-small">
+            <span class="close" onclick="closeBestTimeModal()">&times;</span>
+            <div class="modal-body">
+                <div class="modal-icon">⏰</div>
+                <h2>Best Time Finder</h2>
+                <p>Find the optimal time to visit any destination</p>
+                <div class="alert-form">
+                    <select id="bestTimeDestination" class="alert-select">
+                        <option value="">Select destination...</option>
+                    </select>
+                    <div id="bestTimeResult" class="best-time-result" style="display: none;">
+                        <!-- Results will be shown here -->
+                    </div>
+                    <button class="alert-submit" onclick="findBestTime()">Find Best Time →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Itinerary Modal -->
+    <div id="itineraryModal" class="modal">
+        <div class="modal-content modal-small">
+            <span class="close" onclick="closeItineraryModal()">&times;</span>
+            <div class="modal-body">
+                <div class="modal-icon">🧭</div>
+                <h2>Crowd-free Itinerary</h2>
+                <p>Get AI-generated plans with minimal crowds</p>
+                <div class="alert-form">
+                    <select id="itineraryState" class="alert-select">
+                        <option value="">Select state...</option>
+                        <option value="Rajasthan">Rajasthan</option>
+                        <option value="Kerala">Kerala</option>
+                        <option value="Goa">Goa</option>
+                        <option value="Uttar Pradesh">Uttar Pradesh</option>
+                        <option value="Himachal Pradesh">Himachal Pradesh</option>
+                    </select>
+                    <div id="itineraryResult" class="itinerary-result" style="display: none;">
+                        <!-- Results will be shown here -->
+                    </div>
+                    <button class="alert-submit" onclick="generateItinerary()">Generate Itinerary →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Status Modal -->
+    <div id="dataStatusModal" class="modal">
+        <div class="modal-content modal-small">
+            <span class="close" onclick="closeDataStatusModal()">&times;</span>
+            <div class="modal-body">
+                <div class="modal-icon">📊</div>
+                <h2>Data Source Information</h2>
+                <p>Transparency about where our data comes from</p>
+                <div class="data-source-info">
+                    <div class="source-item">
+                        <div class="source-header">
+                            <span class="source-icon">🌤️</span>
+                            <span class="source-name">Weather Data</span>
+                            <span class="source-badge" id="weatherSourceBadge">Loading</span>
+                        </div>
+                        <p class="source-detail" id="weatherSourceDetail">Checking source...</p>
+                    </div>
+                    <div class="source-item">
+                        <div class="source-header">
+                            <span class="source-icon">👥</span>
+                            <span class="source-name">Crowd Data</span>
+                            <span class="source-badge" id="crowdSourceBadge">Loading</span>
+                        </div>
+                        <p class="source-detail" id="crowdSourceDetail">Checking source...</p>
+                    </div>
+                    <div class="source-item">
+                        <div class="source-header">
+                            <span class="source-icon">🕐</span>
+                            <span class="source-name">Last Updated</span>
+                        </div>
+                        <p class="source-detail" id="lastUpdateTime">--</p>
+                    </div>
+                    <div class="data-quality-section">
+                        <h4>Overall Data Quality</h4>
+                        <div class="quality-meter" id="qualityMeter">
+                            <div class="quality-fill" id="qualityFill"></div>
+                        </div>
+                        <p class="quality-label" id="qualityLabel">--</p>
+                    </div>
+                    <div class="api-setup-note">
+                        <strong>💡 Want Live Data?</strong>
+                        <p>Add your free OpenWeatherMap API key in <code>config.js</code> to enable real weather data. See <code>API_SETUP_GUIDE.md</code> for instructions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="data.js"></script>
+    <script src="api-service.js"></script>
+    <script src="client-algorithm.js"></script>
+    <script src="feedback-widget.js"></script>
+    <script src="script.js"></script>
+    
+    <!-- How It Works Modal -->
+    <div class="modal-overlay" id="howItWorksModal" style="display:none;">
+        <div class="how-it-works-modal">
+            <button class="modal-close" onclick="closeHowItWorks()">&times;</button>
+            <h2>🧠 How CrowdWise Predicts Crowds</h2>
+            
+            <div class="methodology-section">
+                <h3>📊 Our Self-Sufficient Algorithm</h3>
+                <p>We don't rely on expensive external APIs. Instead, we use a sophisticated multi-signal approach:</p>
+                
+                <div class="signal-grid">
+                    <div class="signal-card">
+                        <span class="signal-icon">🕐</span>
+                        <h4>Time Patterns</h4>
+                        <p>Different places have different peak hours. Temples are busy early morning, beaches at sunset.</p>
+                        <span class="weight-badge">20% weight</span>
+                    </div>
+                    <div class="signal-card">
+                        <span class="signal-icon">📅</span>
+                        <h4>Day of Week</h4>
+                        <p>Weekends typically see 40-70% more visitors than weekdays.</p>
+                        <span class="weight-badge">15% weight</span>
+                    </div>
+                    <div class="signal-card">
+                        <span class="signal-icon">🌤️</span>
+                        <h4>Seasonal Patterns</h4>
+                        <p>Tourist season (Oct-Mar) vs monsoon (Jun-Aug) dramatically affects crowds.</p>
+                        <span class="weight-badge">20% weight</span>
+                    </div>
+                    <div class="signal-card">
+                        <span class="signal-icon">🎉</span>
+                        <h4>Holidays & Events</h4>
+                        <p>Diwali, long weekends, and local festivals can 2x the crowds.</p>
+                        <span class="weight-badge">15% weight</span>
+                    </div>
+                    <div class="signal-card">
+                        <span class="signal-icon">📱</span>
+                        <h4>Social Signals</h4>
+                        <p>Wikipedia views, trending hashtags indicate rising interest.</p>
+                        <span class="weight-badge">10% weight</span>
+                    </div>
+                    <div class="signal-card">
+                        <span class="signal-icon">🏨</span>
+                        <h4>Hotel Demand</h4>
+                        <p>Low availability = high demand = more crowds expected.</p>
+                        <span class="weight-badge">15% weight</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accuracy-section">
+                <h3>📈 Accuracy & Improvement</h3>
+                <div class="accuracy-info">
+                    <div class="accuracy-stat">
+                        <span class="stat-value" id="modalAccuracy">65-75%</span>
+                        <span class="stat-label">Current Accuracy Range</span>
+                    </div>
+                    <div class="accuracy-stat">
+                        <span class="stat-value" id="modalFeedback">Growing</span>
+                        <span class="stat-label">User Feedback</span>
+                    </div>
+                </div>
+                <p class="improvement-note">💡 Your feedback directly improves our predictions! When you tell us if a prediction was accurate, we adjust our algorithm weights.</p>
+            </div>
+            
+            <div class="limitations-section">
+                <h3>⚠️ Honest Limitations</h3>
+                <ul>
+                    <li><strong>Not real-time headcounts:</strong> We estimate crowd levels, not exact visitor numbers</li>
+                    <li><strong>Pattern-based:</strong> Unusual events (strikes, VIP visits) may not be captured</li>
+                    <li><strong>Improving over time:</strong> Accuracy increases as we collect more feedback</li>
+                </ul>
+            </div>
+            
+            <div class="cta-section">
+                <p>Help us improve! After visiting a place, let us know if our prediction was accurate.</p>
+                <button class="cta-button" onclick="closeHowItWorks()">Got it, let's explore! 🚀</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,156 @@
+# ============================================================
+# CrowdWise India - Artillery Load Test Configuration
+# ============================================================
+# This configuration tests the backend API performance
+# under various load conditions.
+#
+# Prerequisites:
+#   npm install -g artillery
+#   npm install -g artillery-plugin-expect
+#
+# Run tests:
+#   artillery run backend/tests/load-test.yml
+#
+# Generate HTML report:
+#   artillery run backend/tests/load-test.yml --output report.json
+#   artillery report report.json
+# ============================================================
+
+config:
+  target: "http://localhost:3002"
+  phases:
+    # Warm-up phase - 30 users over 1 minute
+    - duration: 60
+      arrivalRate: 5
+      rampTo: 30
+      name: "Warm-up phase"
+    
+    # Sustained load - 50 users/second for 3 minutes
+    - duration: 180
+      arrivalRate: 50
+      name: "Sustained load"
+    
+    # Spike test - 200 users/second for 1 minute
+    - duration: 60
+      arrivalRate: 100
+      rampTo: 200
+      name: "Spike test"
+    
+    # Cool-down - back to normal
+    - duration: 60
+      arrivalRate: 50
+      rampTo: 10
+      name: "Cool-down"
+
+  defaults:
+    headers:
+      Content-Type: "application/json"
+      Accept: "application/json"
+
+  # Response time thresholds (ms)
+  ensure:
+    p95: 500      # 95th percentile should be under 500ms
+    p99: 1000     # 99th percentile should be under 1s
+    maxErrorRate: 1  # Less than 1% error rate
+
+  plugins:
+    expect: {}
+
+scenarios:
+  # Scenario 1: Health Check (lightweight)
+  - name: "Health Check"
+    weight: 1
+    flow:
+      - get:
+          url: "/api/health"
+          expect:
+            - statusCode: 200
+            - hasProperty: "status"
+            - equals:
+                - "{{ status }}"
+                - "healthy"
+
+  # Scenario 2: Weather API (most common)
+  - name: "Get Weather Data"
+    weight: 4
+    flow:
+      - loop:
+        - get:
+            url: "/api/weather/{{ $randomNumber(1, 10) }}"
+            expect:
+              - statusCode: 200
+              - hasProperty: "temperature"
+              - hasProperty: "condition"
+        count: 3
+
+  # Scenario 3: Crowd Data API (most common)
+  - name: "Get Crowd Data"
+    weight: 4
+    flow:
+      - loop:
+        - get:
+            url: "/api/crowd/{{ $randomNumber(1, 10) }}"
+            expect:
+              - statusCode: 200
+              - hasProperty: "crowdLevel"
+              - hasProperty: "currentEstimate"
+        count: 3
+
+  # Scenario 4: Aggregated Destination Data
+  - name: "Get Full Destination Data"
+    weight: 2
+    flow:
+      - get:
+          url: "/api/destinations/{{ $randomNumber(1, 10) }}"
+          expect:
+            - statusCode: 200
+            - hasProperty: "weather"
+            - hasProperty: "crowd"
+
+  # Scenario 5: Create Alert
+  - name: "Create Alert"
+    weight: 1
+    flow:
+      - post:
+          url: "/api/alerts"
+          json:
+            email: "test-{{ $randomNumber(1000, 9999) }}@loadtest.com"
+            destinationId: "{{ $randomNumber(1, 10) }}"
+            threshold: "low"
+            destinationName: "Test Destination"
+          expect:
+            - statusCode: 200
+            - hasProperty: "success"
+
+  # Scenario 6: Holidays API (cached)
+  - name: "Get Holidays"
+    weight: 1
+    flow:
+      - get:
+          url: "/api/holidays"
+          expect:
+            - statusCode: 200
+
+  # Scenario 7: User Journey - Browse and Set Alert
+  - name: "User Journey - Full Flow"
+    weight: 2
+    flow:
+      - think: 1
+      # User checks health
+      - get:
+          url: "/api/health"
+      - think: 2
+      # User views multiple destinations
+      - loop:
+        - get:
+            url: "/api/destinations/{{ $randomNumber(1, 10) }}"
+        - think: 1
+        count: 3
+      # User sets an alert
+      - post:
+          url: "/api/alerts"
+          json:
+            email: "journey-{{ $randomNumber(1000, 9999) }}@loadtest.com"
+            destinationId: "{{ $randomNumber(1, 10) }}"
+            threshold: "moderate"
+            destinationName: "Journey Destination"
