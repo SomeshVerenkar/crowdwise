@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     populateStateDropdowns();
     
     // Load real-time data if enabled
-    if (API_CONFIG.ENABLE_DYNAMIC_MOCK || API_CONFIG.USE_REAL_WEATHER) {
+    if (API_CONFIG.USE_REAL_CROWD_DATA || API_CONFIG.ENABLE_DYNAMIC_MOCK || API_CONFIG.USE_REAL_WEATHER) {
         console.log('🔄 Loading real-time data...');
         await apiService.updateAllDestinations(allDestinations);
         filteredDestinations = [...allDestinations];

@@ -126,10 +126,12 @@ class APIService {
         }
 
         // Try backend API if configured
-        if (API_CONFIG.USE_BACKEND_API) {
+        if (API_CONFIG.USE_BACKEND_API && API_CONFIG.USE_REAL_WEATHER) {
             try {
+                console.log(`🌤️ Fetching weather from backend for destination ${destinationId}...`);
                 const weather = await this.fetchWeatherFromBackend(destinationId);
-                if (weather) {
+                if (weather && weather.temperature) {
+                    console.log(`✅ Live weather fetched: ${weather.formatted}`);
                     this.dataStatus.weather = {
                         source: 'backend',
                         lastUpdate: new Date(),
@@ -140,7 +142,7 @@ class APIService {
                     return weather;
                 }
             } catch (error) {
-                console.error('Backend weather error:', error);
+                console.error('❌ Backend weather error:', error);
             }
         }
 
@@ -245,10 +247,12 @@ class APIService {
     
     async getCrowdData(destinationId) {
         // Try backend API first if configured
-        if (API_CONFIG.USE_BACKEND_API) {
+        if (API_CONFIG.USE_BACKEND_API && API_CONFIG.USE_REAL_CROWD_DATA) {
             try {
+                console.log(`🔄 Fetching crowd data from backend for destination ${destinationId}...`);
                 const crowdData = await this.fetchCrowdFromBackend(destinationId);
-                if (crowdData) {
+                if (crowdData && crowdData.crowdLevel) {
+                    console.log(`✅ Live crowd data fetched: ${crowdData.crowdLevel}`);
                     this.dataStatus.crowd = {
                         source: 'backend',
                         lastUpdate: new Date(),
@@ -259,17 +263,18 @@ class APIService {
                     return crowdData;
                 }
             } catch (error) {
-                console.error('Backend crowd error:', error);
+                console.error('❌ Backend crowd error:', error);
             }
         }
         
-        // Use smart estimation algorithm
+        // Fallback to algorithm or mock
+        console.warn('⚠️ Using fallback crowd data (backend unavailable)');
         this.dataStatus.crowd = {
-            source: API_CONFIG.ENABLE_DYNAMIC_MOCK ? 'algorithm' : 'mock',
+            source: 'algorithm',
             lastUpdate: new Date(),
             isLive: false
         };
-        API_CONFIG._crowdSource = API_CONFIG.ENABLE_DYNAMIC_MOCK ? 'algorithm' : 'mock';
+        API_CONFIG._crowdSource = 'algorithm';
         this.updateDataStatus();
         
         return this.estimateCrowdWithAlgorithm(destinationId);
@@ -455,7 +460,7 @@ class APIService {
         destination.weather = weather.formatted;
         
         // Get real-time crowd estimate
-        if (API_CONFIG.ENABLE_DYNAMIC_MOCK) {
+        if (API_CONFIG.USE_REAL_CROWD_DATA || API_CONFIG.ENABLE_DYNAMIC_MOCK) {
             const crowdData = await this.getCrowdData(destination.id);
             if (crowdData) {
                 destination.crowdLevel = crowdData.crowdLevel;
@@ -516,8 +521,8 @@ class APIService {
 // Create global instance
 const apiService = new APIService();
 
-// Auto-refresh data every 5 minutes if enabled
-if (API_CONFIG.ENABLE_DYNAMIC_MOCK) {
+// Auto-refresh data every 5 minutes if real data is enabled
+if (API_CONFIG.USE_REAL_CROWD_DATA || API_CONFIG.USE_REAL_WEATHER || API_CONFIG.ENABLE_DYNAMIC_MOCK) {
     setInterval(() => {
         console.log('🔄 Refreshing crowd data...');
         if (typeof filteredDestinations !== 'undefined') {
