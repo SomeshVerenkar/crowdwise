@@ -697,6 +697,55 @@
         </div>
     </div>
 
+    <!-- Sticky Feedback Button -->
+    <button class="feedback-sticky-btn" onclick="openFeedbackModal()" title="Share Your Feedback">
+        <span class="feedback-icon">💬</span>
+        <span class="feedback-label">Feedback</span>
+    </button>
+
+    <!-- User Feedback Modal -->
+    <div class="modal-overlay" id="feedbackModal" style="display:none;">
+        <div class="feedback-modal">
+            <button class="modal-close" onclick="closeFeedbackModal()">&times;</button>
+            <h2>💬 Share Your Feedback</h2>
+            <p class="feedback-subtitle">Help us improve CrowdWise India! Your feedback matters.</p>
+            
+            <form id="userFeedbackForm" onsubmit="submitUserFeedback(event)">
+                <div class="feedback-form-group">
+                    <label for="feedbackMessage">Description *</label>
+                    <textarea id="feedbackMessage" class="feedback-textarea" rows="5" placeholder="Tell us what's on your mind..." required></textarea>
+                </div>
+                
+                <div class="feedback-form-group">
+                    <label for="feedbackRating">Rating *</label>
+                    <div class="star-rating" id="starRating">
+                        <span class="star" data-value="1">★</span>
+                        <span class="star" data-value="2">★</span>
+                        <span class="star" data-value="3">★</span>
+                        <span class="star" data-value="4">★</span>
+                        <span class="star" data-value="5">★</span>
+                    </div>
+                    <input type="hidden" id="feedbackRating" value="0">
+                </div>
+                
+                <div class="feedback-actions">
+                    <button type="button" class="feedback-cancel-btn" onclick="clearFeedbackForm()">Clear</button>
+                    <button type="submit" class="feedback-submit-btn" id="feedbackSubmitBtn">
+                        <span class="btn-text">Submit</span>
+                        <span class="btn-loading" style="display:none;">Sending...</span>
+                    </button>
+                </div>
+            </form>
+            
+            <div id="feedbackSuccess" class="feedback-success" style="display:none;">
+                <div class="success-icon">✅</div>
+                <h3>Thank You!</h3>
+                <p>Your feedback has been received. We appreciate you taking the time to help us improve!</p>
+                <button class="feedback-done-btn" onclick="closeFeedbackModal()">Done</button>
+            </div>
+        </div>
+    </div>
+
     <script src="config.js"></script>
     <script src="data.js"></script>
     <script src="api-service.js"></script>

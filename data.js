@@ -3050,6 +3050,532 @@ const destinations = [
         alerts: ["Surfing destination", "Less crowded than Promenade Beach"],
         nearbyAttractions: ["Auroville", "Matrimandir", "Botanical Garden"],
         category: "beach"
+    },
+
+    // ==================== MISSING DESTINATIONS FROM USER LIST ====================
+
+    // ANDHRA PRADESH - Missing destinations
+    {
+        id: 193,
+        name: "Gandikota",
+        state: "Andhra Pradesh",
+        city: "Kadapa",
+        emoji: "🏜️",
+        crowdLevel: 35,
+        peakHours: "6:00 AM - 6:00 PM",
+        bestTime: "October to February",
+        avgVisitors: 1500,
+        weather: { temp: 30, condition: "Warm", humidity: 45 },
+        alerts: ["Grand Canyon of India", "Camping available"],
+        nearbyAttractions: ["Pennar River Gorge", "Raghunathaswamy Temple", "Jamia Masjid"],
+        category: "nature"
+    },
+    {
+        id: 194,
+        name: "Kailasagiri",
+        state: "Andhra Pradesh",
+        city: "Visakhapatnam",
+        emoji: "🏔️",
+        crowdLevel: 50,
+        peakHours: "4:00 PM - 8:00 PM",
+        bestTime: "October to March",
+        avgVisitors: 5000,
+        weather: { temp: 28, condition: "Pleasant", humidity: 70 },
+        alerts: ["Ropeway available", "Beautiful sunset views"],
+        nearbyAttractions: ["RK Beach", "Submarine Museum", "VUDA Park"],
+        category: "nature"
+    },
+
+    // BIHAR - Missing destinations
+    {
+        id: 195,
+        name: "Vaishali",
+        state: "Bihar",
+        city: "Vaishali",
+        emoji: "☸️",
+        crowdLevel: 35,
+        peakHours: "9:00 AM - 5:00 PM",
+        bestTime: "October to March",
+        avgVisitors: 2000,
+        weather: { temp: 28, condition: "Warm", humidity: 55 },
+        alerts: ["Ancient Licchavi republic site", "Buddhist pilgrimage"],
+        nearbyAttractions: ["Ashokan Pillar", "Buddha Stupa", "Abhishek Pushkarini"],
+        category: "heritage"
+    },
+
+    // CHHATTISGARH - Missing destinations
+    {
+        id: 196,
+        name: "Kanger Valley National Park",
+        state: "Chhattisgarh",
+        city: "Jagdalpur",
+        emoji: "🌳",
+        crowdLevel: 30,
+        peakHours: "7:00 AM - 5:00 PM",
+        bestTime: "November to June",
+        avgVisitors: 1200,
+        weather: { temp: 26, condition: "Pleasant", humidity: 70 },
+        alerts: ["Limestone caves inside", "Home to unique species"],
+        nearbyAttractions: ["Kutumsar Caves", "Dandak Caves", "Tirathgarh Falls"],
+        category: "wildlife"
+    },
+    {
+        id: 197,
+        name: "Tirathgarh Falls",
+        state: "Chhattisgarh",
+        city: "Jagdalpur",
+        emoji: "💧",
+        crowdLevel: 35,
+        peakHours: "9:00 AM - 5:00 PM",
+        bestTime: "August to January",
+        avgVisitors: 1500,
+        weather: { temp: 26, condition: "Pleasant", humidity: 75 },
+        alerts: ["Multi-tiered waterfall", "Swimming possible at base"],
+        nearbyAttractions: ["Kanger Valley", "Chitrakote Falls", "Jagdalpur"],
+        category: "nature"
+    },
+
+    // GOA - Missing destinations
+    {
+        id: 198,
+        name: "Calangute Beach",
+        state: "Goa",
+        city: "North Goa",
+        emoji: "🏖️",
+        crowdLevel: 80,
+        peakHours: "10:00 AM - 7:00 PM",
+        bestTime: "November to February",
+        avgVisitors: 20000,
+        weather: { temp: 30, condition: "Sunny", humidity: 70 },
+        alerts: ["Queen of Goa beaches", "Water sports hub"],
+        nearbyAttractions: ["Baga Beach", "Candolim Beach", "Aguada Fort"],
+        category: "beach"
+    },
+    {
+        id: 199,
+        name: "Anjuna Beach",
+        state: "Goa",
+        city: "North Goa",
+        emoji: "🏖️",
+        crowdLevel: 65,
+        peakHours: "4:00 PM - 11:00 PM",
+        bestTime: "November to February",
+        avgVisitors: 12000,
+        weather: { temp: 30, condition: "Sunny", humidity: 70 },
+        alerts: ["Famous flea market on Wednesday", "Nightlife hotspot"],
+        nearbyAttractions: ["Vagator Beach", "Chapora Fort", "Curlies Beach Shack"],
+        category: "beach"
+    },
+
+    // MADHYA PRADESH - Missing destinations
+    {
+        id: 200,
+        name: "Pachmarhi",
+        state: "Madhya Pradesh",
+        city: "Hoshangabad",
+        emoji: "🏔️",
+        crowdLevel: 50,
+        peakHours: "9:00 AM - 5:00 PM",
+        bestTime: "October to June",
+        avgVisitors: 5000,
+        weather: { temp: 22, condition: "Pleasant", humidity: 60 },
+        alerts: ["Only hill station in MP", "Satpura Queen"],
+        nearbyAttractions: ["Bee Falls", "Jata Shankar Caves", "Pandav Caves", "Dhupgarh"],
+        category: "hill-station"
+    },
+    {
+        id: 201,
+        name: "Kanha National Park",
+        state: "Madhya Pradesh",
+        city: "Mandla",
+        emoji: "🐅",
+        crowdLevel: 55,
+        peakHours: "6:00 AM - 10:00 AM",
+        bestTime: "October to June",
+        avgVisitors: 3000,
+        weather: { temp: 28, condition: "Dry", humidity: 40 },
+        alerts: ["Inspiration for Jungle Book", "Safari booking required"],
+        nearbyAttractions: ["Bamni Dadar", "Kanha Museum", "Shravan Tal"],
+        category: "wildlife"
+    },
+
+    // RAJASTHAN - Missing destination
+    {
+        id: 202,
+        name: "Jodhpur",
+        state: "Rajasthan",
+        city: "Jodhpur",
+        emoji: "🏰",
+        crowdLevel: 70,
+        peakHours: "9:00 AM - 6:00 PM",
+        bestTime: "October to March",
+        avgVisitors: 15000,
+        weather: { temp: 30, condition: "Dry", humidity: 30 },
+        alerts: ["Blue City of India", "Mehrangarh Fort is must-visit"],
+        nearbyAttractions: ["Mehrangarh Fort", "Jaswant Thada", "Umaid Bhawan Palace", "Clock Tower"],
+        category: "heritage"
+    },
+
+    // SIKKIM - Missing destinations
+    {
+        id: 203,
+        name: "Tsomgo Lake",
+        state: "Sikkim",
+        city: "East Sikkim",
+        emoji: "🏔️",
+        crowdLevel: 55,
+        peakHours: "9:00 AM - 3:00 PM",
+        bestTime: "May to October, December to February",
+        avgVisitors: 2500,
+        weather: { temp: 5, condition: "Cold", humidity: 60 },
+        alerts: ["Permit required", "Yak rides available"],
+        nearbyAttractions: ["Nathula Pass", "Baba Harbhajan Singh Temple", "Kyongnosla Alpine Sanctuary"],
+        category: "nature"
+    },
+    {
+        id: 204,
+        name: "Yumthang Valley",
+        state: "Sikkim",
+        city: "North Sikkim",
+        emoji: "🌸",
+        crowdLevel: 40,
+        peakHours: "9:00 AM - 3:00 PM",
+        bestTime: "February to June",
+        avgVisitors: 1500,
+        weather: { temp: 8, condition: "Cold", humidity: 65 },
+        alerts: ["Valley of Flowers of East", "Rhododendron blooms in spring"],
+        nearbyAttractions: ["Zero Point", "Hot Springs at Yumthang", "Shingba Rhododendron Sanctuary"],
+        category: "nature"
+    },
+
+    // TAMIL NADU - Missing destinations
+    {
+        id: 205,
+        name: "Chennai",
+        state: "Tamil Nadu",
+        city: "Chennai",
+        emoji: "🌆",
+        crowdLevel: 70,
+        peakHours: "10:00 AM - 8:00 PM",
+        bestTime: "November to February",
+        avgVisitors: 40000,
+        weather: { temp: 32, condition: "Humid", humidity: 75 },
+        alerts: ["Gateway to South India", "Marina Beach is longest urban beach"],
+        nearbyAttractions: ["Marina Beach", "Kapaleeshwarar Temple", "Fort St. George", "Government Museum"],
+        category: "urban"
+    },
+    {
+        id: 206,
+        name: "Kodaikanal",
+        state: "Tamil Nadu",
+        city: "Kodaikanal",
+        emoji: "🏔️",
+        crowdLevel: 65,
+        peakHours: "9:00 AM - 6:00 PM",
+        bestTime: "April to June, September to October",
+        avgVisitors: 8000,
+        weather: { temp: 16, condition: "Cool", humidity: 75 },
+        alerts: ["Princess of Hill Stations", "Boating in Kodai Lake"],
+        nearbyAttractions: ["Kodai Lake", "Coaker's Walk", "Pillar Rocks", "Bryant Park"],
+        category: "hill-station"
+    },
+
+    // KERALA - Missing destinations
+    {
+        id: 207,
+        name: "Varkala",
+        state: "Kerala",
+        city: "Thiruvananthapuram",
+        emoji: "🏖️",
+        crowdLevel: 50,
+        peakHours: "5:00 AM - 7:00 PM",
+        bestTime: "October to March",
+        avgVisitors: 5000,
+        weather: { temp: 30, condition: "Pleasant", humidity: 75 },
+        alerts: ["Cliff beach with mineral springs", "Papanasam Beach for holy dip"],
+        nearbyAttractions: ["Papanasam Beach", "Varkala Cliff", "Janardhana Swamy Temple"],
+        category: "beach"
+    },
+    {
+        id: 208,
+        name: "Kochi (Fort Kochi)",
+        state: "Kerala",
+        city: "Kochi",
+        emoji: "🏛️",
+        crowdLevel: 60,
+        peakHours: "9:00 AM - 6:00 PM",
+        bestTime: "October to March",
+        avgVisitors: 8000,
+        weather: { temp: 30, condition: "Humid", humidity: 80 },
+        alerts: ["Chinese fishing nets iconic", "Colonial heritage"],
+        nearbyAttractions: ["Chinese Fishing Nets", "St. Francis Church", "Jewish Synagogue", "Mattancherry Palace"],
+        category: "heritage"
+    },
+
+    // NAGALAND - Missing destinations
+    {
+        id: 209,
+        name: "Dimapur",
+        state: "Nagaland",
+        city: "Dimapur",
+        emoji: "🏛️",
+        crowdLevel: 40,
+        peakHours: "9:00 AM - 5:00 PM",
+        bestTime: "October to May",
+        avgVisitors: 2000,
+        weather: { temp: 25, condition: "Pleasant", humidity: 65 },
+        alerts: ["Gateway to Nagaland", "Ancient Kachari ruins"],
+        nearbyAttractions: ["Kachari Ruins", "Rangapahar Forest", "Triple Falls", "Diezephe Craft Village"],
+        category: "heritage"
+    },
+    {
+        id: 210,
+        name: "Mokokchung",
+        state: "Nagaland",
+        city: "Mokokchung",
+        emoji: "🏘️",
+        crowdLevel: 25,
+        peakHours: "9:00 AM - 5:00 PM",
+        bestTime: "October to May",
+        avgVisitors: 800,
+        weather: { temp: 20, condition: "Pleasant", humidity: 65 },
+        alerts: ["Cultural capital of Nagaland", "Ao tribe homeland"],
+        nearbyAttractions: ["Longkhum Village", "Mopungchuket Village", "Changtongya Village"],
+        category: "cultural"
+    },
+    {
+        id: 211,
+        name: "Kisama Heritage Village",
+        state: "Nagaland",
+        city: "Kohima",
+        emoji: "🎭",
+        crowdLevel: 60,
+        peakHours: "9:00 AM - 5:00 PM",
+        bestTime: "December (Hornbill Festival)",
+        avgVisitors: 8000,
+        weather: { temp: 15, condition: "Cool", humidity: 60 },
+        alerts: ["Hornbill Festival venue", "All Naga tribes represented"],
+        nearbyAttractions: ["Kohima War Cemetery", "State Museum", "Cathedral of Reconciliation"],
+        category: "cultural"
+    },
+
+    // PUNJAB - Missing destination
+    {
+        id: 212,
+        name: "Patiala",
+        state: "Punjab",
+        city: "Patiala",
+        emoji: "🏰",
+        crowdLevel: 45,
+        peakHours: "10:00 AM - 6:00 PM",
+        bestTime: "October to March",
+        avgVisitors: 4000,
+        weather: { temp: 28, condition: "Warm", humidity: 50 },
+        alerts: ["Royal city with grand palaces", "Famous for Patiala peg and jutti"],
+        nearbyAttractions: ["Qila Mubarak", "Moti Bagh Palace", "Sheesh Mahal", "Bahadurgarh Fort"],
+        category: "heritage"
+    },
+
+    // WEST BENGAL - Missing destination
+    {
+        id: 213,
+        name: "Sundarbans National Park",
+        state: "West Bengal",
+        city: "South 24 Parganas",
+        emoji: "🐅",
+        crowdLevel: 45,
+        peakHours: "6:00 AM - 4:00 PM",
+        bestTime: "September to March",
+        avgVisitors: 2500,
+        weather: { temp: 28, condition: "Humid", humidity: 85 },
+        alerts: ["World's largest mangrove forest", "Royal Bengal Tiger habitat"],
+        nearbyAttractions: ["Sajnekhali Watch Tower", "Sudhanyakhali", "Dobanki Canopy Walk"],
+        category: "wildlife"
+    },
+
+    // DELHI - Missing destination
+    {
+        id: 214,
+        name: "Akshardham Temple",
+        state: "Delhi",
+        city: "Delhi",
+        emoji: "🛕",
+        crowdLevel: 75,
+        peakHours: "10:00 AM - 6:30 PM",
+        bestTime: "October to March",
+        avgVisitors: 25000,
+        weather: { temp: 29, condition: "Pleasant", humidity: 50 },
+        alerts: ["No phones/cameras inside", "Evening fountain show is spectacular"],
+        nearbyAttractions: ["Yamuna Sports Complex", "Commonwealth Games Village", "ISKCON Temple"],
+        category: "religious"
+    },
+
+    // JAMMU & KASHMIR - Missing destination
+    {
+        id: 215,
+        name: "Sonamarg",
+        state: "Jammu & Kashmir",
+        city: "Ganderbal",
+        emoji: "⛰️",
+        crowdLevel: 55,
+        peakHours: "9:00 AM - 5:00 PM",
+        bestTime: "May to October",
+        avgVisitors: 5000,
+        weather: { temp: 12, condition: "Cold", humidity: 70 },
+        alerts: ["Meadow of Gold", "Gateway to Amarnath"],
+        nearbyAttractions: ["Thajiwas Glacier", "Zoji La Pass", "Baltal", "Nilagrad River"],
+        category: "nature"
+    },
+
+    // LADAKH - Missing destinations
+    {
+        id: 216,
+        name: "Tso Moriri",
+        state: "Ladakh",
+        city: "Leh",
+        emoji: "🏔️",
+        crowdLevel: 30,
+        peakHours: "8:00 AM - 5:00 PM",
+        bestTime: "May to September",
+        avgVisitors: 800,
+        weather: { temp: 8, condition: "Cold", humidity: 25 },
+        alerts: ["High altitude lake", "Permit required", "Less crowded than Pangong"],
+        nearbyAttractions: ["Korzok Monastery", "Karzok Village", "Chumur"],
+        category: "nature"
+    },
+
+    // ANDAMAN - Missing destination
+    {
+        id: 217,
+        name: "Havelock Island (Swaraj Dweep)",
+        state: "Andaman & Nicobar",
+        city: "Havelock",
+        emoji: "🏝️",
+        crowdLevel: 55,
+        peakHours: "9:00 AM - 5:00 PM",
+        bestTime: "November to April",
+        avgVisitors: 3000,
+        weather: { temp: 29, condition: "Tropical", humidity: 80 },
+        alerts: ["Radhanagar Beach is Asia's best", "Scuba diving paradise"],
+        nearbyAttractions: ["Radhanagar Beach", "Elephant Beach", "Kalapathar Beach", "Neil Island"],
+        category: "beach"
+    },
+    {
+        id: 218,
+        name: "Port Blair",
+        state: "Andaman & Nicobar",
+        city: "Port Blair",
+        emoji: "🏛️",
+        crowdLevel: 60,
+        peakHours: "9:00 AM - 5:00 PM",
+        bestTime: "October to May",
+        avgVisitors: 5000,
+        weather: { temp: 30, condition: "Tropical", humidity: 80 },
+        alerts: ["Capital of Andaman", "Cellular Jail light show in evening"],
+        nearbyAttractions: ["Cellular Jail", "Ross Island", "North Bay Island", "Corbyn's Cove"],
+        category: "urban"
+    },
+
+    // MOREH - Manipur
+    {
+        id: 219,
+        name: "Moreh",
+        state: "Manipur",
+        city: "Tengnoupal",
+        emoji: "🛍️",
+        crowdLevel: 35,
+        peakHours: "9:00 AM - 5:00 PM",
+        bestTime: "October to March",
+        avgVisitors: 1500,
+        weather: { temp: 24, condition: "Pleasant", humidity: 65 },
+        alerts: ["Indo-Myanmar border town", "Famous for cross-border trade"],
+        nearbyAttractions: ["Moreh Gate", "Tamu (Myanmar)", "Indo-Myanmar Friendship Bridge"],
+        category: "cultural"
+    },
+
+    // LUNGLEI - Mizoram
+    {
+        id: 220,
+        name: "Lunglei",
+        state: "Mizoram",
+        city: "Lunglei",
+        emoji: "🏔️",
+        crowdLevel: 25,
+        peakHours: "9:00 AM - 5:00 PM",
+        bestTime: "October to March",
+        avgVisitors: 600,
+        weather: { temp: 20, condition: "Cool", humidity: 70 },
+        alerts: ["Second largest city of Mizoram", "Stone Bridge"],
+        nearbyAttractions: ["Saikuti Hall", "Thorang", "Zobawk", "Kawlkulh"],
+        category: "nature"
+    },
+
+    // NETARHAT - Jharkhand
+    {
+        id: 221,
+        name: "Netarhat",
+        state: "Jharkhand",
+        city: "Latehar",
+        emoji: "🌅",
+        crowdLevel: 35,
+        peakHours: "5:00 AM - 6:00 PM",
+        bestTime: "October to March",
+        avgVisitors: 1500,
+        weather: { temp: 18, condition: "Cool", humidity: 65 },
+        alerts: ["Queen of Chotanagpur", "Famous for sunrise/sunset"],
+        nearbyAttractions: ["Magnolia Point", "Upper Ghagri Falls", "Lodh Falls", "Koel Viewpoint"],
+        category: "hill-station"
+    },
+
+    // RANCHI - Jharkhand
+    {
+        id: 222,
+        name: "Ranchi",
+        state: "Jharkhand",
+        city: "Ranchi",
+        emoji: "🌆",
+        crowdLevel: 50,
+        peakHours: "10:00 AM - 6:00 PM",
+        bestTime: "October to March",
+        avgVisitors: 6000,
+        weather: { temp: 26, condition: "Pleasant", humidity: 60 },
+        alerts: ["City of waterfalls", "Pleasant climate year-round"],
+        nearbyAttractions: ["Jagannath Temple", "Ranchi Lake", "Rock Garden", "Birsa Zoological Park"],
+        category: "urban"
+    },
+
+    // KOCHI - Adding Kochi properly
+    {
+        id: 223,
+        name: "Kochi",
+        state: "Kerala",
+        city: "Kochi",
+        emoji: "🌆",
+        crowdLevel: 60,
+        peakHours: "9:00 AM - 7:00 PM",
+        bestTime: "October to March",
+        avgVisitors: 10000,
+        weather: { temp: 30, condition: "Humid", humidity: 80 },
+        alerts: ["Queen of Arabian Sea", "Gateway to Kerala"],
+        nearbyAttractions: ["Fort Kochi", "Marine Drive", "Cherai Beach", "Vypeen Island"],
+        category: "urban"
+    },
+
+    // Panipat - Haryana
+    {
+        id: 224,
+        name: "Panipat",
+        state: "Haryana",
+        city: "Panipat",
+        emoji: "⚔️",
+        crowdLevel: 40,
+        peakHours: "9:00 AM - 5:00 PM",
+        bestTime: "October to March",
+        avgVisitors: 3000,
+        weather: { temp: 28, condition: "Warm", humidity: 50 },
+        alerts: ["City of Weavers", "Three historic battles fought here"],
+        nearbyAttractions: ["Panipat Museum", "Kabuli Bagh Mosque", "Kala Amb", "Ibrahim Lodhi's Tomb"],
+        category: "heritage"
     }
 ];
 

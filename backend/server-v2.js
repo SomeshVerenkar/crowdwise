@@ -425,6 +425,116 @@ app.get('/api/feedback/stats', async (req, res) => {
     res.json(stats);
 });
 
+// ==================== USER FEEDBACK API ====================
+
+// Submit general user feedback (suggestions, bugs, etc.)
+const FEEDBACK_NOTIFICATION_EMAIL = 'SAMVERENKAR@GMAIL.COM';
+
+app.post('/api/user-feedback', async (req, res) => {
+    const { message, rating, timestamp, userAgent, page } = req.body;
+    
+    if (!message || !rating) {
+        return res.status(400).json({ error: 'Description and rating are required' });
+    }
+    
+    try {
+        const fs = require('fs').promises;
+        const path = require('path');
+        const feedbackFile = path.join(CONFIG.DATA_DIR, 'user-feedback.json');
+        
+        // Read existing feedback
+        let feedbackList = [];
+        try {
+            const data = await fs.readFile(feedbackFile, 'utf8');
+            feedbackList = JSON.parse(data);
+        } catch (err) {
+            // File doesn't exist yet, start with empty array
+            feedbackList = [];
+        }
+        
+        // Create feedback entry
+        const feedbackEntry = {
+            id: `uf_${Date.now()}`,
+            message,
+            rating,
+            timestamp: timestamp || new Date().toISOString(),
+            userAgent: userAgent || null,
+            page: page || null,
+            status: 'new', // new, reviewed, addressed
+            createdAt: new Date().toISOString()
+        };
+        
+        // Add to list
+        feedbackList.push(feedbackEntry);
+        
+        // Save to file
+        await fs.writeFile(feedbackFile, JSON.stringify(feedbackList, null, 2));
+        
+        console.log(`📝 New user feedback received: ${rating}⭐ - "${message.substring(0, 50)}..."`);
+        
+        // Send email notification to configured email
+        if (emailTransporter) {
+            try {
+                await emailTransporter.sendMail({
+                    from: CONFIG.EMAIL_FROM,
+                    to: FEEDBACK_NOTIFICATION_EMAIL,
+                    subject: `[CrowdWise Feedback] New ${rating}⭐ Rating`,
+                    html: `
+                        <h2>🗺️ CrowdWise India - New Feedback</h2>
+                        <hr>
+                        <p><strong>Rating:</strong> ${'⭐'.repeat(rating)} (${rating}/5)</p>
+                        <p><strong>Description:</strong></p>
+                        <blockquote style="background: #f5f5f5; padding: 15px; border-left: 4px solid #6366f1;">${message}</blockquote>
+                        <hr>
+                        <p><strong>Time:</strong> ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}</p>
+                        <p><strong>Feedback ID:</strong> ${feedbackEntry.id}</p>
+                    `
+                });
+                console.log('📧 Feedback notification email sent to', FEEDBACK_NOTIFICATION_EMAIL);
+            } catch (emailErr) {
+                console.log('⚠️ Could not send email notification:', emailErr.message);
+            }
+        }
+        
+        res.json({
+            success: true,
+            message: 'Feedback received successfully',
+            id: feedbackEntry.id
+        });
+    } catch (error) {
+        console.error('User feedback error:', error.message);
+        res.status(500).json({ error: 'Failed to save feedback' });
+    }
+});
+
+// Get all user feedback (for admin)
+app.get('/api/user-feedback', async (req, res) => {
+    try {
+        const fs = require('fs').promises;
+        const path = require('path');
+        const feedbackFile = path.join(CONFIG.DATA_DIR, 'user-feedback.json');
+        
+        let feedbackList = [];
+        try {
+            const data = await fs.readFile(feedbackFile, 'utf8');
+            feedbackList = JSON.parse(data);
+        } catch (err) {
+            feedbackList = [];
+        }
+        
+        // Sort by newest first
+        feedbackList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        
+        res.json({
+            total: feedbackList.length,
+            feedback: feedbackList
+        });
+    } catch (error) {
+        console.error('Get feedback error:', error.message);
+        res.status(500).json({ error: 'Failed to retrieve feedback' });
+    }
+});
+
 // ==================== DATA COLLECTION API ====================
 
 // Trigger manual data collection

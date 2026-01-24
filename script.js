@@ -486,8 +486,9 @@ function searchNearMe() {
             // Sort by distance
             destinationsWithDistance.sort((a, b) => a.distance - b.distance);
             
-            // Take nearest 10 destinations
-            const nearbyDestinations = destinationsWithDistance.slice(0, 10);
+            // Filter destinations within 30km range
+            const MAX_DISTANCE_KM = 30;
+            const nearbyDestinations = destinationsWithDistance.filter(d => d.distance <= MAX_DISTANCE_KM);
             
             if (nearbyDestinations.length > 0) {
                 // Update filtered destinations to show nearby ones
@@ -508,12 +509,12 @@ function searchNearMe() {
                 // Show success message
                 const nearestDist = nearbyDestinations[0].distance;
                 const distText = nearestDist < 1 ? `${Math.round(nearestDist * 1000)}m` : `${nearestDist.toFixed(1)}km`;
-                showToast(`📍 Found ${nearbyDestinations.length} destinations near you! Nearest: ${nearbyDestinations[0].name} (${distText})`);
+                showToast(`📍 Found ${nearbyDestinations.length} destination${nearbyDestinations.length > 1 ? 's' : ''} within 30km! Nearest: ${nearbyDestinations[0].name} (${distText})`);
                 
                 // Scroll to destinations
                 document.getElementById('destinations').scrollIntoView({ behavior: 'smooth' });
             } else {
-                showToast('📍 No destinations found near your location. Try searching by state.');
+                showToast('📍 No destinations found within 30km of your location. Try searching by state.');
             }
             
             // Reset button
@@ -1785,4 +1786,181 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
     }, 2000);
+    
+    // Initialize star rating
+    initStarRating();
+});
+
+// ========== USER FEEDBACK MODAL ==========
+function openFeedbackModal() {
+    const modal = document.getElementById('feedbackModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        
+        // Reset form
+        document.getElementById('userFeedbackForm').reset();
+        document.getElementById('feedbackRating').value = '0';
+        document.querySelectorAll('.star-rating .star').forEach(star => star.classList.remove('active'));
+        
+        // Show form, hide success
+        document.getElementById('userFeedbackForm').style.display = 'block';
+        document.getElementById('feedbackSuccess').style.display = 'none';
+        
+        // Track event
+        if (typeof trackEvent === 'function') {
+            trackEvent('feedback_modal_opened', 'Feedback Modal', 1);
+        }
+    }
+}
+
+function closeFeedbackModal() {
+    const modal = document.getElementById('feedbackModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+function initStarRating() {
+    const stars = document.querySelectorAll('.star-rating .star');
+    const ratingInput = document.getElementById('feedbackRating');
+    
+    stars.forEach(star => {
+        star.addEventListener('click', () => {
+            const value = star.getAttribute('data-value');
+            ratingInput.value = value;
+            
+            // Update visual
+            stars.forEach(s => {
+                if (parseInt(s.getAttribute('data-value')) <= parseInt(value)) {
+                    s.classList.add('active');
+                } else {
+                    s.classList.remove('active');
+                }
+            });
+        });
+        
+        star.addEventListener('mouseenter', () => {
+            const value = star.getAttribute('data-value');
+            stars.forEach(s => {
+                if (parseInt(s.getAttribute('data-value')) <= parseInt(value)) {
+                    s.classList.add('hovered');
+                } else {
+                    s.classList.remove('hovered');
+                }
+            });
+        });
+        
+        star.addEventListener('mouseleave', () => {
+            stars.forEach(s => s.classList.remove('hovered'));
+        });
+    });
+}
+
+function clearFeedbackForm() {
+    document.getElementById('userFeedbackForm').reset();
+    document.getElementById('feedbackRating').value = '0';
+    document.querySelectorAll('.star-rating .star').forEach(star => star.classList.remove('active'));
+    showToast('Form cleared', 'info');
+}
+
+async function submitUserFeedback(event) {
+    event.preventDefault();
+    
+    const submitBtn = document.getElementById('feedbackSubmitBtn');
+    const btnText = submitBtn.querySelector('.btn-text');
+    const btnLoading = submitBtn.querySelector('.btn-loading');
+    
+    // Get form data
+    const feedbackData = {
+        message: document.getElementById('feedbackMessage').value.trim(),
+        rating: parseInt(document.getElementById('feedbackRating').value) || 0,
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        page: window.location.href
+    };
+    
+    // Validate
+    if (!feedbackData.message) {
+        showToast('Please enter your feedback', 'warning');
+        return;
+    }
+    if (!feedbackData.rating || feedbackData.rating === 0) {
+        showToast('Please select a rating', 'warning');
+        return;
+    }
+    
+    // Show loading
+    submitBtn.disabled = true;
+    btnText.style.display = 'none';
+    btnLoading.style.display = 'inline';
+    
+    try {
+        // Try to send to backend with timeout
+        const backendUrl = API_CONFIG.BACKEND_URL || 'http://localhost:3002';
+        
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 second timeout
+        
+        try {
+            const response = await fetch(`${backendUrl}/api/user-feedback`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(feedbackData),
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
+            if (response.ok) {
+                // Show success
+                document.getElementById('userFeedbackForm').style.display = 'none';
+                document.getElementById('feedbackSuccess').style.display = 'block';
+                
+                // Track event
+                if (typeof trackEvent === 'function') {
+                    trackEvent('feedback_submitted', 'feedback', feedbackData.rating);
+                }
+                
+                showToast('Thank you for your feedback! 🎉', 'success');
+            } else {
+                throw new Error('Failed to submit');
+            }
+        } catch (fetchError) {
+            clearTimeout(timeoutId);
+            throw fetchError;
+        }
+    } catch (error) {
+        console.error('Feedback submission error:', error);
+        
+        // Save locally if backend fails - store in localStorage with timestamp
+        const localFeedback = JSON.parse(localStorage.getItem('crowdwise_feedbacks') || '[]');
+        localFeedback.push({
+            ...feedbackData,
+            id: `uf_${Date.now()}`,
+            status: 'pending_sync'
+        });
+        localStorage.setItem('crowdwise_feedbacks', JSON.stringify(localFeedback));
+        
+        // Still show success (saved locally)
+        document.getElementById('userFeedbackForm').style.display = 'none';
+        document.getElementById('feedbackSuccess').style.display = 'block';
+        
+        showToast('Thank you for your feedback! 🎉', 'success');
+    } finally {
+        submitBtn.disabled = false;
+        btnText.style.display = 'inline';
+        btnLoading.style.display = 'none';
+    }
+}
+
+// Close feedback modal when clicking outside
+document.addEventListener('click', function(event) {
+    const feedbackModal = document.getElementById('feedbackModal');
+    if (event.target === feedbackModal) {
+        closeFeedbackModal();
+    }
 });

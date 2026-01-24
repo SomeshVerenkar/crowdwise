@@ -205,7 +205,129 @@ const DESTINATION_COORDINATES = {
     // Lakshadweep
     105: { lat: 10.8505, lon: 72.1833, city: "Agatti" },
     // Puducherry
-    106: { lat: 11.9416, lon: 79.8083, city: "Pondicherry" }
+    106: { lat: 11.9416, lon: 79.8083, city: "Pondicherry" },
+    
+    // Additional Destinations (107-192) - Previously added
+    107: { lat: 15.4837, lon: 77.6073, city: "Anantapur" }, // Lepakshi
+    108: { lat: 16.0787, lon: 78.8695, city: "Kurnool" }, // Srisailam
+    109: { lat: 17.7231, lon: 83.3013, city: "Visakhapatnam" }, // RK Beach
+    110: { lat: 27.4324, lon: 96.5563, city: "Changlang" }, // Namdapha
+    111: { lat: 27.2682, lon: 92.4026, city: "Bomdila" },
+    112: { lat: 25.5941, lon: 85.1376, city: "Patna" }, // Patna Sahib
+    113: { lat: 25.3425, lon: 87.3119, city: "Bhagalpur" }, // Vikramshila
+    114: { lat: 22.1508, lon: 81.2467, city: "Kabirdham" }, // Bhoramdeo
+    115: { lat: 21.1900, lon: 82.0200, city: "Raipur" }, // Barnawapara
+    116: { lat: 22.7668, lon: 83.2000, city: "Surguja" }, // Mainpat
+    117: { lat: 15.0100, lon: 74.0231, city: "Canacona" }, // Palolem
+    118: { lat: 15.4909, lon: 73.7733, city: "Aguada" }, // Fort Aguada
+    119: { lat: 22.2442, lon: 68.9685, city: "Dwarka" },
+    120: { lat: 23.8593, lon: 72.1267, city: "Patan" }, // Rani ki Vav
+    121: { lat: 30.7983, lon: 76.9089, city: "Panchkula" }, // Pinjore
+    122: { lat: 30.6333, lon: 77.0833, city: "Morni" },
+    123: { lat: 23.4000, lon: 85.5500, city: "Ranchi" }, // Hundru Falls
+    124: { lat: 23.9667, lon: 86.1333, city: "Giridih" }, // Parasnath
+    125: { lat: 25.1151, lon: 94.3714, city: "Ukhrul" }, // Shirui Peak
+    126: { lat: 24.5000, lon: 93.7833, city: "Moirang" }, // INA Memorial
+    127: { lat: 22.4983, lon: 92.5833, city: "Lawngtlai" }, // Phawngpui
+    128: { lat: 23.4000, lon: 92.8500, city: "Serchhip" }, // Vantawng Falls
+    129: { lat: 25.6667, lon: 94.1000, city: "Kohima" }, // Khonoma
+    130: { lat: 25.7500, lon: 94.0833, city: "Kohima" }, // Tuophema
+    131: { lat: 19.7200, lon: 85.4500, city: "Puri" }, // Chilika Lake
+    132: { lat: 21.8300, lon: 86.3667, city: "Mayurbhanj" }, // Simlipal
+    133: { lat: 31.2392, lon: 76.5128, city: "Rupnagar" }, // Anandpur Sahib
+    134: { lat: 31.6200, lon: 74.8700, city: "Amritsar" }, // Gobindgarh Fort
+    135: { lat: 28.0333, lon: 88.7000, city: "Lachen" }, // Gurudongmar
+    136: { lat: 27.3000, lon: 88.3667, city: "Ravangla" },
+    137: { lat: 24.3167, lon: 92.0167, city: "Kailashahar" }, // Unakoti
+    138: { lat: 23.9167, lon: 92.2667, city: "Jampui" },
+    139: { lat: 27.0594, lon: 88.4695, city: "Kalimpong" },
+    140: { lat: 23.6814, lon: 87.6853, city: "Bolpur" }, // Shantiniketan
+    141: { lat: 34.0161, lon: 75.3150, city: "Pahalgam" },
+    142: { lat: 34.3033, lon: 75.2931, city: "Sonamarg" },
+    143: { lat: 33.0833, lon: 75.2833, city: "Patnitop" },
+    144: { lat: 28.5933, lon: 77.2507, city: "Delhi" }, // Humayun's Tomb
+    145: { lat: 28.6127, lon: 77.2773, city: "Delhi" }, // Akshardham
+    146: { lat: 11.8333, lon: 93.0500, city: "Neil Island" },
+    147: { lat: 12.1167, lon: 92.7667, city: "Baratang" },
+    148: { lat: 30.7408, lon: 76.7869, city: "Chandigarh" }, // Sukhna Lake
+    149: { lat: 30.7600, lon: 76.8000, city: "Chandigarh" }, // Capitol Complex
+    150: { lat: 12.0070, lon: 79.8107, city: "Auroville" },
+    151: { lat: 11.9000, lon: 79.8167, city: "Chunnambar" }, // Paradise Beach
+    152: { lat: 20.7144, lon: 70.9822, city: "Diu" }, // Diu Fort
+    153: { lat: 20.7167, lon: 70.9333, city: "Diu" }, // Nagoa Beach
+    154: { lat: 20.2833, lon: 73.0167, city: "Silvassa" },
+    155: { lat: 10.9333, lon: 72.2833, city: "Bangaram" },
+    156: { lat: 10.5593, lon: 72.6420, city: "Kavaratti" },
+    157: { lat: 27.5000, lon: 92.1000, city: "Tawang" }, // Sela Pass
+    158: { lat: 26.9833, lon: 94.6333, city: "Sivasagar" },
+    159: { lat: 26.7500, lon: 90.9167, city: "Barpeta" }, // Manas
+    160: { lat: 28.4167, lon: 77.3167, city: "Faridabad" }, // Surajkund
+    161: { lat: 32.0100, lon: 77.3167, city: "Kullu" }, // Kasol
+    162: { lat: 23.6333, lon: 85.4167, city: "Ramgarh" }, // Rajrappa
+    163: { lat: 14.5500, lon: 74.3167, city: "Gokarna" },
+    164: { lat: 9.5833, lon: 77.1833, city: "Thekkady" },
+    165: { lat: 25.3500, lon: 78.6333, city: "Tikamgarh" }, // Orchha
+    166: { lat: 17.9167, lon: 73.6500, city: "Satara" }, // Mahabaleshwar
+    167: { lat: 24.4833, lon: 94.1000, city: "Thoubal" }, // Khongjom
+    168: { lat: 25.1833, lon: 92.0167, city: "West Jaintia Hills" }, // Dawki
+    169: { lat: 25.2000, lon: 91.9167, city: "East Khasi Hills" }, // Mawlynnong
+    170: { lat: 23.7500, lon: 92.3833, city: "Reiek" },
+    171: { lat: 23.7167, lon: 92.8833, city: "Saitual" }, // Tam Dil
+    172: { lat: 25.6667, lon: 94.1167, city: "Kohima" }, // War Cemetery
+    173: { lat: 31.6200, lon: 74.8800, city: "Amritsar" }, // Jallianwala Bagh
+    174: { lat: 18.0000, lon: 79.5833, city: "Warangal" },
+    175: { lat: 16.5167, lon: 79.3167, city: "Nalgonda" }, // Nagarjuna Sagar
+    176: { lat: 23.6667, lon: 91.3167, city: "Sepahijala" },
+    177: { lat: 11.6833, lon: 92.7500, city: "Port Blair" }, // Ross Island
+    178: { lat: 30.7500, lon: 76.7833, city: "Chandigarh" }, // Rose Garden
+    179: { lat: 30.7583, lon: 76.8000, city: "Chandigarh" }, // Le Corbusier
+    180: { lat: 20.2667, lon: 73.0000, city: "Silvassa" }, // Vanganga
+    181: { lat: 20.2500, lon: 73.0333, city: "Silvassa" }, // Dudhni Lake
+    182: { lat: 20.2833, lon: 73.0167, city: "Silvassa" }, // Hirwa Van
+    183: { lat: 20.2750, lon: 73.0083, city: "Silvassa" }, // Swaminarayan
+    184: { lat: 20.4167, lon: 72.8333, city: "Daman" }, // Devka Beach
+    185: { lat: 20.3917, lon: 72.8333, city: "Daman" }, // Moti Daman Fort
+    186: { lat: 20.7333, lon: 70.9833, city: "Diu" }, // Ghogla Beach
+    187: { lat: 33.9833, lon: 77.6667, city: "Leh" }, // Thiksey Monastery
+    188: { lat: 34.2167, lon: 77.4000, city: "Leh" }, // Magnetic Hill
+    189: { lat: 8.2833, lon: 73.0500, city: "Minicoy" },
+    190: { lat: 10.0833, lon: 73.6333, city: "Kalpeni" },
+    191: { lat: 11.9333, lon: 79.8333, city: "Pondicherry" }, // Sri Aurobindo
+    192: { lat: 11.9667, lon: 79.8333, city: "Pondicherry" }, // Serenity Beach
+    
+    // New destinations from user list (193-224)
+    193: { lat: 15.2495, lon: 78.2799, city: "Kadapa" }, // Gandikota
+    194: { lat: 17.7833, lon: 83.3833, city: "Visakhapatnam" }, // Kailasagiri
+    195: { lat: 25.9833, lon: 85.1333, city: "Vaishali" },
+    196: { lat: 18.9333, lon: 81.9500, city: "Jagdalpur" }, // Kanger Valley
+    197: { lat: 19.0833, lon: 81.9667, city: "Jagdalpur" }, // Tirathgarh Falls
+    198: { lat: 15.5439, lon: 73.7553, city: "Calangute" },
+    199: { lat: 15.5833, lon: 73.7333, city: "Anjuna" },
+    200: { lat: 22.4631, lon: 78.4333, city: "Pachmarhi" },
+    201: { lat: 22.3333, lon: 80.6167, city: "Mandla" }, // Kanha
+    202: { lat: 26.2389, lon: 73.0243, city: "Jodhpur" },
+    203: { lat: 27.3667, lon: 88.7500, city: "East Sikkim" }, // Tsomgo Lake
+    204: { lat: 27.8500, lon: 88.7000, city: "Lachung" }, // Yumthang
+    205: { lat: 13.0827, lon: 80.2707, city: "Chennai" },
+    206: { lat: 10.2381, lon: 77.4892, city: "Kodaikanal" },
+    207: { lat: 8.7379, lon: 76.7163, city: "Varkala" },
+    208: { lat: 9.9312, lon: 76.2673, city: "Kochi" }, // Fort Kochi
+    209: { lat: 25.9000, lon: 93.7333, city: "Dimapur" },
+    210: { lat: 26.3167, lon: 94.5167, city: "Mokokchung" },
+    211: { lat: 25.6333, lon: 94.1000, city: "Kohima" }, // Kisama
+    212: { lat: 30.3398, lon: 76.3869, city: "Patiala" },
+    213: { lat: 21.9497, lon: 88.8983, city: "South 24 Parganas" }, // Sundarbans
+    214: { lat: 28.6127, lon: 77.2773, city: "Delhi" }, // Akshardham (duplicate but ok)
+    215: { lat: 34.3033, lon: 75.2931, city: "Sonamarg" },
+    216: { lat: 32.9167, lon: 78.3167, city: "Tso Moriri" },
+    217: { lat: 11.9416, lon: 92.9546, city: "Havelock" },
+    218: { lat: 11.6234, lon: 92.7265, city: "Port Blair" },
+    219: { lat: 24.2333, lon: 94.3167, city: "Moreh" },
+    220: { lat: 22.8833, lon: 92.7333, city: "Lunglei" },
+    221: { lat: 23.4500, lon: 84.2833, city: "Netarhat" },
+    222: { lat: 23.3441, lon: 85.3096, city: "Ranchi" },
+    223: { lat: 9.9312, lon: 76.2673, city: "Kochi" },
+    224: { lat: 29.3909, lon: 76.9635, city: "Panipat" }
 };
 
 // Google Place IDs for each destination (you'll need to find these)
