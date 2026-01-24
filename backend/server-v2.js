@@ -8,6 +8,8 @@
 const express = require('express');
 const cors = require('cors');
 const fetch = require('node-fetch');
+const nodemailer = require('nodemailer');
+const cron = require('node-cron');
 require('dotenv').config();
 
 // Import custom services
@@ -42,9 +44,19 @@ const CONFIG = {
     CROWD_CACHE_TTL: 15 * 60 * 1000,    // 15 minutes
     PREDICTION_CACHE_TTL: 60 * 60 * 1000, // 1 hour
     
+    // Email configuration (for alerts)
+    EMAIL_HOST: process.env.EMAIL_HOST || 'smtp.gmail.com',
+    EMAIL_PORT: parseInt(process.env.EMAIL_PORT) || 587,
+    EMAIL_USER: process.env.EMAIL_USER || '',
+    EMAIL_PASS: process.env.EMAIL_PASS || '',
+    EMAIL_FROM: process.env.EMAIL_FROM || 'CrowdWise India <noreply@crowdwise.in>',
+    
     // System settings
     ENABLE_SCHEDULER: process.env.ENABLE_SCHEDULER !== 'false',
-    DATA_DIR: process.env.DATA_DIR || './data'
+    DATA_DIR: process.env.DATA_DIR || './data',
+    
+    // Alert check interval (ms)
+    ALERT_CHECK_INTERVAL: 15 * 60 * 1000  // 15 minutes
 };
 
 // ==================== DESTINATION DATABASE ====================
@@ -91,6 +103,30 @@ const cache = {
     weather: new Map(),
     predictions: new Map()
 };
+
+// ==================== ALERTS STORAGE ====================
+
+const alertsStore = [];
+let emailTransporter = null;
+
+function initializeEmailTransporter() {
+    if (CONFIG.EMAIL_USER && CONFIG.EMAIL_PASS) {
+        emailTransporter = nodemailer.createTransport({
+            host: CONFIG.EMAIL_HOST,
+            port: CONFIG.EMAIL_PORT,
+            secure: CONFIG.EMAIL_PORT === 465,
+            auth: {
+                user: CONFIG.EMAIL_USER,
+                pass: CONFIG.EMAIL_PASS
+            }
+        });
+        console.log('✅ Email transporter initialized');
+        return true;
+    } else {
+        console.log('⚠️  Email credentials not configured - alerts will be logged only');
+        return false;
+    }
+}
 
 // ==================== MIDDLEWARE ====================
 
@@ -467,6 +503,253 @@ app.get('/api/holidays', (req, res) => {
     })));
 });
 
+// ==================== ALERTS API ====================
+
+// Create a new alert
+app.post('/api/alerts', (req, res) => {
+    const { email, destinationId, destinationName, threshold } = req.body;
+    
+    // Validate required fields
+    if (!email || !destinationId || !threshold) {
+        return res.status(400).json({
+            success: false,
+            error: 'Missing required fields: email, destinationId, threshold'
+        });
+    }
+    
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({
+            success: false,
+            error: 'Invalid email format'
+        });
+    }
+    
+    // Check for duplicate alert
+    const existingAlert = alertsStore.find(a =>
+        a.email === email &&
+        a.destinationId === parseInt(destinationId) &&
+        a.threshold === threshold &&
+        !a.triggered
+    );
+    
+    if (existingAlert) {
+        return res.json({
+            success: true,
+            message: 'Alert already exists',
+            alert: existingAlert
+        });
+    }
+    
+    // Get destination name if not provided
+    const dest = DESTINATIONS[destinationId];
+    const finalDestName = destinationName || (dest ? dest.name : `Destination ${destinationId}`);
+    
+    // Create new alert
+    const alert = {
+        id: Date.now().toString(),
+        email,
+        destinationId: parseInt(destinationId),
+        destinationName: finalDestName,
+        threshold,
+        createdAt: new Date().toISOString(),
+        triggered: false,
+        lastTriggered: null,
+        lastChecked: null
+    };
+    
+    alertsStore.push(alert);
+    console.log(`🔔 New alert created: ${email} wants ${threshold} crowd at ${finalDestName}`);
+    
+    res.json({
+        success: true,
+        message: 'Alert created successfully',
+        alert
+    });
+});
+
+// Get all alerts (for admin)
+app.get('/api/alerts', (req, res) => {
+    res.json({
+        total: alertsStore.length,
+        active: alertsStore.filter(a => !a.triggered).length,
+        alerts: alertsStore
+    });
+});
+
+// Delete an alert
+app.delete('/api/alerts/:alertId', (req, res) => {
+    const { alertId } = req.params;
+    const index = alertsStore.findIndex(a => a.id === alertId);
+    
+    if (index === -1) {
+        return res.status(404).json({ success: false, error: 'Alert not found' });
+    }
+    
+    alertsStore.splice(index, 1);
+    res.json({ success: true, message: 'Alert deleted' });
+});
+
+// Check threshold match
+function checkThresholdMatch(currentLevel, threshold) {
+    const levelOrder = { low: 1, moderate: 2, heavy: 3, overcrowded: 4 };
+    const thresholdOrder = { low: 1, moderate: 2, heavy: 3, any: 0 };
+    
+    if (threshold === 'any') return true;
+    return levelOrder[currentLevel] <= thresholdOrder[threshold];
+}
+
+// Send alert email
+async function sendAlertEmail(alert, currentLevel, crowdData) {
+    const crowdEmoji = { low: '🟢', moderate: '🟡', heavy: '🟠', overcrowded: '🔴' };
+    
+    const emailContent = {
+        to: alert.email,
+        subject: `🎉 CrowdWise Alert: ${alert.destinationName} is now ${currentLevel}!`,
+        html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
+                    <h1 style="color: white; margin: 0;">🗺️ CrowdWise India</h1>
+                    <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0;">Your Travel Alert</p>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 12px 12px;">
+                    <h2 style="color: #333; margin-top: 0;">
+                        ${crowdEmoji[currentLevel] || '📊'} ${alert.destinationName}
+                    </h2>
+                    
+                    <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                        <p style="margin: 0; font-size: 16px;">
+                            <strong>Current Crowd Level:</strong> 
+                            <span style="color: ${currentLevel === 'low' ? '#22c55e' : currentLevel === 'moderate' ? '#eab308' : '#ef4444'};">
+                                ${currentLevel.charAt(0).toUpperCase() + currentLevel.slice(1)}
+                            </span>
+                        </p>
+                        <p style="margin: 10px 0 0 0; font-size: 14px; color: #666;">
+                            Crowd Score: ${crowdData.percentageFull || crowdData.crowdScore * 100}%
+                        </p>
+                    </div>
+                    
+                    <p style="color: #666; font-size: 14px;">
+                        You set an alert to be notified when ${alert.destinationName} reaches 
+                        <strong>${alert.threshold}</strong> crowd levels. Time to plan your visit!
+                    </p>
+                    
+                    <div style="text-align: center; margin: 25px 0;">
+                        <a href="https://crowdwise.in" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                            Plan Your Visit →
+                        </a>
+                    </div>
+                    
+                    <div style="margin-top: 30px; padding: 15px; background: #e0f2fe; border-radius: 8px;">
+                        <p style="margin: 0; font-size: 13px; color: #0369a1;">
+                            💡 <strong>Pro tip:</strong> Early mornings (6-8 AM) typically have the lowest crowds.
+                        </p>
+                    </div>
+                    
+                    <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
+                    
+                    <p style="font-size: 12px; color: #9ca3af; text-align: center; margin: 0;">
+                        This alert was sent by CrowdWise India.<br>
+                        You will not receive another alert for this destination unless you create a new one.
+                    </p>
+                </div>
+            </div>
+        `
+    };
+    
+    if (emailTransporter) {
+        try {
+            await emailTransporter.sendMail({
+                from: CONFIG.EMAIL_FROM,
+                ...emailContent
+            });
+            console.log(`📧 Alert email sent to ${alert.email} for ${alert.destinationName}`);
+            return true;
+        } catch (error) {
+            console.error(`❌ Failed to send email to ${alert.email}:`, error.message);
+            return false;
+        }
+    } else {
+        // Log when email is not configured
+        console.log(`📧 [MOCK EMAIL] Would send to ${alert.email}:`);
+        console.log(`   Subject: ${emailContent.subject}`);
+        console.log(`   Destination: ${alert.destinationName}, Level: ${currentLevel}`);
+        return true; // Return true so alert is marked as triggered
+    }
+}
+
+// Check all alerts
+async function checkAllAlerts() {
+    console.log(`🔍 Checking ${alertsStore.filter(a => !a.triggered).length} active alerts...`);
+    
+    for (const alert of alertsStore) {
+        if (alert.triggered) continue;
+        
+        try {
+            // Get current crowd data
+            const dest = DESTINATIONS[alert.destinationId];
+            if (!dest) continue;
+            
+            const prediction = crowdAlgorithm.calculateCrowdScore({
+                destination: dest.name,
+                category: dest.category,
+                baseCrowdLevel: dest.baseCrowd
+            });
+            
+            const currentLevel = prediction.crowdLevel;
+            alert.lastChecked = new Date().toISOString();
+            
+            const shouldTrigger = checkThresholdMatch(currentLevel, alert.threshold);
+            
+            if (shouldTrigger) {
+                console.log(`🎯 Alert triggered! ${alert.destinationName} is now ${currentLevel}`);
+                const emailSent = await sendAlertEmail(alert, currentLevel, prediction);
+                if (emailSent) {
+                    alert.triggered = true;
+                    alert.lastTriggered = new Date().toISOString();
+                }
+            }
+        } catch (error) {
+            console.error(`❌ Error checking alert for ${alert.destinationName}:`, error.message);
+        }
+    }
+}
+
+// Start alert checker cron job
+let alertCheckerInterval = null;
+
+function startAlertChecker() {
+    if (alertCheckerInterval) return;
+    
+    // Check immediately
+    checkAllAlerts();
+    
+    // Then check every 15 minutes
+    alertCheckerInterval = setInterval(checkAllAlerts, CONFIG.ALERT_CHECK_INTERVAL);
+    console.log('✅ Alert checker started (checking every 15 minutes)');
+}
+
+function stopAlertChecker() {
+    if (alertCheckerInterval) {
+        clearInterval(alertCheckerInterval);
+        alertCheckerInterval = null;
+        console.log('🛑 Alert checker stopped');
+    }
+}
+
+// Manual trigger for testing
+app.post('/api/alerts/check', async (req, res) => {
+    await checkAllAlerts();
+    res.json({
+        success: true,
+        message: 'Alert check completed',
+        activeAlerts: alertsStore.filter(a => !a.triggered).length,
+        triggeredAlerts: alertsStore.filter(a => a.triggered).length
+    });
+});
+
 // ==================== INITIALIZE & START ====================
 
 async function initialize() {
@@ -484,6 +767,12 @@ async function initialize() {
         // schedulerService.start();
         console.log('📅 Scheduler service ready (call /api/scheduler/start to enable)');
     }
+    
+    // Initialize email transporter
+    initializeEmailTransporter();
+    
+    // Start alert checker
+    startAlertChecker();
     
     console.log('✅ All services initialized');
 }

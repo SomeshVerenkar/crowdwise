@@ -453,7 +453,165 @@ function quickSearch(term) {
 }
 
 function searchNearMe() {
-    alert('📍 Near Me feature would use your location to find nearby destinations.\n\nThis is a demo - in production, this would use the Geolocation API.');
+    // Check if geolocation is supported
+    if (!navigator.geolocation) {
+        alert('📍 Geolocation is not supported by your browser. Please use the search or filter options.');
+        return;
+    }
+    
+    // Show loading state
+    const nearMeBtn = document.querySelector('.near-me-btn');
+    const originalContent = nearMeBtn.innerHTML;
+    nearMeBtn.innerHTML = '<span class="near-me-icon">⏳</span><span class="near-me-text">Finding...</span>';
+    nearMeBtn.disabled = true;
+    
+    // Request user's location
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            const userLat = position.coords.latitude;
+            const userLon = position.coords.longitude;
+            
+            console.log(`📍 User location: ${userLat}, ${userLon}`);
+            
+            // Calculate distance to all destinations and sort by nearest
+            const destinationsWithDistance = allDestinations.map(dest => {
+                const coords = DESTINATION_COORDINATES[dest.id];
+                if (coords) {
+                    const distance = calculateDistance(userLat, userLon, coords.lat, coords.lon);
+                    return { ...dest, distance };
+                }
+                return { ...dest, distance: Infinity };
+            }).filter(d => d.distance !== Infinity);
+            
+            // Sort by distance
+            destinationsWithDistance.sort((a, b) => a.distance - b.distance);
+            
+            // Take nearest 10 destinations
+            const nearbyDestinations = destinationsWithDistance.slice(0, 10);
+            
+            if (nearbyDestinations.length > 0) {
+                // Update filtered destinations to show nearby ones
+                filteredDestinations = nearbyDestinations;
+                currentSort = 'distance';
+                
+                // Clear other filters
+                document.getElementById('searchInput').value = '';
+                document.getElementById('stateFilter').value = 'all';
+                currentCrowdFilter = 'all';
+                
+                // Update UI
+                document.querySelectorAll('.crowd-pill').forEach(btn => btn.classList.remove('active'));
+                document.querySelector('.crowd-pill[data-filter="all"]').classList.add('active');
+                
+                renderDestinations();
+                
+                // Show success message
+                const nearestDist = nearbyDestinations[0].distance;
+                const distText = nearestDist < 1 ? `${Math.round(nearestDist * 1000)}m` : `${nearestDist.toFixed(1)}km`;
+                showToast(`📍 Found ${nearbyDestinations.length} destinations near you! Nearest: ${nearbyDestinations[0].name} (${distText})`);
+                
+                // Scroll to destinations
+                document.getElementById('destinations').scrollIntoView({ behavior: 'smooth' });
+            } else {
+                showToast('📍 No destinations found near your location. Try searching by state.');
+            }
+            
+            // Reset button
+            nearMeBtn.innerHTML = originalContent;
+            nearMeBtn.disabled = false;
+        },
+        (error) => {
+            // Reset button
+            nearMeBtn.innerHTML = originalContent;
+            nearMeBtn.disabled = false;
+            
+            // Handle errors
+            let errorMessage = '📍 Could not get your location. ';
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    errorMessage += 'Please allow location access in your browser settings.';
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    errorMessage += 'Location information is unavailable.';
+                    break;
+                case error.TIMEOUT:
+                    errorMessage += 'Location request timed out. Please try again.';
+                    break;
+                default:
+                    errorMessage += 'Please try again or use the search/filter options.';
+            }
+            showToast(errorMessage);
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 300000 // Cache location for 5 minutes
+        }
+    );
+}
+
+// Calculate distance between two points using Haversine formula
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Earth's radius in kilometers
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in kilometers
+}
+
+// Show toast notification
+function showToast(message) {
+    // Remove existing toast
+    const existingToast = document.querySelector('.toast-notification');
+    if (existingToast) existingToast.remove();
+    
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification';
+    toast.innerHTML = message;
+    toast.style.cssText = `
+        position: fixed;
+        bottom: 100px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 16px 24px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 500;
+        box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
+        z-index: 10000;
+        max-width: 90%;
+        text-align: center;
+        animation: slideUp 0.3s ease;
+    `;
+    
+    // Add animation keyframes if not exists
+    if (!document.querySelector('#toast-styles')) {
+        const style = document.createElement('style');
+        style.id = 'toast-styles';
+        style.textContent = `
+            @keyframes slideUp {
+                from { transform: translateX(-50%) translateY(20px); opacity: 0; }
+                to { transform: translateX(-50%) translateY(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    document.body.appendChild(toast);
+    
+    // Remove after 4 seconds
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+    }, 4000);
 }
 
 // ========== FILTER FUNCTIONALITY ==========
@@ -755,15 +913,17 @@ function resetAlertModal() {
     const modal = document.getElementById('alertModal');
     const modalBody = modal.querySelector('.modal-body');
     
-    // Restore original HTML structure exactly as in index.html
+    // Restore original HTML structure with searchable dropdown
     modalBody.innerHTML = `
         <div class="modal-icon">🔔</div>
         <h2>Set Crowd Alert</h2>
         <p>Get notified when a destination becomes less crowded</p>
         <div class="alert-form">
-            <select id="alertDestination" class="alert-select">
-                <option value="">Select destination...</option>
-            </select>
+            <div class="searchable-dropdown" id="alertDestinationContainer">
+                <input type="text" class="dropdown-search" id="alertDestinationSearch" placeholder="🔍 Search destinations..." autocomplete="off">
+                <div class="dropdown-list" id="alertDestinationList"></div>
+                <input type="hidden" id="alertDestination">
+            </div>
             <select id="alertThreshold" class="alert-select">
                 <option value="low">When crowd is Low 🟢</option>
                 <option value="moderate">When crowd is Moderate 🟡</option>
@@ -773,21 +933,104 @@ function resetAlertModal() {
         </div>
     `;
     
-    // Re-populate destinations dropdown
-    populateAlertDestinations();
+    // Initialize searchable dropdown
+    initSearchableDestinationDropdown('alertDestinationSearch', 'alertDestinationList', 'alertDestination');
+}
+
+function initSearchableDestinationDropdown(searchInputId, listId, hiddenInputId) {
+    const searchInput = document.getElementById(searchInputId);
+    const dropdownList = document.getElementById(listId);
+    const hiddenInput = document.getElementById(hiddenInputId);
+    
+    if (!searchInput || !dropdownList || !hiddenInput) return;
+    
+    // Populate all destinations initially
+    function renderDropdownItems(filter = '') {
+        const filterLower = filter.toLowerCase();
+        const filtered = allDestinations.filter(dest => 
+            dest.name.toLowerCase().includes(filterLower) ||
+            dest.state.toLowerCase().includes(filterLower) ||
+            (dest.city && dest.city.toLowerCase().includes(filterLower))
+        );
+        
+        if (filtered.length === 0) {
+            dropdownList.innerHTML = '<div class="dropdown-no-results">No destinations found</div>';
+        } else {
+            dropdownList.innerHTML = filtered.map(dest => `
+                <div class="dropdown-item" data-id="${dest.id}" data-name="${dest.emoji} ${dest.name}">
+                    ${dest.emoji} ${dest.name}<span class="dest-state">• ${dest.state}</span>
+                </div>
+            `).join('');
+        }
+    }
+    
+    // Show dropdown on focus
+    searchInput.addEventListener('focus', () => {
+        renderDropdownItems(searchInput.value);
+        dropdownList.classList.add('show');
+    });
+    
+    // Filter on input
+    searchInput.addEventListener('input', () => {
+        renderDropdownItems(searchInput.value);
+        dropdownList.classList.add('show');
+        // Clear selection if user is typing
+        if (!searchInput.classList.contains('has-selection')) {
+            hiddenInput.value = '';
+        }
+        searchInput.classList.remove('has-selection');
+    });
+    
+    // Handle item selection
+    dropdownList.addEventListener('click', (e) => {
+        const item = e.target.closest('.dropdown-item');
+        if (item) {
+            const id = item.dataset.id;
+            const name = item.dataset.name;
+            hiddenInput.value = id;
+            searchInput.value = name;
+            searchInput.classList.add('has-selection');
+            dropdownList.classList.remove('show');
+        }
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest(`#${searchInputId}`) && !e.target.closest(`#${listId}`)) {
+            dropdownList.classList.remove('show');
+        }
+    });
+    
+    // Handle keyboard navigation
+    searchInput.addEventListener('keydown', (e) => {
+        const items = dropdownList.querySelectorAll('.dropdown-item');
+        const currentIndex = Array.from(items).findIndex(item => item.classList.contains('selected'));
+        
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            const nextIndex = currentIndex < items.length - 1 ? currentIndex + 1 : 0;
+            items.forEach((item, i) => item.classList.toggle('selected', i === nextIndex));
+            items[nextIndex]?.scrollIntoView({ block: 'nearest' });
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            const prevIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1;
+            items.forEach((item, i) => item.classList.toggle('selected', i === prevIndex));
+            items[prevIndex]?.scrollIntoView({ block: 'nearest' });
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            const selectedItem = dropdownList.querySelector('.dropdown-item.selected');
+            if (selectedItem) {
+                selectedItem.click();
+            }
+        } else if (e.key === 'Escape') {
+            dropdownList.classList.remove('show');
+        }
+    });
 }
 
 function populateAlertDestinations() {
-    const select = document.getElementById('alertDestination');
-    if (!select) return;
-    
-    select.innerHTML = '<option value="">Select destination</option>';
-    allDestinations.forEach(dest => {
-        const option = document.createElement('option');
-        option.value = dest.id;
-        option.textContent = `${dest.emoji} ${dest.name} - ${dest.state}`;
-        select.appendChild(option);
-    });
+    // Now handled by initSearchableDestinationDropdown
+    initSearchableDestinationDropdown('alertDestinationSearch', 'alertDestinationList', 'alertDestination');
 }
 
 function showBestTimeModal() {
@@ -1267,8 +1510,21 @@ async function showDetails(destinationId) {
 
 function setAlertForDestination(destId) {
     closeModal();
-    document.getElementById('alertDestination').value = destId;
     showAlertModal();
+    
+    // Wait for modal to render, then set the destination
+    setTimeout(() => {
+        const dest = allDestinations.find(d => d.id == destId);
+        if (dest) {
+            const searchInput = document.getElementById('alertDestinationSearch');
+            const hiddenInput = document.getElementById('alertDestination');
+            if (searchInput && hiddenInput) {
+                searchInput.value = `${dest.emoji} ${dest.name}`;
+                searchInput.classList.add('has-selection');
+                hiddenInput.value = destId;
+            }
+        }
+    }, 100);
 }
 
 function generateWeeklyCrowdChart(crowdLevel) {

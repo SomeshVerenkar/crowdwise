@@ -586,9 +586,11 @@
                 <h2>Set Crowd Alert</h2>
                 <p>Get notified when a destination becomes less crowded</p>
                 <div class="alert-form">
-                    <select id="alertDestination" class="alert-select">
-                        <option value="">Select destination...</option>
-                    </select>
+                    <div class="searchable-dropdown" id="alertDestinationContainer">
+                        <input type="text" class="dropdown-search" id="alertDestinationSearch" placeholder="🔍 Search destinations..." autocomplete="off">
+                        <div class="dropdown-list" id="alertDestinationList"></div>
+                        <input type="hidden" id="alertDestination">
+                    </div>
                     <select id="alertThreshold" class="alert-select">
                         <option value="low">When crowd is Low 🟢</option>
                         <option value="moderate">When crowd is Moderate 🟡</option>
