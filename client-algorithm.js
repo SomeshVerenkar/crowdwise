@@ -7,6 +7,32 @@
 
 class ClientCrowdAlgorithm {
     constructor() {
+        // Operating hours by category
+        this.operatingHours = {
+            default: { open: 6, close: 18 },
+            religious: { open: 4, close: 22 },
+            temple: { open: 4, close: 21 },
+            mosque: { open: 5, close: 21 },
+            church: { open: 6, close: 20 },
+            monument: { open: 6, close: 18 },
+            fort: { open: 9, close: 18 },
+            palace: { open: 9, close: 17 },
+            museum: { open: 10, close: 17 },
+            beach: { open: 0, close: 24, allDay: true },
+            nature: { open: 6, close: 18 },
+            waterfall: { open: 6, close: 17 },
+            hillstation: { open: 0, close: 24, allDay: true },
+            wildlife: { open: 6, close: 18 },
+            nationalpark: { open: 6, close: 18 },
+            garden: { open: 5, close: 20 },
+            market: { open: 10, close: 22 },
+            nightlife: { open: 20, close: 4, overnight: true },
+            resort: { open: 0, close: 24, allDay: true },
+            lake: { open: 6, close: 19 },
+            dam: { open: 8, close: 18 },
+            viewpoint: { open: 5, close: 20 }
+        };
+        
         // Time of day patterns (hourly multipliers)
         this.hourlyPatterns = {
             default: {
@@ -81,6 +107,21 @@ class ClientCrowdAlgorithm {
             hour = new Date().getHours()
         } = params;
 
+        // Check if place is open
+        const openStatus = this.checkIfOpen(hour, category);
+        if (!openStatus.isOpen) {
+            return {
+                score: 0,
+                crowdLevel: 0,
+                crowdLabel: 'CLOSED',
+                crowdEmoji: '🔒',
+                percentageFull: 0,
+                estimatedCount: 0,
+                status: 'closed',
+                message: openStatus.message
+            };
+        }
+
         // 1. Time of day score
         const hourPattern = this.hourlyPatterns[category] || this.hourlyPatterns.default;
         const timeScore = hourPattern[hour] || 0.5;
@@ -148,6 +189,46 @@ class ClientCrowdAlgorithm {
         }
 
         return { isHoliday: false, name: null, impact: 1.0 };
+    }
+    
+    // Check if place is open at given hour
+    checkIfOpen(hour, category) {
+        const hours = this.operatingHours[category] || this.operatingHours.default;
+        
+        // Handle all-day places
+        if (hours.allDay) {
+            return {
+                isOpen: true,
+                message: 'Open 24 hours'
+            };
+        }
+        
+        // Handle overnight places
+        if (hours.overnight) {
+            const isOpen = hour >= hours.open || hour < hours.close;
+            return {
+                isOpen,
+                message: isOpen ? `Open until ${this.formatHour(hours.close)} AM` : `Opens at ${this.formatHour(hours.open)} PM`
+            };
+        }
+        
+        // Normal hours
+        const isOpen = hour >= hours.open && hour < hours.close;
+        return {
+            isOpen,
+            message: isOpen 
+                ? `Open until ${this.formatHour(hours.close)}` 
+                : hour < hours.open
+                    ? `Opens at ${this.formatHour(hours.open)}`
+                    : `Closed (opens tomorrow at ${this.formatHour(hours.open)})`
+        };
+    }
+    
+    formatHour(hour) {
+        if (hour === 0) return '12:00 AM';
+        if (hour === 12) return '12:00 PM';
+        if (hour < 12) return `${hour}:00 AM`;
+        return `${hour - 12}:00 PM`;
     }
 
     scoreToCrowdLevel(score) {

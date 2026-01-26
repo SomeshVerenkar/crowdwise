@@ -17,6 +17,32 @@ class CrowdScoringAlgorithm {
             hotelDemand: 0.15,    // Hotel availability signals
             weather: 0.05         // Weather impact
         };
+        
+        // Operating hours by category (24-hour format)
+        this.operatingHours = {
+            default: { open: 6, close: 18 },           // 6 AM - 6 PM
+            religious: { open: 4, close: 22 },         // 4 AM - 10 PM
+            temple: { open: 4, close: 21 },            // 4 AM - 9 PM
+            mosque: { open: 5, close: 21 },            // 5 AM - 9 PM
+            church: { open: 6, close: 20 },            // 6 AM - 8 PM
+            monument: { open: 6, close: 18 },          // 6 AM - 6 PM
+            fort: { open: 9, close: 18 },              // 9 AM - 6 PM
+            palace: { open: 9, close: 17 },            // 9 AM - 5 PM
+            museum: { open: 10, close: 17 },           // 10 AM - 5 PM
+            beach: { open: 0, close: 24, allDay: true }, // All day
+            nature: { open: 6, close: 18 },            // 6 AM - 6 PM
+            waterfall: { open: 6, close: 17 },         // 6 AM - 5 PM
+            hillstation: { open: 0, close: 24, allDay: true }, // All day
+            wildlife: { open: 6, close: 18 },          // 6 AM - 6 PM (safari timings)
+            nationalpark: { open: 6, close: 18 },      // 6 AM - 6 PM
+            garden: { open: 5, close: 20 },            // 5 AM - 8 PM
+            market: { open: 10, close: 22 },           // 10 AM - 10 PM
+            nightlife: { open: 20, close: 4, overnight: true }, // 8 PM - 4 AM
+            resort: { open: 0, close: 24, allDay: true },
+            lake: { open: 6, close: 19 },              // 6 AM - 7 PM
+            dam: { open: 8, close: 18 },               // 8 AM - 6 PM
+            viewpoint: { open: 5, close: 20 }          // 5 AM - 8 PM
+        };
 
         // Time of day patterns (hourly multipliers)
         this.hourlyPatterns = {
@@ -230,6 +256,55 @@ class CrowdScoringAlgorithm {
         const condition = weatherCondition.toLowerCase().replace(/\s+/g, '_');
         return this.weatherImpact[condition] || 1.0;
     }
+    
+    // ========== CHECK OPERATING HOURS ==========
+    
+    checkIfOpen(hour, category) {
+        const hours = this.operatingHours[category] || this.operatingHours.default;
+        
+        // Handle all-day places
+        if (hours.allDay) {
+            return {
+                isOpen: true,
+                opensAt: null,
+                closesAt: null,
+                message: 'Open 24 hours'
+            };
+        }
+        
+        // Handle overnight places (nightlife)
+        if (hours.overnight) {
+            const isOpen = hour >= hours.open || hour < hours.close;
+            return {
+                isOpen,
+                opensAt: hours.open,
+                closesAt: hours.close,
+                message: isOpen ? `Open until ${this.formatHour(hours.close)} AM` : `Opens at ${this.formatHour(hours.open)} PM`
+            };
+        }
+        
+        // Normal operating hours
+        const isOpen = hour >= hours.open && hour < hours.close;
+        
+        return {
+            isOpen,
+            opensAt: hours.open,
+            closesAt: hours.close,
+            message: isOpen 
+                ? `Open until ${this.formatHour(hours.close)}` 
+                : hour < hours.open
+                    ? `Opens at ${this.formatHour(hours.open)}`
+                    : `Closed (opens tomorrow at ${this.formatHour(hours.open)})`
+        };
+    }
+    
+    // Format hour to readable time
+    formatHour(hour) {
+        if (hour === 0) return '12:00 AM';
+        if (hour === 12) return '12:00 PM';
+        if (hour < 12) return `${hour}:00 AM`;
+        return `${hour - 12}:00 PM`;
+    }
 
     // ========== MAIN SCORING FUNCTION ==========
 
@@ -244,6 +319,33 @@ class CrowdScoringAlgorithm {
             hotelSignal = null,
             weatherCondition = null
         } = params;
+
+        // ========== CHECK IF PLACE IS OPEN ==========
+        const openStatus = this.checkIfOpen(hour, category);
+        if (!openStatus.isOpen) {
+            return {
+                score: 0,
+                crowdLevel: 0,
+                crowdLabel: 'CLOSED',
+                crowdEmoji: '🔒',
+                percentageFull: 0,
+                estimatedCount: 0,
+                status: 'closed',
+                opensAt: openStatus.opensAt,
+                closesAt: openStatus.closesAt,
+                message: openStatus.message,
+                confidence: 100,
+                breakdown: {
+                    timeOfDay: 0,
+                    dayOfWeek: 0,
+                    seasonal: 0,
+                    holiday: 0,
+                    socialSignal: 0,
+                    hotelDemand: 0,
+                    weather: 0
+                }
+            };
+        }
 
         // 1. Time of Day Score (0-1)
         const timeScore = this.getTimeOfDayScore(hour, category);
