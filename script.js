@@ -486,8 +486,8 @@ function searchNearMe() {
             // Sort by distance
             destinationsWithDistance.sort((a, b) => a.distance - b.distance);
             
-            // Filter destinations within 30km range
-            const MAX_DISTANCE_KM = 30;
+            // Filter destinations within 100km range
+            const MAX_DISTANCE_KM = 100;
             const nearbyDestinations = destinationsWithDistance.filter(d => d.distance <= MAX_DISTANCE_KM);
             
             if (nearbyDestinations.length > 0) {
@@ -509,12 +509,12 @@ function searchNearMe() {
                 // Show success message
                 const nearestDist = nearbyDestinations[0].distance;
                 const distText = nearestDist < 1 ? `${Math.round(nearestDist * 1000)}m` : `${nearestDist.toFixed(1)}km`;
-                showToast(`📍 Found ${nearbyDestinations.length} destination${nearbyDestinations.length > 1 ? 's' : ''} within 30km! Nearest: ${nearbyDestinations[0].name} (${distText})`);
+                showToast(`📍 Found ${nearbyDestinations.length} destination${nearbyDestinations.length > 1 ? 's' : ''} within 100km! Nearest: ${nearbyDestinations[0].name} (${distText})`);
                 
                 // Scroll to destinations
                 document.getElementById('destinations').scrollIntoView({ behavior: 'smooth' });
             } else {
-                showToast('📍 No destinations found within 30km of your location. Try searching by state.');
+                showToast('📍 No destinations found within 100km of your location. Try searching by state.');
             }
             
             // Reset button
@@ -637,6 +637,13 @@ function filterByCrowd(level) {
 }
 
 function filterByState() {
+    const stateValue = document.getElementById('stateFilter').value;
+    
+    // If a specific state is selected (not 'all'), clear the search input
+    if (stateValue !== 'all') {
+        document.getElementById('searchInput').value = '';
+    }
+    
     applyCurrentFilters();
     renderDestinations();
 }
