@@ -421,6 +421,11 @@ function addToRecentSearches(term) {
 function searchDestination() {
     const searchTerm = document.getElementById('searchInput').value.toLowerCase();
     
+    // If user is typing to search, clear the state filter
+    if (searchTerm.trim() !== '') {
+        document.getElementById('stateFilter').value = 'all';
+    }
+    
     // Track search for analytics
     if (searchTerm.trim() !== '' && typeof trackEvent === 'function') {
         trackEvent('search', searchTerm.trim());
