@@ -419,19 +419,19 @@ function addToRecentSearches(term) {
 }
 
 function searchDestination() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim(); // Trim spaces from search
     
     // If user is typing to search, clear the state filter
-    if (searchTerm.trim() !== '') {
+    if (searchTerm !== '') {
         document.getElementById('stateFilter').value = 'all';
     }
     
     // Track search for analytics
-    if (searchTerm.trim() !== '' && typeof trackEvent === 'function') {
-        trackEvent('search', searchTerm.trim());
+    if (searchTerm !== '' && typeof trackEvent === 'function') {
+        trackEvent('search', searchTerm);
     }
     
-    if (searchTerm.trim() === '') {
+    if (searchTerm === '') {
         filteredDestinations = [...allDestinations];
     } else {
         filteredDestinations = allDestinations.filter(dest => 
