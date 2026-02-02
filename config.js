@@ -29,10 +29,10 @@ const API_CONFIG = {
     
     // Backend API URL (for aggregated crowd data)
     // Start the backend server: node backend/server.js
-    BACKEND_API_URL: window.location.hostname === 'localhost' 
+       BACKEND_API_URL: window.location.hostname === 'localhost' 
         ? 'http://localhost:3002/api'
-        : 'https://api.crowdwise.in/api',  // Your production API domain
-    USE_BACKEND_API: true, // Backend is now running
+        : 'https://crowdwise-production.up.railway.app/api',  // Railway hosted backend
+    USE_BACKEND_API: true, // Backend is now running on Railway
     
     // ==================== OTHER APIs ====================
     // Holiday API for India (Free, no key needed)
