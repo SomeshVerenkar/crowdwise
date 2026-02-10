@@ -31,8 +31,8 @@ const API_CONFIG = {
     // Start the backend server: node backend/server.js
        BACKEND_API_URL: window.location.hostname === 'localhost' 
         ? 'http://localhost:3002/api'
-        : 'https://crowdwise-production.up.railway.app/api',  // Railway hosted backend
-    USE_BACKEND_API: true, // Backend is now running on Railway
+        : 'http://crowdwise-api.eba-ymkfcnps.us-east-1.elasticbeanstalk.com/api',  // AWS Elastic Beanstalk backend
+    USE_BACKEND_API: true, // Backend is now running on AWS
     
     // ==================== OTHER APIs ====================
     // Holiday API for India (Free, no key needed)
