@@ -1,8 +1,8 @@
 name = "crowdwise"
 compatibility_date = "2026-02-10"
 
-[site]
-bucket = "."
+[assets]
+directory = "."
 
-# Deploy all files in root as static assets
-# This tells Cloudflare to serve index.html, styles.css, etc. directly
+# Deploy all files in root directory as static assets
+# Serves index.html, styles.css, etc. directly
