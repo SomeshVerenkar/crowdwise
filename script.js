@@ -1623,7 +1623,7 @@ function displayDataStatus() {
     } else if (overall === 'partial') {
         statusText.textContent = '🟡 Partial Live';
     } else {
-        statusText.textContent = '🔴 Demo Data';
+        statusText.textContent = '� Algorithm-Based';
     }
     
     // Add click handler for modal
@@ -1632,7 +1632,7 @@ function displayDataStatus() {
     // Console log
     let statusMessage = overall === 'live' ? '🟢 Using Real-time API Data' : 
                         overall === 'partial' ? '🟡 Using Partial Real-time Data' :
-                        '🔴 Using Demo Data';
+                        '🟠 Using Time-Pattern Algorithm';
     console.log(`%c${statusMessage}`, 'font-size: 14px; font-weight: bold; color: #667eea;');
 }
 

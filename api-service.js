@@ -280,9 +280,9 @@ class APIService {
             }
         }
         
-        // Fallback to algorithm - only update status if not already live
-        console.warn('⚠️ Using fallback crowd data (backend unavailable)');
+        // Fallback to algorithm - only log once
         if (!this.dataStatus.crowd.isLive) {
+            console.log('📊 Using time-pattern algorithm for crowd predictions');
             this.dataStatus.crowd = {
                 source: 'algorithm',
                 lastUpdate: new Date(),
