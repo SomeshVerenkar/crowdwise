@@ -28,15 +28,15 @@ const API_CONFIG = {
     GOOGLE_PLACES_API_URL: 'https://maps.googleapis.com/maps/api/place',
     
     // Backend API URL (for aggregated crowd data)
-    // Start the backend server: node backend/server.js
+    // Proxied through Netlify _redirects to avoid mixed content (HTTPS→HTTP)
        BACKEND_API_URL: window.location.hostname === 'localhost' 
         ? 'http://localhost:3002/api'
-        : 'http://crowdwise-api.eba-ymkfcnps.us-east-1.elasticbeanstalk.com/api',  // AWS Elastic Beanstalk backend
+        : '/api',  // Netlify proxies this to AWS Elastic Beanstalk
     USE_BACKEND_API: true, // Backend is now running on AWS
     
     // ==================== OTHER APIs ====================
     // Holiday API for India (Free, no key needed)
-    HOLIDAY_API_URL: 'https://date.nager.at/api/v3/PublicHolidays/2026/IN',
+    HOLIDAY_API_URL: 'https://date.nager.at/api/v3/PublicHolidays/2025/IN',
     
     // ==================== REFRESH INTERVALS ====================
     WEATHER_REFRESH_INTERVAL: 600000,  // 10 minutes

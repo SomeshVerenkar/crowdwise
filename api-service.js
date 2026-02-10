@@ -453,15 +453,34 @@ class APIService {
         try {
             const response = await fetch(API_CONFIG.HOLIDAY_API_URL);
             if (response.ok) {
-                const holidays = await response.json();
-                this.holidayCache = holidays;
-                return holidays;
+                const text = await response.text();
+                if (text && text.trim().length > 2) {
+                    const holidays = JSON.parse(text);
+                    // Adjust year to current year for matching
+                    this.holidayCache = holidays.map(h => ({
+                        ...h,
+                        date: h.date.replace(/^\d{4}/, new Date().getFullYear())
+                    }));
+                    return this.holidayCache;
+                }
             }
         } catch (error) {
-            console.error('Holiday API error:', error);
+            console.warn('Holiday API unavailable, using built-in holidays');
         }
 
-        return [];
+        // Fallback: Indian holidays
+        const year = new Date().getFullYear();
+        this.holidayCache = [
+            { date: `${year}-01-26`, localName: 'Republic Day' },
+            { date: `${year}-03-14`, localName: 'Holi' },
+            { date: `${year}-04-14`, localName: 'Ambedkar Jayanti' },
+            { date: `${year}-08-15`, localName: 'Independence Day' },
+            { date: `${year}-10-02`, localName: 'Gandhi Jayanti' },
+            { date: `${year}-10-20`, localName: 'Dussehra' },
+            { date: `${year}-11-09`, localName: 'Diwali' },
+            { date: `${year}-12-25`, localName: 'Christmas' }
+        ];
+        return this.holidayCache;
     }
 
     async isHolidayToday() {
