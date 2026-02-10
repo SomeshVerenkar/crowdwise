@@ -1,1 +1,1 @@
-/api/*  http://crowdwise-api.eba-ymkfcnps.us-east-1.elasticbeanstalk.com/api/:splat  200
+/api/*  https://crowdwise-api.eba-ymkfcnps.us-east-1.elasticbeanstalk.com/api/:splat  200
