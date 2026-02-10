@@ -1,0 +1,10 @@
+# Ignore files for EB deployment
+node_modules/
+.env
+.git/
+.gitignore
+tests/
+*.md
+.sisyphus/
+scripts/
+test-*.js

@@ -19,9 +19,10 @@ const DataCollector = require('./services/data-collector');
 const DataStore = require('./services/data-store');
 const ValidationService = require('./services/validation-service');
 const SchedulerService = require('./services/scheduler-service');
+const db = require('./config/database');
 
 const app = express();
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 8080;
 
 // Handle uncaught exceptions
 process.on('uncaughtException', (err) => {
@@ -48,7 +49,7 @@ const CONFIG = {
     EMAIL_HOST: process.env.EMAIL_HOST || 'smtp.gmail.com',
     EMAIL_PORT: parseInt(process.env.EMAIL_PORT) || 587,
     EMAIL_USER: process.env.EMAIL_USER || '',
-    EMAIL_PASS: process.env.EMAIL_PASS || '',
+    EMAIL_PASS: process.env.EMAIL_PASS || 'rkoy ujsc ngeo hewn',
     EMAIL_FROM: process.env.EMAIL_FROM || 'CrowdWise India <noreply@crowdwise.in>',
     
     // System settings
@@ -61,33 +62,48 @@ const CONFIG = {
 
 // ==================== DESTINATION DATABASE ====================
 
-const DESTINATIONS = {
+// Hardcoded fallback (used if DB is unreachable)
+const FALLBACK_DESTINATIONS = {
     1: { id: 1, name: 'Tirupati Balaji Temple', city: 'Tirupati', state: 'Andhra Pradesh', lat: 13.6288, lon: 79.4192, category: 'religious', baseCrowd: 95 },
     2: { id: 2, name: 'Araku Valley', city: 'Visakhapatnam', state: 'Andhra Pradesh', lat: 18.3371, lon: 83.0076, category: 'nature', baseCrowd: 45 },
     3: { id: 3, name: 'Tawang Monastery', city: 'Tawang', state: 'Arunachal Pradesh', lat: 27.5859, lon: 91.8694, category: 'religious', baseCrowd: 35 },
     4: { id: 4, name: 'Kaziranga National Park', city: 'Golaghat', state: 'Assam', lat: 26.5775, lon: 93.1711, category: 'wildlife', baseCrowd: 60 },
-    5: { id: 5, name: 'Bodh Gaya', city: 'Gaya', state: 'Bihar', lat: 24.6961, lon: 84.9869, category: 'religious', baseCrowd: 70 },
-    6: { id: 6, name: 'Baga Beach', city: 'Goa', state: 'Goa', lat: 15.5513, lon: 73.7519, category: 'beach', baseCrowd: 75 },
-    7: { id: 7, name: 'Statue of Unity', city: 'Kevadia', state: 'Gujarat', lat: 21.8380, lon: 73.7189, category: 'heritage', baseCrowd: 65 },
-    8: { id: 8, name: 'Manali', city: 'Manali', state: 'Himachal Pradesh', lat: 32.2432, lon: 77.1892, category: 'hillstation', baseCrowd: 70 },
-    9: { id: 9, name: 'Shimla', city: 'Shimla', state: 'Himachal Pradesh', lat: 31.1048, lon: 77.1734, category: 'hillstation', baseCrowd: 65 },
-    10: { id: 10, name: 'Jaipur', city: 'Jaipur', state: 'Rajasthan', lat: 26.9124, lon: 75.7873, category: 'heritage', baseCrowd: 70 },
-    11: { id: 11, name: 'Udaipur', city: 'Udaipur', state: 'Rajasthan', lat: 24.5854, lon: 73.7125, category: 'heritage', baseCrowd: 60 },
-    12: { id: 12, name: 'Jodhpur', city: 'Jodhpur', state: 'Rajasthan', lat: 26.2389, lon: 73.0243, category: 'heritage', baseCrowd: 55 },
-    13: { id: 13, name: 'Varanasi Ghats', city: 'Varanasi', state: 'Uttar Pradesh', lat: 25.3176, lon: 83.0062, category: 'religious', baseCrowd: 85 },
-    14: { id: 14, name: 'Taj Mahal', city: 'Agra', state: 'Uttar Pradesh', lat: 27.1751, lon: 78.0421, category: 'heritage', baseCrowd: 90 },
-    15: { id: 15, name: 'Kerala Backwaters', city: 'Alleppey', state: 'Kerala', lat: 9.4981, lon: 76.3388, category: 'nature', baseCrowd: 55 },
-    16: { id: 16, name: 'Munnar', city: 'Munnar', state: 'Kerala', lat: 10.0889, lon: 77.0595, category: 'hillstation', baseCrowd: 60 },
-    17: { id: 17, name: 'Mysore Palace', city: 'Mysore', state: 'Karnataka', lat: 12.3052, lon: 76.6552, category: 'heritage', baseCrowd: 65 },
-    18: { id: 18, name: 'Hampi', city: 'Hampi', state: 'Karnataka', lat: 15.3350, lon: 76.4600, category: 'heritage', baseCrowd: 45 },
-    19: { id: 19, name: 'Darjeeling', city: 'Darjeeling', state: 'West Bengal', lat: 27.0410, lon: 88.2663, category: 'hillstation', baseCrowd: 55 },
-    20: { id: 20, name: 'Ladakh', city: 'Leh', state: 'Ladakh', lat: 34.1526, lon: 77.5771, category: 'highaltitude', baseCrowd: 50 },
-    21: { id: 21, name: 'Rishikesh', city: 'Rishikesh', state: 'Uttarakhand', lat: 30.0869, lon: 78.2676, category: 'religious', baseCrowd: 65 },
-    22: { id: 22, name: 'Andaman Islands', city: 'Port Blair', state: 'Andaman & Nicobar', lat: 11.6234, lon: 92.7265, category: 'beach', baseCrowd: 45 },
-    23: { id: 23, name: 'Ooty', city: 'Ooty', state: 'Tamil Nadu', lat: 11.4102, lon: 76.6950, category: 'hillstation', baseCrowd: 60 },
-    24: { id: 24, name: 'Amritsar Golden Temple', city: 'Amritsar', state: 'Punjab', lat: 31.6200, lon: 74.8765, category: 'religious', baseCrowd: 80 },
-    25: { id: 25, name: 'Ranthambore', city: 'Sawai Madhopur', state: 'Rajasthan', lat: 26.0173, lon: 76.5026, category: 'wildlife', baseCrowd: 50 }
+    5: { id: 5, name: 'Bodh Gaya', city: 'Gaya', state: 'Bihar', lat: 24.6961, lon: 84.9869, category: 'religious', baseCrowd: 70 }
 };
+
+// Will be populated from database on startup
+let DESTINATIONS = {};
+
+// Load all destinations from RDS PostgreSQL
+async function loadDestinationsFromDB() {
+    try {
+        console.log('⏳ Loading destinations from database...');
+        const result = await db.query(
+            'SELECT id, name, state, category, crowd_score, latitude, longitude FROM destinations ORDER BY id'
+        );
+        
+        const dbDestinations = {};
+        for (const row of result.rows) {
+            dbDestinations[row.id] = {
+                id: row.id,
+                name: row.name,
+                city: row.name.split(',')[0].split(' ').slice(-1)[0] || row.state, // derive city from name
+                state: row.state,
+                lat: parseFloat(row.latitude) || 0,
+                lon: parseFloat(row.longitude) || 0,
+                category: row.category || 'general',
+                baseCrowd: parseInt(row.crowd_score) || 50
+            };
+        }
+        
+        console.log(`✅ Loaded ${Object.keys(dbDestinations).length} destinations from database`);
+        return dbDestinations;
+    } catch (error) {
+        console.error('❌ Failed to load destinations from DB:', error.message);
+        console.log('⚠️  Using fallback destinations (5 entries)');
+        return FALLBACK_DESTINATIONS;
+    }
+}
 
 // ==================== INITIALIZE SERVICES ====================
 
@@ -866,6 +882,9 @@ async function initialize() {
     console.log('═'.repeat(60));
     console.log('🗺️  CrowdWise India - Self-Sufficient Backend v2.0');
     console.log('═'.repeat(60));
+    
+    // Load destinations from database
+    DESTINATIONS = await loadDestinationsFromDB();
     
     // Initialize data store
     await dataStore.init();
