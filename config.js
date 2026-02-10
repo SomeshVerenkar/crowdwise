@@ -28,11 +28,12 @@ const API_CONFIG = {
     GOOGLE_PLACES_API_URL: 'https://maps.googleapis.com/maps/api/place',
     
     // Backend API URL (for aggregated crowd data)
-    // Proxied through Netlify _redirects to avoid mixed content (HTTPS→HTTP)
-       BACKEND_API_URL: window.location.hostname === 'localhost' 
+    // Note: AWS Elastic Beanstalk only supports HTTP, which causes mixed content errors on HTTPS sites
+    // Disabled for Cloudflare Pages deployment - using client-side algorithm instead
+    BACKEND_API_URL: window.location.hostname === 'localhost' 
         ? 'http://localhost:3002/api'
-        : '/api',  // Netlify proxies this to AWS Elastic Beanstalk
-    USE_BACKEND_API: true, // Backend is now running on AWS
+        : 'http://crowdwise-api.eba-ymkfcnps.us-east-1.elasticbeanstalk.com/api',
+    USE_BACKEND_API: false, // Disabled due to mixed content (HTTPS→HTTP blocked by browsers)
     
     // ==================== OTHER APIs ====================
     // Holiday API for India (Free, no key needed)
