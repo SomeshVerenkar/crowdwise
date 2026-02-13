@@ -12,8 +12,8 @@ const API_CONFIG = {
     // ==================== WEATHER APIs ====================
     // OpenWeatherMap API (Free tier: 1000 calls/day)
     // Sign up at: https://openweathermap.org/api
-    // API key is now stored securely in backend/.env
-    WEATHER_API_KEY: '',  // Not used - backend handles weather API calls
+    // API key is now used for direct frontend calls since backend has HTTPS/HTTP mixed content issue
+    WEATHER_API_KEY: 'bb862ba4c130cfa3b60af919266dbdd4',  // Live API key - weather data is now real-time
     WEATHER_API_URL: 'https://api.openweathermap.org/data/2.5/weather',
     
     // Backup: WeatherAPI.com (Free tier: 1M calls/month)

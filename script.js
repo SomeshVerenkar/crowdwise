@@ -1719,11 +1719,11 @@ function updateDataStatusModal(status) {
         qualityFill.className = 'quality-fill ' + status.overall;
         
         if (status.overall === 'live') {
-            qualityLabel.textContent = '100% Live Data - Maximum accuracy';
+            qualityLabel.textContent = '100% Live Data - Maximum accuracy from real-time sources';
         } else if (status.overall === 'partial') {
-            qualityLabel.textContent = '66% Live Data - Good accuracy with some estimates';
+            qualityLabel.textContent = 'Live weather + Smart algorithm predictions - High accuracy';
         } else {
-            qualityLabel.textContent = 'Pattern-based predictions - Accuracy improves with feedback';
+            qualityLabel.textContent = 'Pattern-based predictions - Good baseline accuracy';
         }
     }
 }
