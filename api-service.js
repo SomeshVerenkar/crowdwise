@@ -23,6 +23,9 @@ class APIService {
             overall: 'demo' // 'demo', 'partial', 'live'
         };
         
+        // Console logging flags (to prevent spam)
+        this._algorithmLoggedOnce = false;
+        
         // Statistics
         this.stats = {
             weatherApiCalls: 0,
@@ -280,9 +283,12 @@ class APIService {
             }
         }
         
-        // Fallback to algorithm - only log once
+        // Fallback to algorithm - only log once globally
         if (!this.dataStatus.crowd.isLive) {
-            console.log('📊 Using time-pattern algorithm for crowd predictions');
+            if (!this._algorithmLoggedOnce) {
+                console.log('📊 Using time-pattern algorithm for crowd predictions');
+                this._algorithmLoggedOnce = true;
+            }
             this.dataStatus.crowd = {
                 source: 'algorithm',
                 lastUpdate: new Date(),
