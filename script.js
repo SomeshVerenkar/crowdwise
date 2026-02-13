@@ -1623,7 +1623,7 @@ function displayDataStatus() {
     } else if (overall === 'partial') {
         statusText.textContent = '🟡 Partial Live';
     } else {
-        statusText.textContent = '� Algorithm-Based';
+        statusText.textContent = '🔵 Algorithm-Based';
     }
     
     // Add click handler for modal
@@ -1663,10 +1663,8 @@ function updateDataStatusModal(status) {
     const weatherDetail = document.getElementById('weatherSourceDetail');
     if (weatherBadge && weatherDetail) {
         const source = status.weather.source;
-        weatherBadge.textContent = source === 'openweathermap' || source === 'backend' ? 'LIVE' : 
-                                   source === 'algorithm' ? 'SIMULATED' : 'DEMO';
-        weatherBadge.className = 'source-badge ' + (status.weather.isLive ? 'live' : 
-                                 source === 'algorithm' ? 'algorithm' : 'demo');
+        weatherBadge.textContent = source === 'openweathermap' || source === 'backend' || source === 'weatherapi' ? 'LIVE' : 'SIMULATED';
+        weatherBadge.className = 'source-badge ' + (status.weather.isLive ? 'live' : 'algorithm');
         
         if (source === 'openweathermap') {
             weatherDetail.textContent = 'Real-time weather data from OpenWeatherMap API';
@@ -1675,7 +1673,7 @@ function updateDataStatusModal(status) {
         } else if (source === 'backend') {
             weatherDetail.textContent = 'Weather data from backend aggregation service';
         } else {
-            weatherDetail.textContent = 'Using simulated weather patterns. Add API key for live data.';
+            weatherDetail.textContent = 'Pattern-based weather simulation for this location';
         }
     }
     
