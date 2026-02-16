@@ -55,6 +55,17 @@ const API_CONFIG = {
     USE_MOCK_DATA: false,
     ENABLE_DYNAMIC_MOCK: false,
     
+    // ==================== WEEK 1-2 ACCURACY IMPROVEMENT FLAGS ====================
+    // Enable new accuracy improvement features independently for safe deployment and A/B testing
+    // All features implemented and tested - enabled for production
+    FEATURE_FLAGS: {
+        FESTIVALS_ENABLED: true,         // Regional festivals impact on crowd prediction (Tasks 4-6) - 100 festivals
+        GAMIFICATION_ENABLED: true,      // Points, badges, and leaderboard system (Tasks 7-9)
+        WIKIPEDIA_7DAY: true,            // 7-day Wikipedia window + spike detection (Tasks 10-11)
+        WEATHER_REFINEMENT: true,        // Category-specific weather impact adjustments (Tasks 12-13)
+        AB_COMPARISON_MODE: false        // Show old vs new predictions side-by-side for comparison
+    },
+    
     // ==================== DATA SOURCE TRACKING ====================
     // These are set automatically - do not modify
     _weatherSource: 'mock',      // 'mock', 'openweathermap', 'weatherapi', 'backend'

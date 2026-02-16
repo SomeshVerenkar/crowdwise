@@ -3,6 +3,10 @@
 // ============================================================
 // Client-side prediction when backend is unavailable
 // Uses pattern-based estimation for immediate results
+// 
+// Week 1-2 Accuracy Improvements:
+// - Festival impact integration (via FestivalService)
+// - Weather-based category multipliers (via WeatherService)
 // ============================================================
 
 class ClientCrowdAlgorithm {
@@ -104,7 +108,9 @@ class ClientCrowdAlgorithm {
             baseCrowdLevel = 50,
             category = 'default',
             date = new Date(),
-            hour = new Date().getHours()
+            hour = new Date().getHours(),
+            destinationId = null,
+            weatherCondition = null
         } = params;
 
         // Check if place is open
@@ -133,16 +139,35 @@ class ClientCrowdAlgorithm {
         const seasonPattern = this.seasonalPatterns[category] || this.seasonalPatterns.default;
         const seasonScore = seasonPattern[date.getMonth()] || 1.0;
 
-        // 4. Holiday check
+        // 4. Holiday check (national holidays)
         const holidayInfo = this.checkHoliday(date);
         const holidayMultiplier = holidayInfo.impact;
 
         // 5. Weekend check
         const isWeekend = date.getDay() === 0 || date.getDay() === 6;
 
-        // Calculate final score
+        // 6. Festival impact (Week 1-2 enhancement)
+        let festivalMultiplier = 1.0;
+        let festivalInfo = { hasActiveFestival: false, festivals: [] };
+        if (this._isFestivalsEnabled() && destinationId && typeof FestivalService !== 'undefined') {
+            festivalInfo = FestivalService.getFestivalImpactDetails(destinationId, date);
+            festivalMultiplier = festivalInfo.impact;
+        }
+
+        // 7. Weather impact (Week 1-2 enhancement)
+        let weatherMultiplier = 1.0;
+        if (this._isWeatherRefinementEnabled() && weatherCondition && typeof WeatherService !== 'undefined') {
+            weatherMultiplier = WeatherService.getWeatherMultiplier(category, weatherCondition);
+        }
+
+        // Calculate final score with all multipliers
         const baseScore = baseCrowdLevel / 100;
-        const multipliedScore = baseScore * timeScore * (dayScore / 1.0) * (seasonScore / 1.0) * holidayMultiplier;
+        
+        // Apply multipliers with stacking rules (cap at 3.0x, floor at 0.2x)
+        let combinedMultiplier = timeScore * (dayScore / 1.0) * (seasonScore / 1.0) * holidayMultiplier * festivalMultiplier * weatherMultiplier;
+        combinedMultiplier = Math.min(3.0, Math.max(0.2, combinedMultiplier));
+        
+        const multipliedScore = baseScore * combinedMultiplier;
         const finalScore = Math.min(1, Math.max(0, multipliedScore));
 
         // Convert to crowd level
@@ -157,12 +182,37 @@ class ClientCrowdAlgorithm {
                 dayOfWeek: Math.round(dayScore * 100) / 100,
                 seasonal: Math.round(seasonScore * 100) / 100,
                 holiday: holidayInfo.name || 'None',
-                isWeekend
+                isWeekend,
+                // Week 1-2 new factors
+                festival: festivalInfo.hasActiveFestival ? {
+                    name: festivalInfo.festivals[0]?.name || 'Festival',
+                    impact: Math.round(festivalMultiplier * 100) / 100
+                } : null,
+                weather: weatherCondition ? {
+                    condition: weatherCondition,
+                    impact: Math.round(weatherMultiplier * 100) / 100
+                } : null
             },
             confidence: 'pattern-based',
             dataSource: 'client-algorithm',
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            // New metadata for debugging/transparency
+            _enhancedPrediction: this._isFestivalsEnabled() || this._isWeatherRefinementEnabled()
         };
+    }
+    
+    // Check if festivals feature is enabled
+    _isFestivalsEnabled() {
+        return typeof API_CONFIG !== 'undefined' && 
+               API_CONFIG.FEATURE_FLAGS && 
+               API_CONFIG.FEATURE_FLAGS.FESTIVALS_ENABLED === true;
+    }
+    
+    // Check if weather refinement feature is enabled
+    _isWeatherRefinementEnabled() {
+        return typeof API_CONFIG !== 'undefined' && 
+               API_CONFIG.FEATURE_FLAGS && 
+               API_CONFIG.FEATURE_FLAGS.WEATHER_REFINEMENT === true;
     }
 
     checkHoliday(date) {
@@ -239,7 +289,7 @@ class ClientCrowdAlgorithm {
     }
 
     // Get best time to visit today
-    getBestTimeToday(baseCrowdLevel, category) {
+    getBestTimeToday(baseCrowdLevel, category, destinationId = null, weatherCondition = null) {
         const predictions = [];
         const now = new Date();
 
@@ -251,7 +301,9 @@ class ClientCrowdAlgorithm {
                 baseCrowdLevel,
                 category,
                 date: testDate,
-                hour
+                hour,
+                destinationId,
+                weatherCondition
             });
 
             predictions.push({
