@@ -31,7 +31,7 @@ const API_CONFIG = {
     // Note: AWS Elastic Beanstalk only supports HTTP, which causes mixed content errors on HTTPS sites
     // Disabled for Cloudflare Pages deployment - using client-side algorithm instead
     BACKEND_API_URL: window.location.hostname === 'localhost' 
-        ? 'http://localhost:3002/api'
+        ? 'http://localhost:8080/api'
         : 'http://crowdwise-api.eba-ymkfcnps.us-east-1.elasticbeanstalk.com/api',
     USE_BACKEND_API: false, // Disabled due to mixed content (HTTPS→HTTP blocked by browsers)
     

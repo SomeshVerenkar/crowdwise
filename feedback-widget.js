@@ -9,7 +9,7 @@
 class FeedbackWidget {
     constructor() {
         this.backendUrl = window.location.hostname === 'localhost'
-            ? 'http://localhost:3002/api'
+            ? 'http://localhost:8080/api'
             : 'https://api.crowdwise.in/api';  // Your production API domain
         this.shownDestinations = new Set();
         this.feedbackGiven = JSON.parse(localStorage.getItem('crowdwise_feedback') || '[]');

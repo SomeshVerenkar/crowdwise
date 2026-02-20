@@ -1908,7 +1908,7 @@ async function submitUserFeedback(event) {
     
     try {
         // Try to send to backend with timeout
-        const backendUrl = API_CONFIG.BACKEND_URL || 'http://localhost:3002';
+        const backendUrl = API_CONFIG.BACKEND_URL || 'http://localhost:8080';
         
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 second timeout
