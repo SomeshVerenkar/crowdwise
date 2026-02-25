@@ -53,7 +53,7 @@
         }
     </script>
     
-    <link rel="stylesheet" href="styles.css?v=3.9">
+    <link rel="stylesheet" href="styles.css?v=4.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -195,10 +195,6 @@
                     <span class="nav-icon">📍</span>
                     <span>Destinations</span>
                 </a>
-                <a href="#heatmap" class="nav-link">
-                    <span class="nav-icon">🗺️</span>
-                    <span>Heatmap</span>
-                </a>
                 <a href="blog.html" class="nav-link" style="color: #667eea;">
                     <span class="nav-icon">📝</span>
                     <span>Blog</span>
@@ -223,7 +219,6 @@
     <div class="mobile-nav" id="mobileNav">
         <a href="#home" class="mobile-nav-link" onclick="toggleMobileMenu()">🏠 Home</a>
         <a href="#destinations" class="mobile-nav-link" onclick="toggleMobileMenu()">📍 Destinations</a>
-        <a href="#heatmap" class="mobile-nav-link" onclick="toggleMobileMenu()">🗺️ Heatmap</a>
         <a href="#about" class="mobile-nav-link" onclick="toggleMobileMenu()">ℹ️ About</a>
     </div>
 
@@ -391,28 +386,6 @@
         </div>
     </section>
 
-    <!-- India Heatmap Section -->
-    <section class="heatmap-section" id="heatmap">
-        <div class="container">
-            <div class="section-header centered">
-                <div>
-                    <h2 class="section-title">🗺️ India Crowd Heatmap</h2>
-                    <p class="section-subtitle">Visual overview of crowd levels across popular destinations</p>
-                </div>
-            </div>
-            <div class="heatmap-container">
-                <div class="heatmap-grid" id="heatmapGrid">
-                    <!-- Heatmap items will be generated dynamically -->
-                </div>
-                <div class="heatmap-legend">
-                    <span class="heatmap-legend-item"><span class="hl-dot low"></span> Low Crowd</span>
-                    <span class="heatmap-legend-item"><span class="hl-dot moderate"></span> Moderate</span>
-                    <span class="heatmap-legend-item"><span class="hl-dot busy"></span> Busy</span>
-                    <span class="heatmap-legend-item"><span class="hl-dot packed"></span> Packed</span>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Smart Features Section -->
     <section class="smart-features">
@@ -533,10 +506,6 @@
             <span class="bottom-nav-icon search-icon-main">🔍</span>
             <span class="bottom-nav-label">Search</span>
         </button>
-        <a href="#heatmap" class="bottom-nav-item">
-            <span class="bottom-nav-icon">🗺️</span>
-            <span class="bottom-nav-label">Map</span>
-        </a>
         <a href="#about" class="bottom-nav-item">
             <span class="bottom-nav-icon">ℹ️</span>
             <span class="bottom-nav-label">About</span>
