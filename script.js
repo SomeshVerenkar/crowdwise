@@ -9,9 +9,34 @@ let currentCrowdFilter = 'all';
 
 // Transform destination data to include required fields
 function transformDestinationData(dest) {
-    // Convert numeric crowdLevel to string
-    const normalizedLevel = normalizeCrowdLevel(dest.crowdLevel);
-    
+    // Preserve numeric base crowd level for algorithm use
+    const baseCrowdLevel = typeof dest.crowdLevel === 'number'
+        ? dest.crowdLevel
+        : { 'low': 25, 'moderate': 50, 'heavy': 70, 'overcrowded': 90 }[dest.crowdLevel] || 50;
+
+    // Use the prediction algorithm for a time/day/season-aware crowd level
+    let normalizedLevel;
+    let closedMessage = null;
+    if (window.clientCrowdAlgorithm) {
+        try {
+            const predicted = window.clientCrowdAlgorithm.calculateCrowdScore({
+                baseCrowdLevel,
+                category: dest.category || 'default',
+                destinationId: dest.id
+            });
+            if (predicted.status === 'closed') {
+                normalizedLevel = 'closed';
+                closedMessage = predicted.message || 'Currently closed';
+            } else {
+                normalizedLevel = predicted.level || 'moderate';
+            }
+        } catch (e) {
+            normalizedLevel = normalizeCrowdLevel(dest.crowdLevel);
+        }
+    } else {
+        normalizedLevel = normalizeCrowdLevel(dest.crowdLevel);
+    }
+
     // Format weather (convert object to string if needed)
     let weatherStr = dest.weather;
     if (typeof dest.weather === 'object' && dest.weather !== null) {
@@ -28,9 +53,11 @@ function transformDestinationData(dest) {
     
     return {
         ...dest,
+        baseCrowdLevel,
         crowdLevel: normalizedLevel,
+        closedMessage,
         weather: weatherStr,
-        currentEstimate: currentEstimate,
+        currentEstimate: normalizedLevel === 'closed' ? null : currentEstimate,
         bestTimeToVisit: dest.bestTime || 'October to March'
     };
 }
@@ -141,16 +168,20 @@ function renderDestinations() {
     
     grid.innerHTML = filteredDestinations.map(dest => {
         const crowdClass = getCrowdClass(dest.crowdLevel);
-        const crowdLabel = getCrowdLabel(dest.crowdLevel);
-        const trendData = generateTrendData(dest.crowdLevel);
-        const bestTimeNow = getBestTimeNow(dest);
+        const crowdLabel = getCrowdLabel(dest.crowdLevel, dest.closedMessage);
+        const isClosed = dest.crowdLevel === 'closed';
+
+        // Badge: use actual closed message (e.g. "Opens at 7:00 AM") not generic "Closed Today"
+        const bestTimeBadge = isClosed
+            ? `<span class="best-time-badge closed-badge">🔒 ${dest.closedMessage || 'Closed Now'}</span>`
+            : `<span class="best-time-badge">⏰ Best: ${getBestTimeNow(dest)}</span>`;
         
         return `
-            <div class="destination-card" onclick="showDetails(${dest.id})">
-                <div class="card-image">
-                    <span style="font-size: 4rem;">${dest.emoji}</span>
+            <div class="destination-card" onclick="navigateToDestination(${dest.id})">
+                <div class="card-image" data-dest-id="${dest.id}">
+                    <span class="card-emoji" style="font-size: 4rem;">${dest.emoji}</span>
                     <span class="crowd-badge crowd-${dest.crowdLevel}">${crowdLabel}</span>
-                    <span class="best-time-badge">⏰ Best: ${bestTimeNow}</span>
+                    ${bestTimeBadge}
                 </div>
                 <div class="card-content">
                     <div class="card-header">
@@ -158,63 +189,26 @@ function renderDestinations() {
                             <div class="card-title">${dest.name}</div>
                             <div class="card-state">📍 ${dest.state}</div>
                         </div>
-                        <div class="current-estimate">
-                            <div class="estimate-label">Live Count</div>
-                            <div class="estimate-value">👥 ${dest.currentEstimate}</div>
-                        </div>
-                    </div>
-                    
-                    <div class="card-stats">
-                        <div class="card-stat">
-                            <span class="stat-icon">⏰</span>
-                            <div class="stat-content">
-                                <span class="stat-label">Best Time</span>
-                                <span class="stat-value">${bestTimeNow}</span>
-                            </div>
-                        </div>
-                        <div class="card-stat">
-                            <span class="stat-icon">🔥</span>
-                            <div class="stat-content">
-                                <span class="stat-label">Peak</span>
-                                <span class="stat-value">${dest.peakHours}</span>
-                            </div>
-                        </div>
-                        <div class="card-stat">
-                            <span class="stat-icon">🌡️</span>
-                            <div class="stat-content">
-                                <span class="stat-label">Weather</span>
-                                <span class="stat-value">${dest.weather}</span>
-                            </div>
-                        </div>
-                        <div class="card-stat">
-                            <span class="stat-icon">📈</span>
-                            <div class="stat-content">
-                                <span class="stat-label">Trend</span>
-                                <span class="stat-value">${getTrendText(dest.crowdLevel)}</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="crowd-sparkline">
-                        ${trendData.map((val, i) => `
-                            <div class="sparkline-bar ${getSparklineClass(val)}" style="height: ${val}%"></div>
-                        `).join('')}
-                    </div>
-                    
-                    <div class="best-time-box">
-                        <div class="best-time-header">
-                            <span class="best-time-icon">💡</span>
-                            <span class="best-time-label">Best Time to Visit</span>
-                        </div>
-                        <div class="best-time-value">${dest.bestTimeToVisit}</div>
-                        <div class="trend-indicator ${getTrendDirection(dest.crowdLevel)}">
-                            ${getTrendIcon(dest.crowdLevel)} ${getTrendText(dest.crowdLevel)}
-                        </div>
+                        ${dest.crowdLevel === 'closed'
+                            ? `<div class="current-estimate closed-estimate">
+                                <div class="estimate-label">Status</div>
+                                <div class="estimate-value" style="font-size:11px;color:#6b7280;">⚫ ${dest.closedMessage || 'Closed Now'}</div>
+                               </div>`
+                            : `<div class="current-estimate">
+                                <div class="estimate-label">Live Count</div>
+                                <div class="estimate-value">👥 ${dest.currentEstimate}</div>
+                               </div>`
+                        }
                     </div>
                 </div>
             </div>
         `;
     }).join('');
+
+    // Load destination photos asynchronously after cards are rendered
+    if (window.DestinationPhotos) {
+        window.DestinationPhotos.loadPhotosForVisibleCards();
+    }
 }
 
 // ========== HEATMAP RENDERING ==========
@@ -222,7 +216,7 @@ function renderHeatmap() {
     const heatmapGrid = document.getElementById('heatmapGrid');
     
     heatmapGrid.innerHTML = allDestinations.map(dest => `
-        <div class="heatmap-item ${dest.crowdLevel}" onclick="showDetails(${dest.id})">
+        <div class="heatmap-item ${dest.crowdLevel}" onclick="navigateToDestination(${dest.id})">
             <div class="heatmap-emoji">${dest.emoji}</div>
             <div class="heatmap-name">${dest.name}</div>
             <div class="heatmap-crowd">${getCrowdLabel(dest.crowdLevel)}</div>
@@ -256,14 +250,21 @@ function getCrowdClass(level) {
     return classes[normalizedLevel] || 'moderate';
 }
 
-function getCrowdLabel(level) {
+function getCrowdLabel(level, closedMsg) {
     const normalizedLevel = normalizeCrowdLevel(level);
+    if (normalizedLevel === 'closed') {
+        // Show specific message: "Opens at 8:00 AM" or "Closed Now" — never generic "Closed Today"
+        // unless the place is truly closed all day
+        if (closedMsg && !/closed today/i.test(closedMsg)) {
+            return `🔒 ${closedMsg}`;
+        }
+        return '⚫ Closed Now';
+    }
     const labels = {
         'low': '🟢 Low',
         'moderate': '🟡 Moderate',
         'heavy': '🟠 Busy',
-        'overcrowded': '🔴 Packed',
-        'closed': '⚫ Closed Today'
+        'overcrowded': '🔴 Packed'
     };
     return labels[normalizedLevel] || '🟡 Moderate';
 }
@@ -320,11 +321,22 @@ function getTrendText(crowdLevel) {
 }
 
 function getBestTimeNow(dest) {
+    try {
+        if (window.clientCrowdAlgorithm) {
+            const result = window.clientCrowdAlgorithm.getBestTimeToday(
+                dest.baseCrowdLevel || 50,
+                dest.category || 'default',
+                dest.id
+            );
+            if (result && result.bestTime) return result.bestTime;
+        }
+    } catch (e) {
+        console.warn('getBestTimeNow fallback:', e);
+    }
     const hour = new Date().getHours();
-    if (hour < 9) return '6-9 AM';
-    if (hour < 12) return 'Now!';
-    if (hour < 16) return '4-6 PM';
-    return '6-8 AM';
+    if (hour >= 6 && hour < 9) return '6:00 AM - 9:00 AM';
+    if (hour >= 9 && hour < 16) return '4:00 PM - 6:00 PM';
+    return '6:00 AM - 9:00 AM';
 }
 
 // ========== SEARCH FUNCTIONALITY ==========
@@ -340,7 +352,7 @@ function setupSearchSuggestions() {
     popularSuggestions.innerHTML = popular.map(item => {
         const dest = allDestinations.find(d => d.name.includes(item.split(' ')[0]));
         return `
-            <div class="suggestion-item" onclick="quickSearch('${item}')">
+            <div class="suggestion-item" onclick="fillSearch('${item}')">
                 ${dest ? dest.emoji : '📍'} ${item}
             </div>
         `;
@@ -350,6 +362,11 @@ function setupSearchSuggestions() {
     searchInput.addEventListener('focus', function() {
         updateRecentSearches();
         suggestionsDropdown.classList.add('active');
+        // On mobile, position the dropdown correctly below the search input
+        if (window.innerWidth <= 768) {
+            const inputRect = searchInput.getBoundingClientRect();
+            suggestionsDropdown.style.top = (inputRect.bottom + 4) + 'px';
+        }
     });
     
     searchInput.addEventListener('blur', function() {
@@ -366,7 +383,7 @@ function setupSearchSuggestions() {
             ).slice(0, 5);
             
             popularSuggestions.innerHTML = matches.map(dest => `
-                <div class="suggestion-item" onclick="quickSearch('${dest.name}')">
+                <div class="suggestion-item" onclick="fillSearch('${dest.name}')">
                     ${dest.emoji} ${dest.name}
                     <span style="margin-left: auto; font-size: 12px; opacity: 0.7;">${getCrowdLabel(dest.crowdLevel)}</span>
                 </div>
@@ -376,20 +393,19 @@ function setupSearchSuggestions() {
             popularSuggestions.innerHTML = popular.map(item => {
                 const dest = allDestinations.find(d => d.name.includes(item.split(' ')[0]));
                 return `
-                    <div class="suggestion-item" onclick="quickSearch('${item}')">
+                    <div class="suggestion-item" onclick="fillSearch('${item}')">
                         ${dest ? dest.emoji : '📍'} ${item}
                     </div>
                 `;
             }).join('');
         }
-        
-        searchDestination();
+        // Do NOT call searchDestination() here — only update suggestions.
+        // Actual filtering + navigation happens on Search button click or Enter.
     });
     
     searchInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
-            addToRecentSearches(this.value);
-            suggestionsDropdown.classList.remove('active');
+            searchAndNavigate();
         }
     });
 }
@@ -401,7 +417,7 @@ function updateRecentSearches() {
     if (recentSearches.length > 0) {
         recentSection.style.display = 'block';
         recentSuggestions.innerHTML = recentSearches.slice(0, 3).map(term => `
-            <div class="suggestion-item" onclick="quickSearch('${term}')">
+            <div class="suggestion-item" onclick="fillSearch('${term}')">
                 🕒 ${term}
             </div>
         `).join('');
@@ -416,6 +432,58 @@ function addToRecentSearches(term) {
         recentSearches = recentSearches.slice(0, 5);
         localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
     }
+}
+
+function searchAndNavigate() {
+    searchDestination();
+    const searchTerm = document.getElementById('searchInput').value.trim();
+    if (searchTerm !== '') {
+        addToRecentSearches(searchTerm);
+        document.getElementById('searchSuggestions').classList.remove('active');
+        document.getElementById('searchInput').blur();
+        setTimeout(() => {
+            const destSection = document.getElementById('destinations');
+            if (destSection) {
+                destSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 100);
+    }
+}
+
+// Fill the search box from a suggestion — pre-fills input ONLY, does NOT filter or navigate.
+// User must click the Search button or press Enter to apply the search.
+function fillSearch(term) {
+    document.getElementById('searchInput').value = term;
+    document.getElementById('searchSuggestions').classList.remove('active');
+    searchDestination(); // run search immediately, do NOT focus (focus re-opens the dropdown)
+}
+
+// Build a flat searchable string for a destination (only core fields — no alerts/nearby)
+function buildSearchText(dest) {
+    return [
+        dest.name,
+        dest.state,
+        dest.city,
+        dest.category
+    ].filter(Boolean).join(' ').toLowerCase();
+}
+
+// Returns true if every word in the query matches the destination (word-boundary match)
+function matchesQuery(dest, rawQuery) {
+    if (!rawQuery) return true;
+    const text = ' ' + buildSearchText(dest) + ' ';
+    const words = rawQuery.toLowerCase().trim().split(/\s+/).filter(Boolean);
+    return words.every(word => {
+        // Stem common plurals: beaches→beach, temples→temple, forts→fort
+        const stems = [word];
+        if (word.length > 4 && word.endsWith('es')) stems.push(word.slice(0, -2));
+        if (word.length > 3 && word.endsWith('s')) stems.push(word.slice(0, -1));
+        // Match any stem with a word-boundary regex
+        return stems.some(w => {
+            const re = new RegExp('\\b' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+            return re.test(text);
+        });
+    });
 }
 
 function searchDestination() {
@@ -434,13 +502,7 @@ function searchDestination() {
     if (searchTerm === '') {
         filteredDestinations = [...allDestinations];
     } else {
-        filteredDestinations = allDestinations.filter(dest => 
-            dest.name.toLowerCase().includes(searchTerm) ||
-            dest.state.toLowerCase().includes(searchTerm) ||
-            dest.city.toLowerCase().includes(searchTerm) ||
-            (dest.category && dest.category.toLowerCase().includes(searchTerm)) ||
-            (dest.nearbyAttractions && dest.nearbyAttractions.some(attr => attr.toLowerCase().includes(searchTerm)))
-        );
+        filteredDestinations = allDestinations.filter(dest => matchesQuery(dest, searchTerm));
     }
     
     applyCurrentFilters();
@@ -452,9 +514,8 @@ function quickSearch(term) {
     addToRecentSearches(term);
     searchDestination();
     document.getElementById('searchSuggestions').classList.remove('active');
-    
-    // Scroll to destinations
-    document.getElementById('destinations').scrollIntoView({ behavior: 'smooth' });
+    // quickSearch is now only used for explicit navigation (near-me, etc.)
+    // Suggestion items use fillSearch() instead — no auto-scroll
 }
 
 function searchNearMe() {
@@ -658,11 +719,8 @@ function applyCurrentFilters() {
     const state = document.getElementById('stateFilter').value;
     
     filteredDestinations = allDestinations.filter(dest => {
-        // Search filter
-        const matchesSearch = searchTerm === '' || 
-            dest.name.toLowerCase().includes(searchTerm) ||
-            dest.state.toLowerCase().includes(searchTerm) ||
-            dest.city.toLowerCase().includes(searchTerm);
+        // Multi-word search across all fields
+        const matchesSearch = matchesQuery(dest, searchTerm);
         
         // Crowd filter
         const matchesCrowd = currentCrowdFilter === 'all' || dest.crowdLevel === currentCrowdFilter;
@@ -681,6 +739,27 @@ function quickFilter(level) {
     filterByCrowd(level);
 }
 
+function toggleFilterPanel(e) {
+    if (e) e.stopPropagation();
+    const panel = document.getElementById('filterPanel');
+    const arrow = document.getElementById('filterArrow');
+    if (!panel) return;
+    const isOpen = panel.style.display === 'block';
+    panel.style.display = isOpen ? 'none' : 'block';
+    if (arrow) arrow.textContent = isOpen ? '▾' : '▴';
+    if (!isOpen) {
+        // Close when clicking anywhere outside the dropdown
+        document.addEventListener('click', function closeFn(evt) {
+            const wrap = document.getElementById('filterDropWrap');
+            if (wrap && !wrap.contains(evt.target)) {
+                panel.style.display = 'none';
+                if (arrow) arrow.textContent = '▾';
+                document.removeEventListener('click', closeFn);
+            }
+        });
+    }
+}
+
 function clearAllFilters() {
     document.getElementById('searchInput').value = '';
     document.getElementById('stateFilter').value = 'all';
@@ -692,6 +771,9 @@ function clearAllFilters() {
     
     document.querySelectorAll('.sort-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelector('.sort-btn[data-sort="default"]').classList.add('active');
+    
+    const sortSel = document.getElementById('sortSelectMain');
+    if (sortSel) sortSel.value = 'default';
     
     filteredDestinations = [...allDestinations];
     renderDestinations();
@@ -761,10 +843,9 @@ function syncStateFilter(select) {
 function toggleView(view) {
     const grid = document.getElementById('destinationsGrid');
     const buttons = document.querySelectorAll('.toggle-btn');
-    
     buttons.forEach(btn => btn.classList.remove('active'));
-    document.querySelector(`.toggle-btn[data-view="${view}"]`).classList.add('active');
-    
+    const activeBtn = document.querySelector(`.toggle-btn[data-view="${view}"]`);
+    if (activeBtn) activeBtn.classList.add('active');
     grid.className = `destinations-grid view-${view}`;
 }
 
@@ -836,9 +917,14 @@ async function submitAlert() {
     submitBtn.textContent = 'Setting alert...';
     submitBtn.disabled = true;
     
+    // Determine the correct API URL
+    const apiUrl = window.location.hostname === 'localhost'
+        ? 'http://localhost:8080/api'
+        : API_CONFIG.BACKEND_API_URL;
+    
     try {
         // Try to call the backend API
-        const response = await fetch(`${API_CONFIG.BACKEND_API_URL}/alerts`, {
+        const response = await fetch(`${apiUrl}/alerts`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -862,12 +948,11 @@ async function submitAlert() {
             // Success - show confirmation
             showAlertConfirmation(dest.name, threshold, email);
         } else {
-            // API returned error
-            alert(`❌ Failed to set alert: ${result.error || 'Unknown error'}`);
+            // API returned error — show actual error to user
+            showAlertError(result.error || 'Server returned an error. Please try again.');
         }
     } catch (error) {
-        // Backend not available - store locally and show success anyway
-        console.log('Backend not available, storing alert locally');
+        console.error('Alert submission error:', error);
         
         // Store in localStorage as backup
         const localAlerts = JSON.parse(localStorage.getItem('crowdwise_alerts') || '[]');
@@ -881,13 +966,16 @@ async function submitAlert() {
         });
         localStorage.setItem('crowdwise_alerts', JSON.stringify(localAlerts));
         
-        // Track alert creation locally for analytics
         if (typeof trackEvent === 'function') {
             trackEvent('alert_created_local', dest.name);
         }
         
-        // Show success (user experience)
-        showAlertConfirmation(dest.name, threshold, email);
+        // Show honest feedback to user
+        if (window.location.hostname === 'localhost') {
+            showAlertError('Backend server is not reachable. Please make sure the backend is running on port 8080.');
+        } else {
+            showAlertError('Email alerts are currently unavailable. Your alert has been saved locally and will activate once our email service is restored.');
+        }
     } finally {
         // Reset button
         submitBtn.textContent = originalText;
@@ -920,6 +1008,22 @@ function showAlertConfirmation(destName, threshold, email) {
     setTimeout(() => {
         closeAlertModal();
     }, 5000);
+}
+
+function showAlertError(message) {
+    const modal = document.getElementById('alertModal');
+    const modalBody = modal.querySelector('.modal-body');
+    
+    modalBody.innerHTML = `
+        <div style="text-align: center; padding: 20px;">
+            <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
+            <h3 style="color: var(--text-primary); margin-bottom: 12px;">Alert Could Not Be Sent</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                ${message}
+            </p>
+            <button onclick="resetAlertModal()" style="padding: 12px 24px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-family: inherit;">Try Again</button>
+        </div>
+    `;
 }
 
 function resetAlertModal() {
@@ -1383,142 +1487,17 @@ function getLocalFoodByState(state) {
 }
 
 // ========== DESTINATION DETAILS ==========
-async function showDetails(destinationId) {
-    const dest = allDestinations.find(d => d.id === destinationId);
-    if (!dest) return;
-    
+function navigateToDestination(destinationId) {
     // Track destination view for analytics
-    if (typeof trackEvent === 'function') {
+    const dest = allDestinations.find(d => d.id === destinationId);
+    if (dest && typeof trackEvent === 'function') {
         trackEvent('view_destination', dest.name);
     }
-    
-    const modal = document.getElementById('detailModal');
-    const modalContent = document.getElementById('modalContent');
-    
-    const crowdLabel = getCrowdLabel(dest.crowdLevel);
-    const trendText = getTrendText(dest.crowdLevel);
-    
-    // Generate nearby attractions HTML
-    const nearbyHTML = dest.nearbyAttractions && dest.nearbyAttractions.length > 0 
-        ? dest.nearbyAttractions.map(attr => `<span style="background: var(--bg-light); padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 500;">${attr}</span>`).join('')
-        : '<span>No nearby attractions listed</span>';
-    
-    // Generate alerts/tips HTML
-    const alertsHTML = dest.alerts && dest.alerts.length > 0 
-        ? dest.alerts.map(alert => `<li>⚠️ ${alert}</li>`).join('')
-        : '<li>No special alerts</li>';
-    
-    modalContent.innerHTML = `
-        <div class="modal-header">
-            <h2 class="modal-title">${dest.emoji} ${dest.name}</h2>
-            <p class="modal-state">📍 ${dest.city}, ${dest.state}</p>
-            <div class="crowd-indicator crowd-${dest.crowdLevel}">
-                ${crowdLabel} • ${trendText}
-            </div>
-        </div>
-        
-        <div class="detail-section">
-            <h3>📊 Current Status</h3>
-            <div class="detail-grid">
-                <div class="detail-item">
-                    <div class="detail-item-label">Live Visitors</div>
-                    <div class="detail-item-value">👥 ${dest.currentEstimate || 'N/A'}</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-item-label">Peak Hours</div>
-                    <div class="detail-item-value">🔥 ${dest.peakHours}</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-item-label">Weather</div>
-                    <div class="detail-item-value">🌡️ ${dest.weather}</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-item-label">Category</div>
-                    <div class="detail-item-value">🏷️ ${dest.category ? dest.category.charAt(0).toUpperCase() + dest.category.slice(1).replace('-', ' ') : 'General'}</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="detail-section">
-            <h3>⏰ Best Time Indicator</h3>
-            <div class="best-time-result" style="display: block;">
-                <div class="time-slot">
-                    <span class="time-slot-time">Right Now</span>
-                    <span class="time-slot-crowd ${dest.crowdLevel === 'low' ? 'low' : dest.crowdLevel === 'moderate' ? 'moderate' : 'packed'}">${crowdLabel}</span>
-                </div>
-                <div class="time-slot">
-                    <span class="time-slot-time">Best Today</span>
-                    <span class="time-slot-crowd low">🟢 6:30 - 8:00 AM</span>
-                </div>
-            </div>
-        </div>
-        
-        <div class="detail-section">
-            <h3>� Best Time to Visit</h3>
-            <p><strong>${dest.bestTimeToVisit || dest.bestTime || 'Year-round'}</strong></p>
-        </div>
-        
-        <div class="detail-section">
-            <h3>⚠️ Alerts & Tips</h3>
-            <ul class="tips-list">
-                ${alertsHTML}
-            </ul>
-        </div>
-        
-        <div class="detail-section">
-            <h3>📍 Nearby Attractions</h3>
-            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;">
-                ${nearbyHTML}
-            </div>
-        </div>
-        
-        <div class="detail-section">
-            <h3>📊 Weekly Crowd Trend</h3>
-            ${generateWeeklyCrowdChart(dest.crowdLevel)}
-        </div>
-        
-        <div style="margin-top: 24px; display: flex; gap: 12px;">
-            <button onclick="setAlertForDestination(${dest.id})" style="flex: 1; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-family: inherit;">
-                🔔 Set Alert
-            </button>
-            <button onclick="closeModal()" style="flex: 1; padding: 14px; background: var(--bg-light); color: var(--text-primary); border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-family: inherit;">
-                Close
-            </button>
-        </div>
-    `;
-    
-    modal.style.display = 'block';
-    
-    // Trigger feedback prompt after 5 seconds
-    setTimeout(() => {
-        if (window.feedbackWidget) {
-            // Use the same crowdLevel that's displayed on the card
-            // Check if it's already a string (like 'closed', 'low', etc.)
-            let displayedLevel = dest.crowdLevel;
-            
-            // If it's a number, normalize it
-            if (typeof displayedLevel === 'number') {
-                displayedLevel = normalizeCrowdLevel(displayedLevel);
-            }
-            
-            // If destination is closed, don't show feedback (nothing to validate)
-            if (displayedLevel === 'closed') {
-                // Don't show feedback for closed destinations
-                return;
-            }
-            
-            // Calculate a score from the displayed level for consistency
-            let crowdScore = 0.5;
-            if (typeof dest.crowdLevel === 'number') {
-                crowdScore = dest.crowdLevel / 100;
-            } else {
-                const levelScores = { 'low': 0.25, 'moderate': 0.5, 'heavy': 0.7, 'overcrowded': 0.9 };
-                crowdScore = levelScores[displayedLevel] || 0.5;
-            }
-            
-            window.feedbackWidget.showFeedbackPrompt(dest, displayedLevel, crowdScore);
-        }
-    }, 5000);
+    window.location.href = `destination.html?id=${destinationId}`;
+}
+
+async function showDetails(destinationId) {
+    navigateToDestination(destinationId);
 }
 
 function setAlertForDestination(destId) {
@@ -1576,6 +1555,159 @@ function generateWeeklyCrowdChart(crowdLevel) {
             </p>
         </div>
     `;
+}
+
+// ========== 30-DAY FORECAST ==========
+
+let _forecast30Cache = {};
+
+function switchForecastTab(tab, destinationId) {
+    // Update tab buttons
+    document.querySelectorAll('.forecast-tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+
+    // Show/hide content
+    const todayContent = document.getElementById('forecastTabToday');
+    const thirtyDayContent = document.getElementById('forecastTab30Days');
+
+    if (tab === 'today') {
+        todayContent.classList.add('active');
+        thirtyDayContent.classList.remove('active');
+    } else {
+        todayContent.classList.remove('active');
+        thirtyDayContent.classList.add('active');
+        // Load 30-day forecast if not already loaded
+        if (thirtyDayContent.querySelector('.forecast-loading')) {
+            load30DayForecast(destinationId);
+        }
+    }
+}
+
+async function load30DayForecast(destinationId) {
+    const container = document.getElementById('forecastTab30Days');
+    try {
+        const forecast = await apiService.get30DayForecast(destinationId);
+        if (forecast && forecast.predictions && forecast.predictions.length > 0) {
+            container.innerHTML = render30DayForecast(forecast);
+        } else {
+            container.innerHTML = '<div class="forecast-loading"><p>Unable to load forecast data.</p></div>';
+        }
+    } catch (error) {
+        console.error('Error loading 30-day forecast:', error);
+        container.innerHTML = '<div class="forecast-loading"><p>Error loading forecast. Please try again.</p></div>';
+    }
+}
+
+function render30DayForecast(forecast) {
+    const { predictions, highlights } = forecast;
+
+    // Summary strip
+    const summaryHTML = `
+        <div class="fc-summary">
+            <div class="fc-summary-item">
+                <span class="fc-summary-emoji">🟢</span>
+                <div>
+                    <div class="fc-summary-label">Best Day</div>
+                    <div class="fc-summary-val">${highlights.bestDay.dayShort}, ${highlights.bestDay.month} ${highlights.bestDay.dayOfMonth}</div>
+                </div>
+            </div>
+            <div class="fc-summary-divider"></div>
+            <div class="fc-summary-item">
+                <span class="fc-summary-emoji">🔴</span>
+                <div>
+                    <div class="fc-summary-label">Busiest</div>
+                    <div class="fc-summary-val">${highlights.worstDay.dayShort}, ${highlights.worstDay.month} ${highlights.worstDay.dayOfMonth}</div>
+                </div>
+            </div>
+            <div class="fc-summary-divider"></div>
+            <div class="fc-summary-item">
+                <span class="fc-summary-emoji">📊</span>
+                <div>
+                    <div class="fc-summary-label">Low Crowd</div>
+                    <div class="fc-summary-val">${highlights.lowCrowdDays} days</div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Holiday banner
+    let holidayHTML = '';
+    if (highlights.holidaysInPeriod && highlights.holidaysInPeriod.length > 0) {
+        holidayHTML = `
+            <div class="fc-holiday-banner">
+                🎉 <strong>Upcoming:</strong> ${highlights.holidaysInPeriod.slice(0, 3).map(h => `${h.holiday.name} (${h.dayShort} ${h.dayOfMonth} ${h.month})`).join(' · ')}
+            </div>
+        `;
+    }
+
+    // Day cards
+    const cardsHTML = predictions.map((day, idx) => {
+        const scoreColor = getScoreColor(day.scores.average);
+        const holidayBadge = day.holiday && day.holiday.isHoliday
+            ? `<div class="fc-card-holiday">🎉 ${day.holiday.name}</div>` : '';
+        const weekendBadge = day.isWeekend
+            ? `<span class="fc-card-weekend-badge">Weekend</span>` : '';
+        const meterHeight = Math.max(day.percentageFull, 8);
+
+        return `
+            <div class="fc-card" data-index="${idx}" style="--card-color: ${scoreColor};">
+                <div class="fc-card-header">
+                    <span class="fc-card-day-name">${day.dayShort}</span>
+                    ${weekendBadge}
+                </div>
+                <div class="fc-card-date">${day.dayOfMonth} ${day.month}</div>
+                <div class="fc-card-meter">
+                    <div class="fc-card-meter-fill" style="height: ${meterHeight}%; background: ${scoreColor};"></div>
+                </div>
+                <div class="fc-card-pct">${day.percentageFull}%</div>
+                <div class="fc-card-level">${day.crowdLevel.emoji} ${day.crowdLevel.label}</div>
+                <div class="fc-card-times">
+                    <div class="fc-card-time-item">
+                        <span class="fc-card-time-label">Best</span>
+                        <span class="fc-card-time-val">⏰ ${day.bestHour}</span>
+                    </div>
+                    <div class="fc-card-time-item">
+                        <span class="fc-card-time-label">Peak</span>
+                        <span class="fc-card-time-val">🔥 ${day.peakHour}</span>
+                    </div>
+                </div>
+                ${holidayBadge}
+            </div>
+        `;
+    }).join('');
+
+    return `
+        <div class="fc-container">
+            ${summaryHTML}
+            ${holidayHTML}
+            <div class="fc-scroll-hint">← Swipe to explore all 30 days →</div>
+            <div class="fc-cards-wrapper">
+                <button class="fc-nav-btn fc-nav-prev" onclick="scrollForecastCards(-1)" aria-label="Previous">&#8249;</button>
+                <div class="fc-cards-track" id="fcCardsTrack">${cardsHTML}</div>
+                <button class="fc-nav-btn fc-nav-next" onclick="scrollForecastCards(1)" aria-label="Next">&#8250;</button>
+            </div>
+        </div>
+    `;
+}
+
+function scrollForecastCards(direction) {
+    const track = document.getElementById('fcCardsTrack');
+    if (!track) return;
+    const card = track.querySelector('.fc-card');
+    const cardWidth = card ? (card.offsetWidth + 12) : 174;
+    track.scrollBy({ left: direction * cardWidth * 3, behavior: 'smooth' });
+}
+
+function getScoreColor(score) {
+    if (score < 0.25) return '#4ade80';
+    if (score < 0.50) return '#fbbf24';
+    if (score < 0.75) return '#fb923c';
+    return '#ef4444';
+}
+
+function formatForecastDate(dateStr) {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
 }
 
 function closeModal() {

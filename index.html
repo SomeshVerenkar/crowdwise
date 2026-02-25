@@ -53,7 +53,7 @@
         }
     </script>
     
-    <link rel="stylesheet" href="styles.css?v=3.0">
+    <link rel="stylesheet" href="styles.css?v=3.9">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -182,7 +182,7 @@
                 <div class="logo-icon">🗺️</div>
                 <div class="logo-text">
                     <span class="logo-name">CrowdWise</span>
-                    <span class="logo-tagline">Travel without the rush</span>
+                    <span class="logo-tagline">Know the crowd before you go</span>
                 </div>
                 <span class="header-beta-badge">BETA</span>
             </div>
@@ -256,8 +256,6 @@
         </div>
         <div class="container">
             <div class="hero-content">
-                <div class="hero-badge">✨ Real-time Crowd Intelligence</div>
-                <h1 class="hero-title">Know the crowd<br>before you go.</h1>
                 <p class="hero-subtitle">Live crowd levels • Best visiting time • Avoid peak hours</p>
                 
                 <!-- Search Bar with Enhancements -->
@@ -269,7 +267,7 @@
                             <span>📍</span>
                             <span class="near-me-text">Near me</span>
                         </button>
-                        <button class="search-btn" onclick="searchDestination()">
+                        <button class="search-btn" onclick="searchAndNavigate()">
                             <span>Search</span>
                             <span class="btn-arrow">→</span>
                         </button>
@@ -290,58 +288,19 @@
                     <!-- Popular Tags -->
                     <div class="search-suggestions">
                         <span class="suggestion-label">Popular:</span>
-                        <span class="suggestion-tag" onclick="quickSearch('Taj Mahal')">🕌 Taj Mahal</span>
-                        <span class="suggestion-tag" onclick="quickSearch('Goa')">🏖️ Goa</span>
-                        <span class="suggestion-tag" onclick="quickSearch('Manali')">⛰️ Manali</span>
-                        <span class="suggestion-tag" onclick="quickSearch('Kerala')">🚤 Kerala</span>
+                        <span class="suggestion-tag" onclick="fillSearch('Taj Mahal')">🕌 Taj Mahal</span>
+                        <span class="suggestion-tag" onclick="fillSearch('Goa')">🏖️ Goa</span>
+                        <span class="suggestion-tag" onclick="fillSearch('Manali')">⛰️ Manali</span>
+                        <span class="suggestion-tag" onclick="fillSearch('Kerala')">🚤 Kerala</span>
                     </div>
                 </div>
 
-                <!-- Live Crowd Indicators -->
-                <div class="live-crowd-strip">
-                    <div class="live-indicator">
-                        <span class="live-dot"></span>
-                        <span>Live Updates</span>
-                    </div>
-                    <div class="crowd-legend">
-                        <span class="legend-item"><span class="legend-dot low"></span> Low</span>
-                        <span class="legend-item"><span class="legend-dot moderate"></span> Moderate</span>
-                        <span class="legend-item"><span class="legend-dot busy"></span> Busy</span>
-                        <span class="legend-item"><span class="legend-dot packed"></span> Packed</span>
-                    </div>
-                </div>
+
             </div>
         </div>
     </section>
 
-    <!-- Trust & Data Credibility Section -->
-    <section class="trust-section">
-        <div class="container">
-            <div class="trust-items">
-                <div class="trust-item">
-                    <span class="trust-icon">🔄</span>
-                    <span class="trust-text">Updates every 5 minutes</span>
-                </div>
-                <div class="trust-item">
-                    <span class="trust-icon">�</span>
-                    <span class="trust-text">Pattern-based predictions</span>
-                </div>
-                <div class="trust-item">
-                    <span class="trust-icon">🤖</span>
-                    <span class="trust-text">Smart crowd algorithm</span>
-                </div>
-                <div class="trust-item" id="accuracyBadge">
-                    <span class="trust-icon">📈</span>
-                    <span class="trust-text">Improving with feedback</span>
-                </div>
-            </div>
-            <!-- Transparency Banner -->
-            <div class="transparency-banner" id="transparencyBanner">
-                <span class="beta-tag">BETA</span>
-                <span class="transparency-text">Predictions based on time patterns, seasonality & holidays. <a href="#how-it-works" onclick="showHowItWorks()">How it works →</a></span>
-            </div>
-        </div>
-    </section>
+
 
     <!-- Sticky Filter Bar (appears on scroll) -->
     <div class="sticky-filter-bar" id="stickyFilterBar">
@@ -365,85 +324,49 @@
         </div>
     </div>
 
-    <!-- Filter Section -->
+    <!-- Filter Bar -->
     <section class="filters" id="destinations">
         <div class="container">
-            <div class="filters-header">
-                <h3 class="filters-title">
-                    <span class="filters-icon">🎯</span>
-                    Filter Destinations
-                </h3>
-                <button class="clear-filters" onclick="clearAllFilters()">
-                    <span>✕ Clear All</span>
-                </button>
-            </div>
-            
-            <div class="filter-tabs">
-                <!-- Crowd Level Filter with Color Pills -->
-                <div class="filter-section">
-                    <label class="filter-label">
-                        <span>Crowd Level</span>
-                        <span class="filter-count" id="crowdFilterCount"></span>
-                    </label>
-                    <div class="filter-options crowd-pills">
-                        <button class="crowd-pill active" onclick="filterByCrowd('all')" data-filter="all" data-tooltip="Show all destinations">
-                            <span class="pill-icon">📊</span>
-                            <span class="pill-text">All</span>
-                        </button>
-                        <button class="crowd-pill low" onclick="filterByCrowd('low')" data-filter="low" data-tooltip="Peaceful, minimal waiting">
-                            <span class="pill-icon">🟢</span>
-                            <span class="pill-text">Low</span>
-                            <span class="pill-tooltip">Peaceful, minimal waiting</span>
-                        </button>
-                        <button class="crowd-pill moderate" onclick="filterByCrowd('moderate')" data-filter="moderate" data-tooltip="Some queues, manageable">
-                            <span class="pill-icon">🟡</span>
-                            <span class="pill-text">Moderate</span>
-                            <span class="pill-tooltip">Some queues, manageable</span>
-                        </button>
-                        <button class="crowd-pill busy" onclick="filterByCrowd('heavy')" data-filter="heavy" data-tooltip="Expect crowds & delays">
-                            <span class="pill-icon">🟠</span>
-                            <span class="pill-text">Busy</span>
-                            <span class="pill-tooltip">Expect crowds & delays</span>
-                        </button>
-                        <button class="crowd-pill packed" onclick="filterByCrowd('overcrowded')" data-filter="overcrowded" data-tooltip="Avoid if possible">
-                            <span class="pill-icon">🔴</span>
-                            <span class="pill-text">Packed</span>
-                            <span class="pill-tooltip">Avoid if possible</span>
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- State Filter -->
-                <div class="filter-section">
-                    <label class="filter-label">
-                        <span>State / Region</span>
-                    </label>
-                    <div class="select-wrapper">
-                        <select id="stateFilter" onchange="filterByState()" class="state-select">
-                            <option value="all">🗺️ All States</option>
-                            <!-- States populated dynamically via JavaScript -->
-                        </select>
-                        <span class="select-arrow">▼</span>
+            <div class="filter-bar">
+
+                <!-- Filter CTA + dropdown panel -->
+                <div class="filter-dropdown-wrap" id="filterDropWrap">
+                    <button type="button" class="filter-cta-btn" id="filterCTABtn" onclick="toggleFilterPanel(event)">
+                        🎯 Filter <span class="filter-arrow" id="filterArrow">▾</span>
+                    </button>
+                    <div class="filter-panel" id="filterPanel" style="display:none;">
+                        <div class="filter-panel-inner">
+                            <div class="filter-panel-group">
+                                <span class="filter-panel-label">Crowd Level</span>
+                                <div class="crowd-pills">
+                                    <button class="crowd-pill active" onclick="filterByCrowd('all')" data-filter="all"><span class="pill-icon">📊</span> All</button>
+                                    <button class="crowd-pill low" onclick="filterByCrowd('low')" data-filter="low"><span class="pill-icon">🟢</span> Low</button>
+                                    <button class="crowd-pill moderate" onclick="filterByCrowd('moderate')" data-filter="moderate"><span class="pill-icon">🟡</span> Moderate</button>
+                                    <button class="crowd-pill busy" onclick="filterByCrowd('heavy')" data-filter="heavy"><span class="pill-icon">🟠</span> Busy</button>
+                                    <button class="crowd-pill packed" onclick="filterByCrowd('overcrowded')" data-filter="overcrowded"><span class="pill-icon">🔴</span> Packed</button>
+                                </div>
+                            </div>
+                            <div class="filter-panel-group">
+                                <span class="filter-panel-label">State / Region</span>
+                                <div class="select-wrapper">
+                                    <select id="stateFilter" onchange="filterByState()" class="state-select">
+                                        <option value="all">🗺️ All States</option>
+                                    </select>
+                                    <span class="select-arrow">▼</span>
+                                </div>
+                            </div>
+                            <button class="clear-filters" onclick="clearAllFilters()">✕ Clear All</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Sort Options -->
-                <div class="filter-section">
-                    <label class="filter-label">
-                        <span>Sort By</span>
-                    </label>
-                    <div class="sort-options">
-                        <button class="sort-btn active" onclick="sortDestinations('default')" data-sort="default">
-                            <span>🔥</span> Popular
-                        </button>
-                        <button class="sort-btn" onclick="sortDestinations('least-crowded')" data-sort="least-crowded">
-                            <span>🟢</span> Least Crowded
-                        </button>
-                        <button class="sort-btn" onclick="sortDestinations('best-time')" data-sort="best-time">
-                            <span>⏰</span> Best Time Now
-                        </button>
-                    </div>
+                <!-- Hidden sort buttons kept for JS compatibility -->
+                <div style="display:none" aria-hidden="true">
+                    <button class="sort-btn active" data-sort="default">Popular</button>
+                    <button class="sort-btn" data-sort="least-crowded">Least Crowded</button>
+                    <button class="sort-btn" data-sort="best-time">Best Time Now</button>
                 </div>
+
             </div>
         </div>
     </section>
@@ -456,13 +379,10 @@
                     <h2 class="section-title">Explore Destinations</h2>
                     <p class="section-subtitle">Real-time crowd information for top tourist spots in India</p>
                 </div>
-                <div class="view-toggle">
-                    <button class="toggle-btn active" onclick="toggleView('grid')" data-view="grid">
-                        <span>⊞</span> Grid
-                    </button>
-                    <button class="toggle-btn" onclick="toggleView('list')" data-view="list">
-                        <span>☰</span> List
-                    </button>
+                <!-- Hidden toggle buttons kept for JS compatibility -->
+                <div style="display:none" aria-hidden="true">
+                    <button class="toggle-btn active" onclick="toggleView('grid')" data-view="grid">Grid</button>
+                    <button class="toggle-btn" onclick="toggleView('list')" data-view="list">List</button>
                 </div>
             </div>
             <div id="destinationsGrid" class="destinations-grid view-grid">
@@ -534,53 +454,25 @@
                 <p class="about-description">CrowdWise uses advanced algorithms and real-time data to give you the best travel insights</p>
             </div>
             <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-header">
-                        <div class="feature-icon-wrapper green">
-                            <div class="feature-icon">📊</div>
-                        </div>
-                        <h3>Live Crowd Data</h3>
-                    </div>
-                    <p>Real-time crowd estimates updated every 5 minutes from multiple data sources including tourism boards and mobility patterns</p>
-                    <div class="feature-footer">
-                        <span class="feature-tag green">Updated every 5 min</span>
-                    </div>
+                <div class="feature-card feature-sq">
+                    <div class="feature-sq-icon green">📊</div>
+                    <h3>Live Crowd Data</h3>
+                    <span class="feature-tag green">Real-time</span>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-header">
-                        <div class="feature-icon-wrapper purple">
-                            <div class="feature-icon">🎯</div>
-                        </div>
-                        <h3>Smart Predictions</h3>
-                    </div>
-                    <p>AI-powered analysis of weather, festivals, holidays, and historical data to forecast crowd levels accurately</p>
-                    <div class="feature-footer">
-                        <span class="feature-tag purple">90% accurate</span>
-                    </div>
+                <div class="feature-card feature-sq">
+                    <div class="feature-sq-icon purple">🎯</div>
+                    <h3>Smart Predictions</h3>
+                    <span class="feature-tag purple">Pattern-based</span>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-header">
-                        <div class="feature-icon-wrapper orange">
-                            <div class="feature-icon">⏰</div>
-                        </div>
-                        <h3>Best Time Advice</h3>
-                    </div>
-                    <p>Personalized recommendations for the optimal time to visit based on your preferences and current conditions</p>
-                    <div class="feature-footer">
-                        <span class="feature-tag orange">Personalized</span>
-                    </div>
+                <div class="feature-card feature-sq">
+                    <div class="feature-sq-icon orange">⏰</div>
+                    <h3>Best Time Advice</h3>
+                    <span class="feature-tag orange">Personalised</span>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-header">
-                        <div class="feature-icon-wrapper blue">
-                            <div class="feature-icon">🌦️</div>
-                        </div>
-                        <h3>Weather Insights</h3>
-                    </div>
-                    <p>Real-time weather data integrated with crowd patterns to help you plan the perfect visit</p>
-                    <div class="feature-footer">
-                        <span class="feature-tag blue">Real-time</span>
-                    </div>
+                <div class="feature-card feature-sq">
+                    <div class="feature-sq-icon blue">🌦️</div>
+                    <h3>Weather Insights</h3>
+                    <span class="feature-tag blue">Live data</span>
                 </div>
             </div>
         </div>
@@ -600,9 +492,11 @@
                     </div>
                     <p class="footer-description">Your smart travel companion for exploring India's best destinations with real-time crowd insights.</p>
                     <div class="footer-social">
-                        <a href="#" class="social-link">📱</a>
-                        <a href="#" class="social-link">🐦</a>
-                        <a href="#" class="social-link">📧</a>
+                        <a href="https://www.instagram.com/crowdwise.in?igsh=MTA0OGtzY3g4cGg2NQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" class="social-link social-instagram" aria-label="CrowdWise India on Instagram">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                            </svg>
+                        </a>
                     </div>
                 </div>
                 <div class="footer-links">
@@ -610,28 +504,17 @@
                         <h4>Product</h4>
                         <a href="#destinations">Destinations</a>
                         <a href="#about">How it Works</a>
-                        <a href="#">Mobile App</a>
-                        <a href="#">API Access</a>
-                    </div>
-                    <div class="footer-column">
-                        <h4>Company</h4>
-                        <a href="#">About Us</a>
-                        <a href="#">Contact</a>
-                        <a href="#">Careers</a>
-                        <a href="#">Press</a>
                     </div>
                     <div class="footer-column">
                         <h4>Resources</h4>
-                        <a href="#">Blog</a>
-                        <a href="#">Help Center</a>
-                        <a href="#">Privacy Policy</a>
-                        <a href="#">Terms of Service</a>
+                        <a href="blog.html">Blog</a>
+                        <a href="#" onclick="openPrivacyPolicy(event)">Privacy Policy</a>
+                        <a href="#" onclick="openTermsOfService(event)">Terms of Service</a>
                     </div>
                 </div>
             </div>
             <div class="footer-bottom">
                 <p>&copy; 2026 CrowdWise India. All rights reserved.</p>
-                <p class="footer-disclaimer">Crowd estimates are based on aggregated data and may vary. For critical decisions, verify with local authorities.</p>
             </div>
         </div>
     </footer>
@@ -844,12 +727,13 @@
     <script src="js/festival-service.js"></script>
     <script src="js/weather-service.js"></script>
     <script src="js/accuracy-tracker.js"></script>
+    <script src="js/destination-photos.js"></script>
     <script src="js/gamification/points-engine.js"></script>
     <script src="js/gamification/badge-system.js"></script>
     <script src="api-service.js"></script>
-    <script src="client-algorithm.js?v=2.1"></script>
+    <script src="client-algorithm.js?v=3.1"></script>
     <script src="feedback-widget.js?v=2.0"></script>
-    <script src="script.js?v=2.0"></script>
+    <script src="script.js?v=3.5"></script>
     
     <!-- How It Works Modal -->
     <div class="modal-overlay" id="howItWorksModal" style="display:none;">
@@ -931,5 +815,165 @@
             </div>
         </div>
     </div>
+
+    <!-- Privacy Policy Modal -->
+    <div class="modal-overlay legal-modal-overlay" id="privacyPolicyModal" style="display:none;" onclick="if(event.target===this)closePrivacyPolicy()">
+        <div class="legal-modal-content">
+            <div class="legal-modal-header">
+                <div class="legal-modal-header-text">
+                    <h2>🔒 Privacy Policy</h2>
+                    <p class="legal-last-updated">Last updated: February 2026</p>
+                </div>
+                <button class="modal-close" onclick="closePrivacyPolicy()" aria-label="Close">&times;</button>
+            </div>
+            <div class="legal-modal-body">
+                <h3>1. Who We Are</h3>
+                <p>CrowdWise India ("we", "us", "our") is a free tourist crowd prediction platform available at <strong>crowdwise.in</strong>. We are committed to protecting your privacy and being transparent about how we use your information.</p>
+
+                <h3>2. Information We Collect</h3>
+                <ul>
+                    <li><strong>Email address:</strong> Voluntarily provided when you set up crowd alerts. Used solely to send you the alert you requested.</li>
+                    <li><strong>Usage analytics:</strong> We use Google Analytics to collect anonymised data on pages visited, session duration, and device type. This data contains no personally identifiable information (PII).</li>
+                    <li><strong>User feedback:</strong> Crowd accuracy ratings and destination feedback you submit voluntarily.</li>
+                    <li><strong>Local storage:</strong> We store your recent searches locally in your browser (never sent to our servers).</li>
+                </ul>
+
+                <h3>3. How We Use Your Information</h3>
+                <ul>
+                    <li>Email addresses are used exclusively to send the crowd alert you subscribed to.</li>
+                    <li>Analytics data helps us improve destination coverage and prediction accuracy.</li>
+                    <li>Feedback data is used to refine our crowd prediction algorithm.</li>
+                    <li>We do <strong>not</strong> sell, rent, or share your personal data with any third party for marketing purposes.</li>
+                </ul>
+
+                <h3>4. Third-Party Services</h3>
+                <p>We integrate the following third-party services who have their own privacy policies:</p>
+                <ul>
+                    <li><strong>Google Analytics:</strong> Usage analytics — <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a></li>
+                    <li><strong>OpenWeatherMap:</strong> Live weather data for destinations</li>
+                    <li><strong>Wikimedia API:</strong> Destination images (no user data sent)</li>
+                    <li><strong>Nager.Date API:</strong> Indian public holiday data (no user data sent)</li>
+                </ul>
+
+                <h3>5. Cookies</h3>
+                <p>We use cookies only through Google Analytics for anonymous usage tracking. You can opt out of Google Analytics cookies by installing the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">Google Analytics Opt-out Browser Add-on</a>.</p>
+
+                <h3>6. Data Retention</h3>
+                <p>Alert email addresses are stored only until the alert is triggered and deleted thereafter. Aggregated, anonymised feedback data may be retained indefinitely for algorithm improvement.</p>
+
+                <h3>7. Your Rights</h3>
+                <p>Under applicable Indian data protection laws (Information Technology Act 2000 and applicable rules), you have the right to:</p>
+                <ul>
+                    <li>Request access to personal data we hold about you</li>
+                    <li>Request correction or deletion of your data</li>
+                    <li>Withdraw consent at any time</li>
+                </ul>
+
+                <h3>8. Children's Privacy</h3>
+                <p>CrowdWise India is not directed at children under the age of 13. We do not knowingly collect personal information from children.</p>
+
+                <h3>9. Changes to This Policy</h3>
+                <p>We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated date. Continued use of the service after changes constitutes acceptance.</p>
+
+                <h3>10. Contact Us</h3>
+                <p>For any privacy-related questions or requests, reach us on Instagram: <a href="https://www.instagram.com/crowdwise.in" target="_blank" rel="noopener">@crowdwise.in</a></p>
+
+                <button class="cta-button" onclick="closePrivacyPolicy()" style="margin-top:24px;">Got it ✓</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms of Service Modal -->
+    <div class="modal-overlay legal-modal-overlay" id="termsOfServiceModal" style="display:none;" onclick="if(event.target===this)closeTermsOfService()">
+        <div class="legal-modal-content">
+            <div class="legal-modal-header">
+                <div class="legal-modal-header-text">
+                    <h2>📋 Terms of Service</h2>
+                    <p class="legal-last-updated">Last updated: February 2026</p>
+                </div>
+                <button class="modal-close" onclick="closeTermsOfService()" aria-label="Close">&times;</button>
+            </div>
+            <div class="legal-modal-body">
+                <h3>1. Acceptance of Terms</h3>
+                <p>By accessing or using CrowdWise India at <strong>crowdwise.in</strong>, you agree to be bound by these Terms of Service. If you do not agree, please do not use the service.</p>
+
+                <h3>2. Description of Service</h3>
+                <p>CrowdWise India provides algorithmic crowd-level predictions for tourist destinations across India. All predictions are generated using pattern-based models incorporating time-of-day, seasonality, holiday data, and aggregated signals. The service is provided free of charge.</p>
+
+                <h3>3. Nature of Predictions — Important Disclaimer</h3>
+                <p><strong>Crowd estimates are predictions, not guarantees.</strong> Our algorithm achieves approximately 65–75% accuracy. Actual crowd levels at any destination may differ significantly due to:</p>
+                <ul>
+                    <li>Unexpected local events, strikes, or VIP visits</li>
+                    <li>Sudden weather changes or closures</li>
+                    <li>Festival or event schedule changes</li>
+                    <li>Government restrictions or advisories</li>
+                </ul>
+                <p>Always verify current conditions with destination management, local tourism boards, or official websites before making travel decisions.</p>
+
+                <h3>4. User Conduct</h3>
+                <p>You agree not to:</p>
+                <ul>
+                    <li>Scrape, crawl, or systematically extract data from CrowdWise India without written permission</li>
+                    <li>Use the service for any illegal purpose or in violation of any applicable law</li>
+                    <li>Attempt to gain unauthorised access to any part of the service or its infrastructure</li>
+                    <li>Use the service to send spam or unsolicited communications</li>
+                    <li>Submit false or misleading feedback that could harm prediction accuracy for other users</li>
+                </ul>
+
+                <h3>5. Intellectual Property</h3>
+                <p>All content, design, code, and branding on CrowdWise India are the property of CrowdWise India. You may not reproduce, redistribute, or create derivative works without express written permission. Destination data is sourced from public domain or open-licensed sources.</p>
+
+                <h3>6. Limitation of Liability</h3>
+                <p>To the maximum extent permitted by applicable law, CrowdWise India and its operators shall not be liable for:</p>
+                <ul>
+                    <li>Any loss, injury, or damage arising from your reliance on crowd predictions</li>
+                    <li>Travel expenses, bookings, or plans made based on information from this service</li>
+                    <li>Service interruptions, data inaccuracies, or technical errors</li>
+                    <li>Any indirect, incidental, special, or consequential damages</li>
+                </ul>
+
+                <h3>7. Service Availability</h3>
+                <p>We strive to maintain uninterrupted access but do not guarantee that the service will be available at all times. We reserve the right to modify, suspend, or discontinue the service at any time without notice.</p>
+
+                <h3>8. Crowd Alert Emails</h3>
+                <p>By submitting your email for a crowd alert, you consent to receiving a single notification email when the specified crowd condition is met. We will not use your email for any other communication without explicit consent.</p>
+
+                <h3>9. Links to Third-Party Sites</h3>
+                <p>Our service may contain links to third-party websites (hotel booking platforms, tourism boards, etc.). We are not responsible for the content, privacy practices, or accuracy of these external sites.</p>
+
+                <h3>10. Governing Law</h3>
+                <p>These Terms of Service are governed by and construed in accordance with the laws of India. Any disputes shall be subject to the exclusive jurisdiction of the courts in Mumbai, Maharashtra, India.</p>
+
+                <h3>11. Changes to Terms</h3>
+                <p>We may update these Terms from time to time. The updated version will be posted here with a revised date. Continued use of the service constitutes your acceptance of the updated terms.</p>
+
+                <h3>12. Contact</h3>
+                <p>For any queries regarding these terms, contact us on Instagram: <a href="https://www.instagram.com/crowdwise.in" target="_blank" rel="noopener">@crowdwise.in</a></p>
+
+                <button class="cta-button" onclick="closeTermsOfService()" style="margin-top:24px;">Got it ✓</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openPrivacyPolicy(e) {
+            if (e) e.preventDefault();
+            document.getElementById('privacyPolicyModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        function closePrivacyPolicy() {
+            document.getElementById('privacyPolicyModal').style.display = 'none';
+            document.body.style.overflow = '';
+        }
+        function openTermsOfService(e) {
+            if (e) e.preventDefault();
+            document.getElementById('termsOfServiceModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        function closeTermsOfService() {
+            document.getElementById('termsOfServiceModal').style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    </script>
 </body>
 </html>
