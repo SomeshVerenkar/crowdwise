@@ -1,8 +1,8 @@
 # CrowdWise India — Agent & System Architecture
 
 > **Project**: CrowdWise India — Tourist Crowd Tracker  
-> **Version**: 3.0  
-> **Last Updated**: February 13, 2026  
+> **Version**: 4.0  
+> **Last Updated**: March 1, 2026  
 > **Repository**: [SomeshVerenkar/crowdwise](https://github.com/SomeshVerenkar/crowdwise)  
 > **Live URL**: [https://crowdwise.in](https://crowdwise.in)
 
@@ -10,7 +10,9 @@
 
 ## 1. System Overview
 
-CrowdWise India is a real-time tourist crowd prediction platform covering **224 destinations** across **37 Indian states/UTs**. The system uses a multi-agent architecture combining client-side algorithms, backend prediction services, data scrapers, and scheduled automation to deliver crowd level estimates with **65–75% accuracy**.
+CrowdWise India is a real-time tourist crowd prediction platform covering **359 destinations** across **38 Indian states/UTs**. The system uses a multi-agent architecture combining client-side algorithms, backend prediction services, data scrapers, and scheduled automation to deliver crowd level estimates with **65–75% accuracy**.
+
+The frontend runs entirely as a static site on Cloudflare Pages. The backend (AWS Elastic Beanstalk) is operational but currently not connected to the frontend due to an HTTPS→HTTP mixed content restriction. All real-time predictions, alerts, and forecasts run client-side.
 
 ### Architecture Diagram
 
@@ -26,7 +28,13 @@ CrowdWise India is a real-time tourist crowd prediction platform covering **224 
 │                       │                                      │
 │  ┌──────────┐  ┌──────┴───────┐  ┌────────────────────────┐ │
 │  │ data.js  │  │ config.js    │  │ feedback-widget.js     │ │
-│  │(224 dest)│  │ (API config) │  │ (User feedback UI)     │ │
+│  │(359 dest)│  │ (API config) │  │ (User feedback UI)     │ │
+│  └──────────┘  └──────────────┘  └────────────────────────┘ │
+│                                                              │
+│  ┌──────────┐  ┌──────────────┐  ┌────────────────────────┐ │
+│  │js/        │  │js/gamifica-  │  │ js/accuracy-           │ │
+│  │festival- │  │tion/         │  │ tracker.js             │ │
+│  │service.js│  │badge+points  │  │ destination-photos.js  │ │
 │  └──────────┘  └──────────────┘  └────────────────────────┘ │
 └─────────────────────────┬───────────────────────────────────┘
                           │ HTTP/HTTPS
@@ -68,7 +76,7 @@ CrowdWise India is a real-time tourist crowd prediction platform covering **224 
 │                  DATABASE (AWS RDS PostgreSQL)                │
 │     database-1.cufke8wsyh3e.us-east-1.rds.amazonaws.com     │
 │                                                              │
-│  Tables: destinations (223), alerts, feedback,               │
+│  Tables: destinations (359), alerts, feedback,               │
 │          user_feedback, scraped_data                          │
 │  View:   active_alerts                                       │
 └─────────────────────────────────────────────────────────────┘
@@ -141,27 +149,84 @@ CrowdWise India is a real-time tourist crowd prediction platform covering **224 
 | Property       | Value                                           |
 |----------------|------------------------------------------------|
 | **File**       | `client-algorithm.js`                           |
-| **Type**       | Fallback Prediction Agent                       |
+| **Type**       | Primary Prediction Agent                        |
 | **Runtime**    | Browser (Client-side JavaScript)                |
 | **Input**      | Destination data from `data.js`                 |
 | **Output**     | Crowd score, level, visitor estimates            |
 
-**Purpose**: Provides immediate crowd predictions when the backend is unavailable. Runs entirely in the browser using time-pattern analysis.
+**Purpose**: Delivers real-time crowd predictions and hourly forecasts entirely in the browser. This is the **active primary prediction source** on production — the backend API is currently disabled due to HTTPS↔HTTP mixed content restrictions.
+
+**Exposed API** (`window.clientCrowdAlgorithm`):
+
+| Method | Returns |
+|--------|---------|
+| `calculateCrowdScore(params)` | `{ score, level, status, percentageFull }` |
+| `getBestTimeToday(baseCrowdLevel, category, destId)` | `{ predictions[], bestTime, bestTimeScore, currentHour }` |
 
 **Algorithm Factors**:
 1. **Base crowd level** from destination data
 2. **Time of day** — 24-hour hourly multipliers per category
-3. **Day of week** — Weekend boost (1.3x Sat, 1.4x Sun)
+3. **Day of week** — Weekend boost (1.3× Sat, 1.4× Sun)
 4. **Month/season** — Peak (Oct–Feb) vs. off-season (Apr–Jul)
-5. **Holiday detection** — Indian public holidays boost (1.3x–1.8x)
-6. **Operating hours** — Returns "Closed" outside hours
+5. **Holiday detection** — Indian public holidays boost (1.3×–1.8×)
+6. **Operating hours** — Returns `closed` status outside open hours
 7. **Destination-specific closures** — e.g., Taj Mahal closed on Fridays
 
-**Current Status**: **Active** — Used as primary prediction source on production site. Backend API disabled due to HTTPS↔HTTP mixed content limitation.
+**Current Status**: **Active** — Primary prediction source on production site.
 
 ---
 
-### 2.4 Data Collector Agent (Orchestrator)
+### 2.4 Best Time Finder Agent
+
+| Property       | Value                                           |
+|----------------|-------------------------------------------------|
+| **File**       | `script.js` → `findBestTime()`                  |
+| **Type**       | UI Prediction Feature                           |
+| **Runtime**    | Browser                                         |
+| **Input**      | Destination selected from dropdown              |
+| **Output**     | Chronological hourly time-slot grid with ✦ BEST badge |
+
+**Purpose**: Shows the full day’s predicted crowd pattern for any destination in a visual time-slot grid. Triggered **automatically on destination selection** — no button click required.
+
+**Behaviour**:
+- Calls `window.clientCrowdAlgorithm.getBestTimeToday()` with the selected destination’s `crowdLevel`, `category`, and `id`
+- Combines hourly predictions into 2-hour bands (6–8 AM, 8–10 AM, … 8–10 PM)
+- Displays all slots in **chronological order starting at 6 AM** — no sorting by crowd level
+- No past-slot dimming — all time slots shown equally
+- Lowest-crowd slot gets a `✦ BEST` badge regardless of whether it is past or future
+- Closed destinations show an informational message instead of a grid
+- Re-triggers automatically when the modal is re-opened with a previously selected destination
+- Silently returns when no destination is selected (no alert shown)
+
+---
+
+### 2.5 Crowd Alerts Agent (Frontend)
+
+| Property       | Value                                               |
+|----------------|-----------------------------------------------------|
+| **File**       | `script.js` → `submitAlert()`, `checkLocalAlerts()` |
+| **Type**       | Notification Agent                                  |
+| **Runtime**    | Browser (localStorage + Web Notification API)       |
+| **Input**      | Destination, threshold level, email                 |
+| **Output**     | Browser push notification when threshold is met     |
+
+**Purpose**: Monitors crowd levels at user-chosen destinations and fires a browser notification when the crowd drops to the desired threshold. Operates fully client-side with no backend dependency.
+
+**Flow**:
+1. User sets destination + threshold + email in the Alert modal
+2. Alert stored in `localStorage` under key `crowdwise_alerts`
+3. `checkLocalAlerts()` runs on page load (after 1.2 s delay) and every 5 minutes
+4. Each check calls `clientCrowdAlgorithm.calculateCrowdScore()` for the saved destination
+5. If the live crowd level matches the threshold and hasn’t fired yet, `Notification` API fires a push notification
+6. Fired alerts are marked `triggered: true` in localStorage to prevent re-firing
+
+**Threshold Types**: `low`, `moderate`, `heavy`, `any`
+
+**Note**: Email field is stored but email delivery is reserved for future backend integration once HTTPS is enabled.
+
+---
+
+### 2.6 Data Collector Agent (Orchestrator)
 
 | Property       | Value                                           |
 |----------------|------------------------------------------------|
@@ -186,7 +251,7 @@ CrowdWise India is a real-time tourist crowd prediction platform covering **224 
 
 ---
 
-### 2.5 Wikipedia Scraper Agent
+### 2.7 Wikipedia Scraper Agent
 
 | Property       | Value                                           |
 |----------------|------------------------------------------------|
@@ -207,7 +272,7 @@ CrowdWise India is a real-time tourist crowd prediction platform covering **224 
 
 ---
 
-### 2.6 Social Media Scraper Agent
+### 2.8 Social Media Scraper Agent
 
 | Property       | Value                                           |
 |----------------|------------------------------------------------|
@@ -225,7 +290,7 @@ CrowdWise India is a real-time tourist crowd prediction platform covering **224 
 
 ---
 
-### 2.7 Hotel Availability Scraper Agent
+### 2.9 Hotel Availability Scraper Agent
 
 | Property       | Value                                           |
 |----------------|------------------------------------------------|
@@ -245,7 +310,7 @@ CrowdWise India is a real-time tourist crowd prediction platform covering **224 
 
 ---
 
-### 2.8 Validation & Feedback Agent
+### 2.10 Validation & Feedback Agent
 
 | Property       | Value                                           |
 |----------------|------------------------------------------------|
@@ -270,7 +335,7 @@ CrowdWise India is a real-time tourist crowd prediction platform covering **224 
 
 ---
 
-### 2.9 Scheduler Agent
+### 2.11 Scheduler Agent
 
 | Property       | Value                                           |
 |----------------|------------------------------------------------|
@@ -296,7 +361,7 @@ CrowdWise India is a real-time tourist crowd prediction platform covering **224 
 
 ---
 
-### 2.10 Alert Agent
+### 2.12 Backend Alert Agent (Standby)
 
 | Property       | Value                                           |
 |----------------|------------------------------------------------|
@@ -305,8 +370,9 @@ CrowdWise India is a real-time tourist crowd prediction platform covering **224 
 | **Runtime**    | Backend (Node.js, nodemailer)                   |
 | **Input**      | User-defined alerts (email, destination, threshold) |
 | **Output**     | Email notifications when conditions are met      |
+| **Status**     | Standby — requires HTTPS on backend to activate  |
 
-**Purpose**: Monitors crowd levels at user-specified destinations and sends email alerts when the crowd drops to the desired threshold.
+**Purpose**: Backend implementation for crowd alerts via email. Will supersede the client-side localStorage alert agent once HTTPS is enabled on the backend.
 
 **Features**:
 - Alert check interval: every 15 minutes
@@ -317,7 +383,7 @@ CrowdWise India is a real-time tourist crowd prediction platform covering **224 
 
 ---
 
-### 2.11 API Service Agent (Frontend)
+### 2.13 API Service Agent (Frontend)
 
 | Property       | Value                                           |
 |----------------|------------------------------------------------|
@@ -343,6 +409,88 @@ CrowdWise India is a real-time tourist crowd prediction platform covering **224 
 
 ---
 
+### 2.14 Festival Service Agent
+
+| Property       | Value                                 |
+|----------------|---------------------------------------|
+| **File**       | `js/festival-service.js`              |
+| **Type**       | Contextual Data Agent                 |
+| **Runtime**    | Browser                               |
+| **Input**      | Current date                          |
+| **Output**     | Upcoming Indian festival information  |
+
+**Purpose**: Provides festival and cultural event data to enrich crowd predictions with festival-season context. Reads from `data/festivals2026.json`.
+
+---
+
+### 2.15 Weather Service Agent
+
+| Property       | Value                                      |
+|----------------|--------------------------------------------|  
+| **File**       | `js/weather-service.js`                    |
+| **Type**       | Environmental Signal Agent                 |
+| **Runtime**    | Browser                                    |
+| **Input**      | Destination city/coordinates               |
+| **Output**     | Temperature, condition, weather icon       |
+
+**Purpose**: Fetches live weather data for destination pages and the main UI, passing weather condition as an optional modifier into crowd score calculations.
+
+---
+
+### 2.16 Accuracy Tracker Agent
+
+| Property       | Value                                       |
+|----------------|---------------------------------------------|
+| **File**       | `js/accuracy-tracker.js`                    |
+| **Type**       | Self-Improvement / Analytics Agent          |
+| **Runtime**    | Browser                                     |
+| **Input**      | User-reported crowd vs. algorithm prediction|
+| **Output**     | Accuracy stats stored in localStorage       |
+
+**Purpose**: Client-side companion to the backend Validation Agent. Tracks prediction accuracy locally, surfaces accuracy percentage to users, and feeds the feedback loop.
+
+---
+
+### 2.17 Gamification Agents
+
+#### Points Engine
+
+| Property       | Value                              |
+|----------------|------------------------------------|  
+| **File**       | `js/gamification/points-engine.js` |
+| **Type**       | Engagement Agent                   |
+| **Runtime**    | Browser (localStorage)             |
+| **Input**      | User actions (visits, feedback, alerts set) |
+| **Output**     | Points balance, level, XP          |
+
+#### Badge System
+
+| Property       | Value                              |
+|----------------|------------------------------------|  
+| **File**       | `js/gamification/badge-system.js`  |
+| **Type**       | Engagement Agent                   |
+| **Runtime**    | Browser (localStorage)             |
+| **Input**      | Points milestones, action counts   |
+| **Output**     | Earned badges, unlock notifications|
+
+**Purpose**: Rewards users for contributing feedback and exploring destinations, improving data quality through voluntary participation.
+
+---
+
+### 2.18 Destination Photos Agent
+
+| Property       | Value                              |
+|----------------|------------------------------------|  
+| **File**       | `js/destination-photos.js`         |
+| **Type**       | Media Asset Agent                  |
+| **Runtime**    | Browser                            |
+| **Input**      | Destination ID / name              |
+| **Output**     | Photo URL, attribution, lazy load  |
+
+**Purpose**: Manages destination imagery for the destination detail page and card previews. Handles lazy loading and fallback placeholder logic.
+
+---
+
 ## 3. Data Store Agent
 
 | Property       | Value                                           |
@@ -364,6 +512,13 @@ CrowdWise India is a real-time tourist crowd prediction platform covering **224 
 | `analytics.json`   | Usage and performance statistics       |
 | `destinations.json`| Destination metadata cache             |
 | `user-feedback.json`| General app feedback/suggestions      |
+
+**Frontend Data Files**:
+
+| File                       | Contents                          |
+|----------------------------|-----------------------------------|
+| `data/festivals2026.json`  | Indian festival calendar for 2026 |
+| `data/user-feedbacks.json` | Persisted user feedback entries   |
 
 ---
 
@@ -419,7 +574,7 @@ CrowdWise India is a real-time tourist crowd prediction platform covering **224 
 
 | Table           | Rows  | Description                         |
 |-----------------|-------|-------------------------------------|
-| destinations    | 223   | All tourist destinations + metadata |
+| destinations    | 359   | All tourist destinations + metadata |
 | alerts          | —     | User alert subscriptions            |
 | feedback        | 8     | Crowd accuracy feedback             |
 | user_feedback   | —     | General app feedback/suggestions    |
@@ -439,7 +594,7 @@ CrowdWise India is a real-time tourist crowd prediction platform covering **224 
 ### Core Data
 | Method | Endpoint                      | Description                    |
 |--------|------------------------------|--------------------------------|
-| GET    | `/api/destinations`          | List all 223 destinations      |
+| GET    | `/api/destinations`          | List all 359 destinations      |
 | GET    | `/api/destinations/:id/full` | Full destination data package  |
 | GET    | `/api/crowd/:id`             | Current crowd prediction       |
 | GET    | `/api/weather/:id`           | Live weather data              |
@@ -492,27 +647,69 @@ CrowdWise India is a real-time tourist crowd prediction platform covering **224 
 User visits crowdwise.in
         │
         ▼
-  api-service.js
-  checks USE_BACKEND_API flag
+  api-service.js checks USE_BACKEND_API flag
         │
-        ▼ (flag = false)
+        ▼ (flag = false — active path)
   client-algorithm.js
         │
-        ├── Get destination from data.js
-        ├── Calculate time-of-day multiplier
-        ├── Apply day-of-week factor
+        ├── Get destination from data.js (359 destinations)
+        ├── Calculate time-of-day multiplier (category-specific curves)
+        ├── Apply day-of-week factor (1.3× Sat, 1.4× Sun)
         ├── Apply seasonal (monthly) factor
-        ├── Check Indian holidays
-        ├── Check operating hours / closures
+        ├── Check Indian holidays (js/festival-service.js)
+        ├── Check operating hours / destination-specific closures
+        ├── Apply optional weather modifier (js/weather-service.js)
         │
         ▼
-  Return: { crowdLevel, crowdScore, percentageFull, currentEstimate }
+  { crowdLevel, crowdScore, percentageFull, currentEstimate }
         │
         ▼
-  script.js renders crowd card with level indicator
+  script.js renders crowd card + level indicator
+  js/gamification/points-engine.js logs visit action
 ```
 
-### Crowd Prediction Flow (Backend — Currently Disabled)
+### Best Time Finder Flow
+
+```
+User opens Best Time Finder modal
+        │
+        ▼
+  User selects destination from dropdown
+        │ (change event fires automatically)
+        ▼
+  findBestTime() in script.js
+        │
+        ├── clientCrowdAlgorithm.getBestTimeToday(baseCrowdLevel, category, destId)
+        │     └── Runs calculateCrowdScore() for each hour 6AM–9PM
+        │
+        ├── Build 2-hour bands chronologically (6–8, 8–10, … 20–22)
+        ├── Mark lowest-crowd band as ✦ BEST
+        │
+        ▼
+  Render all bands in 6AM→10PM order (no sorting, no past-dimming)
+```
+
+### Crowd Alert Flow (Active — Client-Side)
+
+```
+User creates alert (destination + threshold + email)
+        │
+        ▼
+  submitAlert() saves to localStorage (crowdwise_alerts)
+        │
+        ▼
+  checkLocalAlerts() runs on load + every 5 minutes
+        │
+        ├── For each saved alert:
+        │     ├── clientCrowdAlgorithm.calculateCrowdScore()
+        │     ├── Compare level to threshold
+        │     └── If match & not triggered → Notification API fires push
+        │
+        ▼
+  Alert marked triggered: true in localStorage
+```
+
+### Crowd Prediction Flow (Backend — Standby, Disabled)
 
 ```
 User visits crowdwise.in
@@ -560,6 +757,14 @@ User visits crowdwise.in
 | `ENABLE_SCHEDULER`    | Enable/disable scheduler (default: true) |
 | `DATA_DIR`            | Local data directory (default: ./data)   |
 
+### Frontend (`config.js`)
+
+| Variable               | Description                                      |
+|------------------------|--------------------------------------------------|
+| `USE_BACKEND_API`      | Toggle backend vs. client-side algorithm (false) |
+| `BACKEND_URL`          | Backend API base URL                             |
+| `OPENWEATHER_API_KEY`  | OpenWeatherMap key for frontend weather calls    |
+
 ---
 
 ## 8. Deployment Pipeline
@@ -598,7 +803,7 @@ eb deploy
   node server-v2.js starts on port 8080
         │
         ▼
-  Loads 223 destinations from RDS
+  Loads 359 destinations from RDS
         │
         ▼
   http://crowdwise-api.eba-ymkfcnps... (live in ~30s)
@@ -616,6 +821,7 @@ eb deploy
 | Social scraper simulated       | Social signals are pattern-based    | Can integrate real scraping later |
 | Hotel scraper simulated        | Hotel demand is pattern-based       | Can integrate real APIs later     |
 | No real-time crowd sensors     | Predictions are algorithmic         | Feedback loop improves accuracy   |
+| Alerts email not delivered     | Email stored but not sent           | Browser Notification API used     |
 
 ### Future Enhancements
 
@@ -626,6 +832,7 @@ eb deploy
 - [ ] **Multi-language support** — Hindi, Tamil, Telugu, etc.
 - [ ] **User accounts** — Save preferences, alert history, visited destinations
 - [ ] **Heatmap visualization** — India map with crowd density overlay
+- [ ] **Alert email delivery** — Connect frontend alerts to backend SMTP once HTTPS is enabled
 
 ---
 
@@ -633,34 +840,56 @@ eb deploy
 
 ### Frontend Files
 
-| File                    | Purpose                                      |
-|-------------------------|----------------------------------------------|
-| `index.html`            | Main HTML page                               |
-| `styles.css`            | All CSS styling                              |
-| `script.js`             | Main UI logic (1,979 lines)                  |
-| `config.js`             | API configuration and feature flags          |
-| `api-service.js`        | API integration service (589 lines)          |
-| `client-algorithm.js`   | Client-side crowd prediction (288 lines)     |
-| `data.js`               | 224 destination database (3,644 lines)       |
-| `feedback-widget.js`    | User feedback UI component                   |
-| `wrangler.toml`         | Cloudflare deployment configuration          |
-| `sitemap.xml`           | SEO sitemap                                  |
-| `robots.txt`            | SEO robots config                            |
+| File                                  | Purpose                                           | Lines |
+|---------------------------------------|---------------------------------------------------|-------|
+| `index.html`                          | Main HTML page (destinations, modals, UI)         | 1,005 |
+| `destination.html`                    | Individual destination detail page                |   590 |
+| `styles.css`                          | All CSS styling (v4 design system)                | 3,618 |
+| `script.js`                           | Main UI logic, modals, search, sheet, features    | 2,885 |
+| `config.js`                           | API configuration and feature flags               |   ~30 |
+| `api-service.js`                      | API integration + fallback orchestration          |   668 |
+| `client-algorithm.js`                 | Client-side crowd prediction engine               |   588 |
+| `data.js`                             | 359 destination database                          | 5,536 |
+| `feedback-widget.js`                  | User feedback UI component                        |   848 |
+| `js/festival-service.js`              | Indian festival calendar service                  |   257 |
+| `js/weather-service.js`               | Live weather data service                         |   204 |
+| `js/accuracy-tracker.js`              | Client-side prediction accuracy tracking          |   422 |
+| `js/destination-photos.js`            | Destination image management                      |   341 |
+| `js/gamification/points-engine.js`    | User points and XP system                         |   344 |
+| `js/gamification/badge-system.js`     | User badge and achievement system                 |   195 |
+| `wrangler.toml`                       | Cloudflare Pages deployment configuration         |     — |
+| `sitemap.xml`                         | SEO sitemap (359 destinations)                    |     — |
+| `robots.txt`                          | SEO robots configuration                          |     — |
+| `data/festivals2026.json`             | Festival calendar data for 2026                   |     — |
+| `data/user-feedbacks.json`            | Persisted user feedback                           |     — |
 
 ### Backend Files
 
-| File                                   | Purpose                               |
-|----------------------------------------|---------------------------------------|
-| `backend/server-v2.js`                 | Main Express API server (983 lines)   |
-| `backend/algorithms/crowd-scoring.js`  | Crowd scoring algorithm (570 lines)   |
-| `backend/algorithms/prediction-engine.js` | Forecast engine (394 lines)        |
-| `backend/scrapers/wikipedia-scraper.js`| Wikipedia pageview scraper (237 lines)|
-| `backend/scrapers/social-scraper.js`   | Social media signal scraper (253 lines)|
-| `backend/scrapers/hotel-scraper.js`    | Hotel availability scraper (230 lines)|
-| `backend/services/data-collector.js`   | Data collection orchestrator (312 lines)|
-| `backend/services/data-store.js`       | JSON file persistence (355 lines)    |
-| `backend/services/validation-service.js`| Feedback & accuracy tracking (370 lines)|
-| `backend/services/scheduler-service.js`| Cron job automation (357 lines)      |
-| `backend/config/database.js`           | PostgreSQL connection pool (64 lines) |
-| `backend/Procfile`                     | EB entry point config                |
-| `backend/.ebextensions/`              | Elastic Beanstalk configuration       |
+| File                                      | Purpose                               | Lines |
+|-------------------------------------------|---------------------------------------|-------|
+| `backend/server-v2.js`                    | Main Express API server               | 1,005 |
+| `backend/algorithms/crowd-scoring.js`     | Crowd scoring algorithm               |   569 |
+| `backend/algorithms/prediction-engine.js` | Forecast engine                       |   488 |
+| `backend/scrapers/wikipedia-scraper.js`   | Wikipedia pageview scraper            |   484 |
+| `backend/scrapers/social-scraper.js`      | Social media signal scraper           |   252 |
+| `backend/scrapers/hotel-scraper.js`       | Hotel availability scraper            |   229 |
+| `backend/services/data-collector.js`      | Data collection orchestrator          |   311 |
+| `backend/services/data-store.js`          | JSON file persistence layer           |   354 |
+| `backend/services/validation-service.js`  | Feedback & accuracy tracking          |   369 |
+| `backend/services/scheduler-service.js`   | Cron job automation                   |   356 |
+| `backend/config/database.js`              | PostgreSQL connection pool            |    63 |
+| `backend/Procfile`                        | Elastic Beanstalk entry point         |     — |
+| `backend/.ebextensions/`                  | Elastic Beanstalk environment config  |     — |
+| `backend/scripts/setup-database.js`       | RDS schema initialisation script      |     — |
+| `backend/scripts/migrate-data.js`         | Data migration utility                |     — |
+
+---
+
+## 11. Changelog
+
+| Version | Date           | Summary |
+|---------|----------------|-------------------------------------------------------------------------|
+| 4.0     | Mar 1, 2026    | 359 destinations, 38 states. Gamification, festival service, weather service, accuracy tracker, destination photos added. Crowd alerts migrated to localStorage + Browser Notification API. Best Time Finder auto-triggers on destination selection, shows chronological 6 AM order with ✦ BEST badge. Client-side algorithm promoted to primary prediction source. |
+| 3.0     | Feb 13, 2026   | 224 destinations. Client-side algorithm as primary. Bottom sheet UI, Discover filters, fuzzy search, destination detail page overhaul. |
+| 2.0     | —              | Backend prediction engine, multi-scraper data collection, validation feedback loop. |
+| 1.0     | —              | Initial launch with basic crowd scoring and static destination data. |

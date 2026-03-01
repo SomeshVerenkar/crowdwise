@@ -13,7 +13,7 @@ const API_CONFIG = {
     // OpenWeatherMap API (Free tier: 1000 calls/day)
     // Sign up at: https://openweathermap.org/api
     // API key is now used for direct frontend calls since backend has HTTPS/HTTP mixed content issue
-    WEATHER_API_KEY: 'bb862ba4c130cfa3b60af919266dbdd4',  // Live API key - weather data is now real-time
+    WEATHER_API_KEY: '01d84178319315636aea1579e3bac3ef',  // Live API key - weather data is now real-time
     WEATHER_API_URL: 'https://api.openweathermap.org/data/2.5/weather',
     
     // Backup: WeatherAPI.com (Free tier: 1M calls/month)
@@ -37,7 +37,7 @@ const API_CONFIG = {
     
     // ==================== OTHER APIs ====================
     // Holiday API for India (Free, no key needed)
-    HOLIDAY_API_URL: 'https://date.nager.at/api/v3/PublicHolidays/2025/IN',
+    HOLIDAY_API_URL: 'https://date.nager.at/api/v3/PublicHolidays/2026/IN',
     
     // ==================== REFRESH INTERVALS ====================
     WEATHER_REFRESH_INTERVAL: 600000,  // 10 minutes
