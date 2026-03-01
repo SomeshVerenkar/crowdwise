@@ -3562,27 +3562,19 @@ body {
     color: white;
 }
 
-/* State filter row in sheet — discover pills + state select + clear in one row */
+/* State filter row in sheet */
 .sheet-bottom-filters {
     display: flex;
     align-items: center;
     gap: 8px;
-    overflow: hidden;
 }
-.sheet-bottom-filters .discover-pills-row {
+.sheet-state-wrap {
     flex: 1;
-    min-width: 0;
-    overflow-x: auto;
-    margin-bottom: 0;
-    padding-bottom: 0;
 }
 .sheet-bottom-actions {
     display: flex;
     align-items: center;
     gap: 6px;
-    flex-shrink: 0;
-}
-.sheet-state-wrap {
     flex-shrink: 0;
 }
 .sheet-body {
@@ -3632,10 +3624,11 @@ body {
     /* Category pills row */
     .category-pills-row { margin-bottom: 5px; padding-bottom: 4px; }
     .category-pill { padding: 4px 9px; font-size: 11px; }
-    /* Bottom combined row */
-    .sheet-bottom-filters { gap: 6px; }
+    /* Discover pills row */
+    .discover-pills-row { margin-bottom: 5px; padding-bottom: 4px; }
     .discover-pill { padding: 4px 9px; font-size: 11px; }
-    .sheet-bottom-actions { gap: 5px; }
+    /* State + clear row */
+    .sheet-bottom-filters { gap: 6px; }
     .sheet-state-wrap .state-select { padding: 5px 26px 5px 9px; font-size: 11px; min-width: 90px; }
     .clear-filters { padding: 5px 10px; font-size: 11px; }
     /* Cards area */

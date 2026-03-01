@@ -526,23 +526,22 @@
                 <button class="category-pill" onclick="filterByCategory('cultural')" data-category="cultural">🎭 Cultural</button>
                 <button class="category-pill" onclick="filterByCategory('adventure')" data-category="adventure">🧗 Adventure</button>
             </div>
-            <!-- Discover filter + State filter + clear (combined compact row) -->
+            <!-- Discover filter pills -->
+            <div class="sheet-pills-row discover-pills-row" id="discoverPills">
+                <button class="discover-pill active" onclick="filterByDiscover('all')" data-discover="all">✨ All</button>
+                <button class="discover-pill" onclick="filterByDiscover('best-time')" data-discover="best-time">🗓️ Best Time</button>
+                <button class="discover-pill" onclick="filterByDiscover('hidden-gems')" data-discover="hidden-gems">💎 Gems</button>
+                <button class="discover-pill" onclick="filterByDiscover('weekend')" data-discover="weekend">🚗 Weekend</button>
+            </div>
+            <!-- State filter + clear -->
             <div class="sheet-bottom-filters">
-                <div class="discover-pills-row" id="discoverPills">
-                    <button class="discover-pill active" onclick="filterByDiscover('all')" data-discover="all">✨ All</button>
-                    <button class="discover-pill" onclick="filterByDiscover('best-time')" data-discover="best-time">🗓️ Best Time</button>
-                    <button class="discover-pill" onclick="filterByDiscover('hidden-gems')" data-discover="hidden-gems">💎 Gems</button>
-                    <button class="discover-pill" onclick="filterByDiscover('weekend')" data-discover="weekend">🚗 Weekend</button>
+                <div class="select-wrapper sheet-state-wrap">
+                    <select id="stateFilter" onchange="filterByState()" class="state-select">
+                        <option value="all">🗺️ All States</option>
+                    </select>
+                    <span class="select-arrow">▼</span>
                 </div>
-                <div class="sheet-bottom-actions">
-                    <div class="select-wrapper sheet-state-wrap">
-                        <select id="stateFilter" onchange="filterByState()" class="state-select">
-                            <option value="all">🗺️ All States</option>
-                        </select>
-                        <span class="select-arrow">▼</span>
-                    </div>
-                    <button class="clear-filters" onclick="clearAllFilters()">✕ Clear</button>
-                </div>
+                <button class="clear-filters" onclick="clearAllFilters()">✕ Clear</button>
             </div>
         </div>
         <!-- Scrollable destinations grid -->
