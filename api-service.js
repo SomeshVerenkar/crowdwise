@@ -654,15 +654,5 @@ class APIService {
 // Create global instance
 const apiService = new APIService();
 
-// Auto-refresh data every 5 minutes if real data is enabled
-if (API_CONFIG.USE_REAL_CROWD_DATA || API_CONFIG.USE_REAL_WEATHER || API_CONFIG.ENABLE_DYNAMIC_MOCK) {
-    setInterval(() => {
-        console.log('🔄 Refreshing crowd data...');
-        if (typeof filteredDestinations !== 'undefined') {
-            apiService.updateAllDestinations(filteredDestinations).then(() => {
-                renderDestinations();
-                console.log('✅ Data refreshed at', new Date().toLocaleTimeString());
-            });
-        }
-    }, API_CONFIG.CROWD_REFRESH_INTERVAL);
-}
+// Data refresh is handled by script.js setInterval — no duplicate here needed
+// (removed duplicate 5-min setInterval to prevent double re-rendering)

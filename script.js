@@ -598,17 +598,94 @@ function populateStateDropdowns() {
 }
 
 // ========== DESTINATION RENDERING ==========
+// ========== DESTINATION RENDERING (progressive / lazy) ==========
+const CARDS_PER_BATCH = 20;
+let _renderedCount = 0;
+let _sheetScrollHandler = null;
+const _bestTimeCache = new Map();
+
+function getCachedBestTime(dest) {
+    const cacheKey = dest.id;
+    if (_bestTimeCache.has(cacheKey)) return _bestTimeCache.get(cacheKey);
+    const val = getBestTimeNow(dest);
+    _bestTimeCache.set(cacheKey, val);
+    return val;
+}
+
+// Build HTML for a single destination card
+function buildCardHTML(dest) {
+    const crowdLabel = getCrowdLabel(dest.crowdLevel, dest.closedMessage);
+    const isClosed = dest.crowdLevel === 'closed';
+    const bestTimeBadge = isClosed
+        ? `<span class="best-time-badge closed-badge">🔒 ${dest.closedMessage || 'Closed Now'}</span>`
+        : `<span class="best-time-badge">⏰ Best: ${getCachedBestTime(dest)}</span>`;
+    return `
+        <div class="destination-card" onclick="navigateToDestination(${dest.id})">
+            <div class="card-image" data-dest-id="${dest.id}">
+                <span class="card-emoji" style="font-size: 4rem;">${dest.emoji}</span>
+                <span class="crowd-badge crowd-${dest.crowdLevel}">${crowdLabel}</span>
+                ${bookmarkIconHTML(dest.id)}
+                ${bestTimeBadge}
+            </div>
+            <div class="card-content">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">${dest.name}</div>
+                        <div class="card-state">📍 ${dest.state}</div>
+                    </div>
+                    ${isClosed
+                        ? `<div class="current-estimate closed-estimate">
+                            <div class="estimate-label">Status</div>
+                            <div class="estimate-value" style="font-size:11px;color:#6b7280;">⚫ ${dest.closedMessage || 'Closed Now'}</div>
+                           </div>`
+                        : `<div class="current-estimate">
+                            <div class="estimate-label">Live Count</div>
+                            <div class="estimate-value">👥 ${dest.currentEstimate}</div>
+                           </div>`
+                    }
+                </div>
+                ${!isClosed ? `<div class="confidence-meter">
+                    <span class="confidence-label">Confidence</span>
+                    <div class="confidence-bar"><div class="confidence-fill" style="width:${dest.confidence}%"></div></div>
+                    <span class="confidence-value">${dest.confidence}%</span>
+                </div>` : ''}
+                <div class="card-sparkline">${generateSparklineSVG(dest)}</div>
+            </div>
+        </div>`;
+}
+
+// Append next batch of cards into the grid
+function appendNextBatch() {
+    const grid = document.getElementById('destinationsGrid');
+    if (!grid || _renderedCount >= filteredDestinations.length) return;
+    const end = Math.min(_renderedCount + CARDS_PER_BATCH, filteredDestinations.length);
+    const fragment = document.createDocumentFragment();
+    const temp = document.createElement('div');
+    for (let i = _renderedCount; i < end; i++) {
+        temp.innerHTML = buildCardHTML(filteredDestinations[i]);
+        fragment.appendChild(temp.firstElementChild);
+    }
+    grid.appendChild(fragment);
+    _renderedCount = end;
+    // Load photos for newly visible cards
+    if (window.DestinationPhotos) window.DestinationPhotos.loadPhotosForVisibleCards();
+}
+
 function renderDestinations() {
     const grid = document.getElementById('destinationsGrid');
 
     // Always scroll the sheet back to the top when results change due to a filter.
-    // (The saved-scroll restore for returning from a destination page happens in
-    // openDestinationsSheet() which runs *after* this, so it correctly overrides.)
     const sheetBody = document.getElementById('sheetBody');
     if (sheetBody) sheetBody.scrollTop = 0;
 
     // Update count badges every render (including zero results)
     updateSheetCounts();
+
+    // Tear down previous infinite-scroll listener
+    if (_sheetScrollHandler && sheetBody) {
+        sheetBody.removeEventListener('scroll', _sheetScrollHandler);
+        _sheetScrollHandler = null;
+    }
 
     if (filteredDestinations.length === 0) {
         grid.innerHTML = `
@@ -618,73 +695,58 @@ function renderDestinations() {
                 <button onclick="clearAllFilters()" style="margin-top: 16px; padding: 12px 24px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; font-weight: 600;">Clear Filters</button>
             </div>
         `;
+        _renderedCount = 0;
         return;
     }
-    
-    grid.innerHTML = filteredDestinations.map(dest => {
-        const crowdClass = getCrowdClass(dest.crowdLevel);
-        const crowdLabel = getCrowdLabel(dest.crowdLevel, dest.closedMessage);
-        const isClosed = dest.crowdLevel === 'closed';
 
-        // Badge: use actual closed message (e.g. "Opens at 7:00 AM") not generic "Closed Today"
-        const bestTimeBadge = isClosed
-            ? `<span class="best-time-badge closed-badge">🔒 ${dest.closedMessage || 'Closed Now'}</span>`
-            : `<span class="best-time-badge">⏰ Best: ${getBestTimeNow(dest)}</span>`;
-        
-        return `
-            <div class="destination-card" onclick="navigateToDestination(${dest.id})">
-                <div class="card-image" data-dest-id="${dest.id}">
-                    <span class="card-emoji" style="font-size: 4rem;">${dest.emoji}</span>
-                    <span class="crowd-badge crowd-${dest.crowdLevel}">${crowdLabel}</span>
-                    ${bookmarkIconHTML(dest.id)}
-                    ${bestTimeBadge}
-                </div>
-                <div class="card-content">
-                    <div class="card-header">
-                        <div>
-                            <div class="card-title">${dest.name}</div>
-                            <div class="card-state">📍 ${dest.state}</div>
-                        </div>
-                        ${dest.crowdLevel === 'closed'
-                            ? `<div class="current-estimate closed-estimate">
-                                <div class="estimate-label">Status</div>
-                                <div class="estimate-value" style="font-size:11px;color:#6b7280;">⚫ ${dest.closedMessage || 'Closed Now'}</div>
-                               </div>`
-                            : `<div class="current-estimate">
-                                <div class="estimate-label">Live Count</div>
-                                <div class="estimate-value">👥 ${dest.currentEstimate}</div>
-                               </div>`
-                        }
-                    </div>
-                    ${dest.crowdLevel !== 'closed' ? `<div class="confidence-meter">
-                        <span class="confidence-label">Confidence</span>
-                        <div class="confidence-bar"><div class="confidence-fill" style="width:${dest.confidence}%"></div></div>
-                        <span class="confidence-value">${dest.confidence}%</span>
-                    </div>` : ''}
-                    <div class="card-sparkline">${generateSparklineSVG(dest)}</div>
-                </div>
-            </div>
-        `;
-    }).join('');
+    // Render first batch only
+    _renderedCount = 0;
+    grid.innerHTML = '';
+    appendNextBatch();
 
-    // Load destination photos asynchronously after cards are rendered
-    if (window.DestinationPhotos) {
-        window.DestinationPhotos.loadPhotosForVisibleCards();
+    // Set up infinite scroll on the sheet body
+    if (sheetBody) {
+        _sheetScrollHandler = function() {
+            if (_renderedCount >= filteredDestinations.length) return;
+            const { scrollTop, scrollHeight, clientHeight } = sheetBody;
+            if (scrollTop + clientHeight >= scrollHeight - 300) {
+                appendNextBatch();
+            }
+        };
+        sheetBody.addEventListener('scroll', _sheetScrollHandler, { passive: true });
     }
 }
 
-// ========== HEATMAP RENDERING ==========
+// ========== HEATMAP RENDERING (lazy — only when scrolled into view) ==========
+let _heatmapRendered = false;
 function renderHeatmap() {
     const heatmapGrid = document.getElementById('heatmapGrid');
-    if (!heatmapGrid) return;
-    
-    heatmapGrid.innerHTML = allDestinations.map(dest => `
-        <div class="heatmap-item ${dest.crowdLevel}" onclick="navigateToDestination(${dest.id})">
-            <div class="heatmap-emoji">${dest.emoji}</div>
-            <div class="heatmap-name">${dest.name}</div>
-            <div class="heatmap-crowd">${getCrowdLabel(dest.crowdLevel)}</div>
-        </div>
-    `).join('');
+    if (!heatmapGrid || _heatmapRendered) return;
+    if ('IntersectionObserver' in window) {
+        const obs = new IntersectionObserver((entries, self) => {
+            if (entries[0].isIntersecting) {
+                _heatmapRendered = true;
+                heatmapGrid.innerHTML = allDestinations.map(dest => `
+                    <div class="heatmap-item ${dest.crowdLevel}" onclick="navigateToDestination(${dest.id})">
+                        <div class="heatmap-emoji">${dest.emoji}</div>
+                        <div class="heatmap-name">${dest.name}</div>
+                        <div class="heatmap-crowd">${getCrowdLabel(dest.crowdLevel)}</div>
+                    </div>
+                `).join('');
+                self.disconnect();
+            }
+        }, { rootMargin: '200px' });
+        obs.observe(heatmapGrid);
+    } else {
+        _heatmapRendered = true;
+        heatmapGrid.innerHTML = allDestinations.map(dest => `
+            <div class="heatmap-item ${dest.crowdLevel}" onclick="navigateToDestination(${dest.id})">
+                <div class="heatmap-emoji">${dest.emoji}</div>
+                <div class="heatmap-name">${dest.name}</div>
+                <div class="heatmap-crowd">${getCrowdLabel(dest.crowdLevel)}</div>
+            </div>
+        `).join('');
+    }
 }
 
 // ========== HELPER FUNCTIONS ==========
@@ -2650,6 +2712,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 // Auto-refresh data every 5 minutes
 setInterval(() => {
+    _bestTimeCache.clear(); // bust cached best-time strings
     updateLastUpdatedTime();
     displayDataStatus();
     checkLocalAlerts(); // re-check saved alerts with latest crowd levels
@@ -2861,7 +2924,7 @@ document.addEventListener('click', function(event) {
         });
     }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
 
-    // Observe cards and feature sections after a short delay (cards render async)
+    let _observeTimer = null;
     function observeElements() {
         document.querySelectorAll('.smart-feature-card, .feature-card, .destination-card').forEach(el => {
             if (!el.classList.contains('reveal-on-scroll') && !el.classList.contains('revealed')) {
@@ -2870,16 +2933,27 @@ document.addEventListener('click', function(event) {
             }
         });
     }
+    // Debounced version to avoid hammering the DOM on rapid filter clicks
+    function scheduleObserve() {
+        clearTimeout(_observeTimer);
+        _observeTimer = setTimeout(observeElements, 150);
+    }
 
-    // Run on load and after each re-render
+    // Hook into renderDestinations + appendNextBatch
     const origRender = window.renderDestinations;
     if (typeof origRender === 'function') {
         window.renderDestinations = function() {
             origRender.apply(this, arguments);
-            requestAnimationFrame(() => setTimeout(observeElements, 50));
+            scheduleObserve();
+        };
+    }
+    const origAppend = window.appendNextBatch;
+    if (typeof origAppend === 'function') {
+        window.appendNextBatch = function() {
+            origAppend.apply(this, arguments);
+            scheduleObserve();
         };
     }
     document.addEventListener('DOMContentLoaded', () => setTimeout(observeElements, 200));
-    // Also run immediately in case DOM is already loaded
     if (document.readyState !== 'loading') setTimeout(observeElements, 200);
 })();
