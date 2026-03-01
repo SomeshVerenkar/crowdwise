@@ -3480,9 +3480,10 @@ body {
 .sheet-pills-row::-webkit-scrollbar { display: none; }
 .sheet-pills-row .crowd-pill {
     flex-shrink: 0;
-    padding: 7px 14px;
-    font-size: 13px;
+    padding: 6px 12px;
+    font-size: 12px;
 }
+.sheet-pills-row .crowd-pill .pill-icon { font-size: 12px; }
 
 /* Category filter pills */
 .category-pills-row {
@@ -3620,7 +3621,8 @@ body {
     .sheet-search-input { font-size: 14px; }
     /* Crowd pills row */
     .sheet-pills-row { margin-bottom: 5px; }
-    .sheet-pills-row .crowd-pill { padding: 5px 10px; font-size: 11px; gap: 4px; }
+    .sheet-pills-row .crowd-pill { padding: 4px 9px; font-size: 11px; gap: 4px; }
+    .sheet-pills-row .crowd-pill .pill-icon { font-size: 11px; }
     /* Category pills row */
     .category-pills-row { margin-bottom: 5px; padding-bottom: 4px; }
     .category-pill { padding: 4px 9px; font-size: 11px; }
