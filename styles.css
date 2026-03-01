@@ -3562,14 +3562,28 @@ body {
     color: white;
 }
 
-/* State filter row in sheet */
+/* State filter row in sheet — discover pills + state select + clear in one row */
 .sheet-bottom-filters {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+    overflow: hidden;
+}
+.sheet-bottom-filters .discover-pills-row {
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+.sheet-bottom-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
 }
 .sheet-state-wrap {
-    flex: 1;
+    flex-shrink: 0;
 }
 .sheet-body {
     flex: 1;
@@ -3605,10 +3619,27 @@ body {
         height: 92vh;
         border-radius: 20px 20px 0 0;
     }
-    .sheet-header { padding: 4px 16px 14px; }
-    .sheet-body { padding: 16px 12px 80px; }
-    .sheet-title { font-size: 18px; }
-    .sheet-pills-row .crowd-pill { padding: 6px 10px; font-size: 12px; }
+    /* --- Compact filter header --- */
+    .sheet-header { padding: 4px 14px 10px; }
+    .sheet-title-row { margin-bottom: 8px; }
+    .sheet-title { font-size: 16px; }
+    .sheet-count-badge { font-size: 11px; padding: 2px 8px; }
+    .sheet-search-wrap { padding: 7px 12px; margin-bottom: 7px; gap: 8px; }
+    .sheet-search-input { font-size: 14px; }
+    /* Crowd pills row */
+    .sheet-pills-row { margin-bottom: 5px; }
+    .sheet-pills-row .crowd-pill { padding: 5px 10px; font-size: 11px; gap: 4px; }
+    /* Category pills row */
+    .category-pills-row { margin-bottom: 5px; padding-bottom: 4px; }
+    .category-pill { padding: 4px 9px; font-size: 11px; }
+    /* Bottom combined row */
+    .sheet-bottom-filters { gap: 6px; }
+    .discover-pill { padding: 4px 9px; font-size: 11px; }
+    .sheet-bottom-actions { gap: 5px; }
+    .sheet-state-wrap .state-select { padding: 5px 26px 5px 9px; font-size: 11px; min-width: 90px; }
+    .clear-filters { padding: 5px 10px; font-size: 11px; }
+    /* Cards area */
+    .sheet-body { padding: 14px 12px 80px; }
 }
 
 @media (min-width: 769px) and (max-width: 1099px) {
