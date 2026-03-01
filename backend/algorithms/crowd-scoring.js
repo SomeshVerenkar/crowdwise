@@ -128,7 +128,7 @@ class CrowdScoringAlgorithm {
         // India public holidays 2026
         this.holidays2026 = [
             { date: '2026-01-26', name: 'Republic Day', impact: 1.5 },
-            { date: '2026-03-10', name: 'Holi', impact: 1.6 },
+            { date: '2026-03-04', name: 'Holi', impact: 1.6 },
             { date: '2026-04-02', name: 'Ram Navami', impact: 1.3 },
             { date: '2026-04-10', name: 'Good Friday', impact: 1.2 },
             { date: '2026-04-14', name: 'Ambedkar Jayanti', impact: 1.2 },

@@ -20,8 +20,8 @@ describe('WikipediaScraper', () => {
             expect(scraper.baseUrl).toBe('https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article');
         });
 
-        test('should have 6-hour cache expiry', () => {
-            expect(scraper.cacheExpiry).toBe(6 * 60 * 60 * 1000);
+        test('should have 4-hour cache expiry', () => {
+            expect(scraper.cacheExpiry).toBe(4 * 60 * 60 * 1000);
         });
 
         test('should have destination wiki mappings', () => {

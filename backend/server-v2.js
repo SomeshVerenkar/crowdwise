@@ -37,7 +37,8 @@ process.on('unhandledRejection', (reason, promise) => {
 
 const CONFIG = {
     // OpenWeatherMap API (FREE - for weather only)
-    OPENWEATHER_API_KEY: process.env.OPENWEATHER_API_KEY || 'bb862ba4c130cfa3b60af919266dbdd4',
+    // ⚠️ NEVER hardcode API keys — set OPENWEATHER_API_KEY in .env or EB environment
+    OPENWEATHER_API_KEY: process.env.OPENWEATHER_API_KEY || '',
     OPENWEATHER_URL: 'https://api.openweathermap.org/data/2.5/weather',
     
     // Cache settings (in milliseconds)
@@ -49,7 +50,7 @@ const CONFIG = {
     EMAIL_HOST: process.env.EMAIL_HOST || 'smtp.gmail.com',
     EMAIL_PORT: parseInt(process.env.EMAIL_PORT) || 587,
     EMAIL_USER: process.env.EMAIL_USER || '',
-    EMAIL_PASS: process.env.EMAIL_PASS || 'rkoy ujsc ngeo hewn',
+    EMAIL_PASS: process.env.EMAIL_PASS || '',
     EMAIL_FROM: process.env.EMAIL_FROM || 'CrowdWise India <noreply@crowdwise.in>',
     
     // System settings
@@ -147,12 +148,41 @@ function initializeEmailTransporter() {
 // ==================== MIDDLEWARE ====================
 
 app.use(cors({
-    origin: '*',
-    methods: ['GET', 'POST', 'OPTIONS'],
+    origin: [
+        'https://crowdwise.in',
+        'https://www.crowdwise.in',
+        'https://crowdwise.samverenkar.workers.dev',
+        'http://localhost:8000',
+        'http://localhost:3000'
+    ],
+    methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
     credentials: true
 }));
 
 app.use(express.json());
+
+// Rate limiting — 100 requests per 15 minutes per IP
+const rateLimit = require('express-rate-limit');
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: 'Too many requests, please try again later.' }
+});
+app.use('/api/', limiter);
+
+// Admin auth middleware — protects admin-only endpoints
+function adminAuth(req, res, next) {
+    const token = req.headers['x-admin-token'];
+    if (!process.env.ADMIN_TOKEN) {
+        return res.status(503).json({ error: 'Admin access not configured on this server.' });
+    }
+    if (token !== process.env.ADMIN_TOKEN) {
+        return res.status(401).json({ error: 'Unauthorized — invalid or missing admin token.' });
+    }
+    next();
+}
 
 // Request logging
 app.use((req, res, next) => {
@@ -387,6 +417,28 @@ app.get('/api/predict/month/:destinationId', async (req, res) => {
     });
 });
 
+// Get 30-day daily forecast
+app.get('/api/predict/30days/:destinationId', async (req, res) => {
+    const { destinationId } = req.params;
+    const dest = DESTINATIONS[destinationId];
+    
+    if (!dest) {
+        return res.status(404).json({ error: 'Destination not found' });
+    }
+    
+    const prediction = predictionEngine.predict30Days({
+        destination: dest.name,
+        category: dest.category,
+        baseCrowdLevel: dest.baseCrowd
+    });
+    
+    res.json({
+        destinationId: dest.id,
+        destination: dest.name,
+        ...prediction
+    });
+});
+
 // ==================== FEEDBACK API ====================
 
 // Submit feedback
@@ -524,7 +576,7 @@ app.post('/api/user-feedback', async (req, res) => {
 });
 
 // Get all user feedback (for admin)
-app.get('/api/user-feedback', async (req, res) => {
+app.get('/api/user-feedback', adminAuth, async (req, res) => {
     try {
         const fs = require('fs').promises;
         const path = require('path');
@@ -696,7 +748,7 @@ app.post('/api/alerts', (req, res) => {
 });
 
 // Get all alerts (for admin)
-app.get('/api/alerts', (req, res) => {
+app.get('/api/alerts', adminAuth, (req, res) => {
     res.json({
         total: alertsStore.length,
         active: alertsStore.filter(a => !a.triggered).length,
@@ -705,7 +757,7 @@ app.get('/api/alerts', (req, res) => {
 });
 
 // Delete an alert
-app.delete('/api/alerts/:alertId', (req, res) => {
+app.delete('/api/alerts/:alertId', adminAuth, (req, res) => {
     const { alertId } = req.params;
     const index = alertsStore.findIndex(a => a.id === alertId);
     
@@ -944,6 +996,7 @@ initialize().then(() => {
         console.log('   GET  /api/weather/:id         - Weather data');
         console.log('   GET  /api/predict/today/:id   - Hourly forecast');
         console.log('   GET  /api/predict/week/:id    - Weekly forecast');
+        console.log('   GET  /api/predict/30days/:id  - 30-day daily forecast');
         console.log('   POST /api/feedback            - Submit accuracy feedback');
         console.log('   GET  /api/feedback/stats      - Accuracy statistics');
         console.log('');

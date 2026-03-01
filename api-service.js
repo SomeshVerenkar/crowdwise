@@ -522,9 +522,33 @@ class APIService {
         if (API_CONFIG.USE_REAL_CROWD_DATA || API_CONFIG.ENABLE_DYNAMIC_MOCK) {
             const crowdData = await this.getCrowdData(destination.id);
             if (crowdData) {
-                destination.crowdLevel = crowdData.crowdLevel;
-                destination.crowdLabel = crowdData.crowdLabel;
-                destination.currentEstimate = crowdData.currentEstimate;
+                // Always re-check operating hours — estimateCrowdWithAlgorithm ignores them
+                let isClosed = false;
+                let closedMsg = null;
+                if (window.clientCrowdAlgorithm) {
+                    try {
+                        const status = window.clientCrowdAlgorithm.calculateCrowdScore({
+                            baseCrowdLevel: destination.baseCrowdLevel || 50,
+                            category: destination.category || 'default',
+                            destinationId: destination.id
+                        });
+                        if (status.status === 'closed') {
+                            isClosed = true;
+                            closedMsg = status.message || 'Currently closed';
+                        }
+                    } catch(_) {}
+                }
+                if (isClosed) {
+                    destination.crowdLevel = 'closed';
+                    destination.crowdLabel = '⚫ Closed Now';
+                    destination.currentEstimate = null;
+                    destination.closedMessage = closedMsg;
+                } else {
+                    destination.crowdLevel = crowdData.crowdLevel;
+                    destination.crowdLabel = crowdData.crowdLabel;
+                    destination.currentEstimate = crowdData.currentEstimate;
+                    destination.closedMessage = null;
+                }
             }
         }
         
@@ -542,6 +566,56 @@ class APIService {
     async updateAllDestinations(destinations) {
         const promises = destinations.map(dest => this.updateDestinationData(dest));
         return Promise.all(promises);
+    }
+
+    // ==================== 30-DAY FORECAST ====================
+
+    async get30DayForecast(destinationId) {
+        // Check client-side cache first (4 hours)
+        const cacheKey = `forecast30_${destinationId}`;
+        const cached = this._forecast30Cache && this._forecast30Cache[cacheKey];
+        if (cached && (Date.now() - cached.timestamp) < 4 * 60 * 60 * 1000) {
+            return cached.data;
+        }
+
+        // Try backend API first if configured
+        if (API_CONFIG.USE_BACKEND_API) {
+            try {
+                const response = await fetch(`${API_CONFIG.BACKEND_API_URL}/predict/30days/${destinationId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    data.dataSource = 'backend';
+                    this._cacheForecast30(cacheKey, data);
+                    return data;
+                }
+            } catch (error) {
+                console.warn('Backend 30-day forecast unavailable, using client algorithm');
+            }
+        }
+
+        // Fallback: Client-side algorithm
+        const destination = destinations.find(d => d.id === destinationId);
+        if (!destination) return null;
+
+        const baseCrowdLevel = typeof destination.crowdLevel === 'number'
+            ? destination.crowdLevel
+            : { 'low': 25, 'moderate': 50, 'heavy': 70, 'overcrowded': 90 }[destination.crowdLevel] || 50;
+
+        const forecast = window.clientCrowdAlgorithm.predict30Days({
+            baseCrowdLevel,
+            category: destination.category || 'default',
+            destinationId: destination.id
+        });
+
+        forecast.destinationId = destinationId;
+        forecast.destinationName = destination.name;
+        this._cacheForecast30(cacheKey, forecast);
+        return forecast;
+    }
+
+    _cacheForecast30(key, data) {
+        if (!this._forecast30Cache) this._forecast30Cache = {};
+        this._forecast30Cache[key] = { data, timestamp: Date.now() };
     }
 
     // ==================== ANALYTICS & INSIGHTS ====================

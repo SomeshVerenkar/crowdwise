@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Destination - CrowdWise India</title>
     <meta name="description" content="Real-time crowd prediction for Indian tourist destinations. Check crowd levels and plan your visit.">
-    <link rel="stylesheet" href="styles.css?v=3.1">
+    <link rel="stylesheet" href="styles.css?v=5.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         /* ===== DESTINATION PAGE STYLES ===== */
         .dest-page { max-width: 900px; margin: 0 auto; padding: 24px 16px 60px; }
@@ -61,6 +61,20 @@
         .dest-nearby-tags { display: flex; flex-wrap: wrap; gap: 8px; }
         .dest-nearby-tag { background: var(--bg-light); padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; }
 
+        /* Compact status row */
+        .dest-status-row { display: flex; align-items: stretch; background: var(--bg-light); border-radius: 12px; border: 1.5px solid var(--border-light); overflow: hidden; }
+        .dest-status-chip { flex: 1; display: flex; align-items: center; gap: 8px; padding: 10px 12px; min-width: 0; }
+        .dest-status-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .dest-status-dot.status-low { background: #22c55e; }
+        .dest-status-dot.status-moderate { background: #eab308; }
+        .dest-status-dot.status-heavy { background: #f97316; }
+        .dest-status-dot.status-overcrowded { background: #ef4444; }
+        .dest-status-dot.status-closed { background: #6b7280; }
+        .dest-status-icon { font-size: 14px; flex-shrink: 0; }
+        .dest-status-label { font-size: 10px; text-transform: uppercase; font-weight: 600; color: var(--text-muted); letter-spacing: 0.3px; }
+        .dest-status-val { font-size: 12px; font-weight: 700; color: var(--text-primary); line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .dest-status-divider { width: 1px; background: var(--border-light); flex-shrink: 0; }
+
         .dest-alerts-list { list-style: none; padding: 0; margin: 0; }
         .dest-alerts-list li { padding: 10px 0; border-bottom: 1px solid var(--border-light); font-size: 14px; }
         .dest-alerts-list li:last-child { border-bottom: none; }
@@ -104,6 +118,9 @@
             .cal-day-pct { font-size: 8px; }
             .dest-quick-stats { grid-template-columns: repeat(2, 1fr); }
             .dest-tab { font-size: 13px; padding: 14px 8px; }
+            .dest-status-row { flex-direction: column; }
+            .dest-status-divider { width: 100%; height: 1px; }
+            .dest-status-val { white-space: normal; }
         }
     </style>
 </head>
@@ -170,6 +187,7 @@
         // Use prediction algorithm for time/day/season-aware crowd level
         let dynamicCrowdLevel = normalizeCrowdLevel(dest.crowdLevel);
         let closedMessage = null;
+        let predictedFactors = null;
         if (window.clientCrowdAlgorithm) {
             try {
                 const predicted = window.clientCrowdAlgorithm.calculateCrowdScore({
@@ -183,6 +201,7 @@
                 } else {
                     dynamicCrowdLevel = predicted.level || dynamicCrowdLevel;
                 }
+                predictedFactors = predicted.factors || null;
             } catch(_){}
         }
 
@@ -220,6 +239,68 @@
         // Set page title
         document.title = `${dest.name} - CrowdWise India`;
 
+        // --- Confidence score — exact same formula as script.js transformDestinationData() ---
+        // Base 55%: time(0.20) + day(0.15) + seasonal(0.20) always active
+        const cat = dest.category || 'default';
+        // Confidence = documented system accuracy (Agents.MD: 65–75% baseline)
+        let confidence = 65;
+        if (predictedFactors) {
+            if (predictedFactors.holiday && predictedFactors.holiday !== 'None') confidence += 3;
+            if (predictedFactors.festival) confidence += 2;
+            if (predictedFactors.weather) confidence += 1;
+        }
+        if (cat !== 'default') confidence += 3;  // category-specific hourly curve
+        if (dest.openTime || dest.closeTime) confidence += 2;  // deterministic hours
+        if (dest.closedOn) confidence += 2;  // known special-day closures
+        confidence = Math.min(confidence, 75);  // honest ceiling per Agents.MD
+
+        // --- Sparkline SVG (same as main page) ---
+        function generateDestSparklineSVG() {
+            if (!window.clientCrowdAlgorithm || dynamicCrowdLevel === 'closed') return '';
+            const algo = window.clientCrowdAlgorithm;
+            const hourly = algo.hourlyPatterns[cat] || algo.hourlyPatterns.default;
+            const now = new Date().getHours();
+            const startH = 6, endH = 22;
+            const W = 120, H = 28, pad = 2;
+            const steps = endH - startH;
+            const points = [];
+            for (let h = startH; h <= endH; h++) {
+                const x = pad + ((h - startH) / steps) * (W - pad * 2);
+                const y = H - pad - (hourly[h] || 0) * (H - pad * 2);
+                points.push({ x, y, h });
+            }
+            const polyline = points.map(p => p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ');
+            let nowDot = '';
+            if (now >= startH && now <= endH) {
+                const np = points[now - startH];
+                if (np) {
+                    const c = dynamicCrowdLevel === 'low' ? '#22c55e' :
+                              dynamicCrowdLevel === 'moderate' ? '#eab308' :
+                              dynamicCrowdLevel === 'heavy' ? '#f97316' : '#ef4444';
+                    nowDot = '<circle cx="' + np.x.toFixed(1) + '" cy="' + np.y.toFixed(1) + '" r="3" fill="' + c + '" stroke="white" stroke-width="1.5"/>';
+                }
+            }
+            const fillPoints = points[0].x.toFixed(1) + ',' + H + ' ' + polyline + ' ' + points[points.length-1].x.toFixed(1) + ',' + H;
+            const tickHours = [6, 9, 12, 15, 18, 21];
+            const fmtHour = h => h === 12 ? '12pm' : h < 12 ? h + 'am' : (h - 12) + 'pm';
+            const tickLabels = tickHours.map(h => {
+                const leftPct = ((h - startH) / steps * 100).toFixed(1);
+                const align = h === startH ? 'left' : h === endH ? 'right' : 'center';
+                const transform = align === 'left' ? 'none' : align === 'right' ? 'translateX(-100%)' : 'translateX(-50%)';
+                return '<span style="left:' + leftPct + '%;transform:' + transform + '">' + fmtHour(h) + '</span>';
+            }).join('');
+            return '<svg viewBox="0 0 ' + W + ' ' + H + '" class="sparkline-svg" preserveAspectRatio="none">' +
+                '<defs><linearGradient id="sparkFillDest" x1="0" y1="0" x2="0" y2="1">' +
+                '<stop offset="0%" stop-color="var(--primary)" stop-opacity="0.15"/>' +
+                '<stop offset="100%" stop-color="var(--primary)" stop-opacity="0.02"/>' +
+                '</linearGradient></defs>' +
+                '<polygon points="' + fillPoints + '" fill="url(#sparkFillDest)"/>' +
+                '<polyline points="' + polyline + '" fill="none" stroke="var(--primary-light)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+                nowDot + '</svg>' +
+                '<div class="sparkline-labels">' + tickLabels + '</div>';
+        }
+        const sparklineHTML = generateDestSparklineSVG();
+
         // --- Nearby attractions ---
         const nearbyHTML = dest.nearbyAttractions && dest.nearbyAttractions.length > 0
             ? dest.nearbyAttractions.map(a => `<span class="dest-nearby-tag">${a}</span>`).join('')
@@ -232,7 +313,7 @@
 
         // Build page
         document.getElementById('destPage').innerHTML = `
-            <a href="index.html" class="dest-back">← Back to all destinations</a>
+            <a href="index.html" class="dest-back" onclick="if(document.referrer.includes(location.origin)){event.preventDefault();history.back();}">← Back to all destinations</a>
 
             <!-- Hero -->
             <div class="dest-hero" id="destHero">
@@ -240,7 +321,7 @@
                 <div class="dest-hero-overlay"></div>
                 <div class="dest-hero-info">
                     <div class="dest-hero-name">${dest.emoji} ${dest.name}</div>
-                    <div class="dest-hero-state">📍 ${dest.city || dest.state}, ${dest.state}</div>
+                    <div class="dest-hero-state">📍 ${dest.city && dest.city !== dest.state ? dest.city + ', ' + dest.state : dest.state}</div>
                     <div class="dest-hero-badges">
                         <span class="dest-hero-badge crowd">${crowdLabel}</span>
                         <span class="dest-hero-badge best-time">${bestTimeBadge}</span>
@@ -291,24 +372,31 @@
                         </div>
                     </div>
 
-                    <!-- Current Status -->
+                    <!-- Current Status & Best Time — compact inline -->
                     <div class="dest-section-title">📊 Current Status &amp; Best Time</div>
-                    <div class="dest-detail-grid">
-                        <div class="dest-detail-item">
-                            <div class="dest-detail-item-label">Right Now</div>
-                            <div class="dest-detail-item-value">${crowdLabel}</div>
+                    <div class="dest-status-row">
+                        <div class="dest-status-chip">
+                            <span class="dest-status-dot status-${dynamicCrowdLevel}"></span>
+                            <div>
+                                <div class="dest-status-label">Now</div>
+                                <div class="dest-status-val">${crowdLabel.replace(/^[\u{1F7E0}\u{1F7E1}\u{1F7E2}\u{1F534}\u{26AB}\u{1F512}]\s*/u, '')}</div>
+                            </div>
                         </div>
-                        <div class="dest-detail-item">
-                            <div class="dest-detail-item-label">Best Today</div>
-                            <div class="dest-detail-item-value">🟢 ${bestTime}</div>
+                        <div class="dest-status-divider"></div>
+                        <div class="dest-status-chip">
+                            <span class="dest-status-icon">🟢</span>
+                            <div>
+                                <div class="dest-status-label">Best Today</div>
+                                <div class="dest-status-val">${bestTime}</div>
+                            </div>
                         </div>
-                        <div class="dest-detail-item">
-                            <div class="dest-detail-item-label">Best Season</div>
-                            <div class="dest-detail-item-value">${dest.bestTimeToVisit || dest.bestTime || 'Year-round'}</div>
-                        </div>
-                        <div class="dest-detail-item">
-                            <div class="dest-detail-item-label">Peak Hours</div>
-                            <div class="dest-detail-item-value">${dest.peakHours || 'N/A'}</div>
+                        <div class="dest-status-divider"></div>
+                        <div class="dest-status-chip">
+                            <span class="dest-status-icon">📅</span>
+                            <div>
+                                <div class="dest-status-label">Best Season</div>
+                                <div class="dest-status-val">${dest.bestTimeToVisit || dest.bestTime || 'Year-round'}</div>
+                            </div>
                         </div>
                     </div>
 
@@ -327,11 +415,6 @@
                     <div id="calendarContainer"></div>
                 </div>
 
-            </div>
-
-            <!-- Bottom CTA -->
-            <div class="dest-cta-row">
-                <button onclick="window.location.href='index.html'" style="background: var(--bg-light); color: var(--text-primary);">← Back</button>
             </div>
         `;
 

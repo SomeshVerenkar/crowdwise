@@ -250,6 +250,101 @@ class PredictionEngine {
         };
     }
 
+    // Predict for next 30 days (daily granularity)
+    predict30Days(params) {
+        const { destination, category, baseCrowdLevel, socialSignal, hotelSignal } = params;
+
+        const predictions = [];
+        const now = new Date();
+
+        for (let dayOffset = 1; dayOffset <= 30; dayOffset++) {
+            const targetDate = new Date(now);
+            targetDate.setDate(targetDate.getDate() + dayOffset);
+
+            // Calculate scores at morning, afternoon, evening for a richer daily view
+            const morningScore = this.crowdAlgorithm.calculateCrowdScore({
+                destination, category, date: targetDate, hour: 9, baseCrowdLevel, socialSignal, hotelSignal
+            });
+            const afternoonScore = this.crowdAlgorithm.calculateCrowdScore({
+                destination, category, date: targetDate, hour: 14, baseCrowdLevel, socialSignal, hotelSignal
+            });
+            const eveningScore = this.crowdAlgorithm.calculateCrowdScore({
+                destination, category, date: targetDate, hour: 18, baseCrowdLevel, socialSignal, hotelSignal
+            });
+
+            const avgScore = (morningScore.score + afternoonScore.score + eveningScore.score) / 3;
+            const peakScore = Math.max(morningScore.score, afternoonScore.score, eveningScore.score);
+
+            // Find peak and best hours for the day
+            const hourlyScores = [];
+            for (let h = 6; h <= 20; h++) {
+                const hs = this.crowdAlgorithm.calculateCrowdScore({
+                    destination, category, date: targetDate, hour: h, baseCrowdLevel, socialSignal, hotelSignal
+                });
+                hourlyScores.push({ hour: h, score: hs.score });
+            }
+            const peakHour = hourlyScores.reduce((max, h) => h.score > max.score ? h : max, hourlyScores[0]);
+            const bestHour = hourlyScores.reduce((min, h) => h.score < min.score ? h : min, hourlyScores[0]);
+
+            predictions.push({
+                date: targetDate.toISOString().split('T')[0],
+                dayName: this.getDayName(targetDate),
+                dayShort: this.getDayName(targetDate).substring(0, 3),
+                dayOfMonth: targetDate.getDate(),
+                month: targetDate.toLocaleString('en-US', { month: 'short' }),
+                isWeekend: targetDate.getDay() === 0 || targetDate.getDay() === 6,
+                scores: {
+                    morning: Math.round(morningScore.score * 100) / 100,
+                    afternoon: Math.round(afternoonScore.score * 100) / 100,
+                    evening: Math.round(eveningScore.score * 100) / 100,
+                    average: Math.round(avgScore * 100) / 100,
+                    peak: Math.round(peakScore * 100) / 100
+                },
+                crowdLevel: this.scoreToCrowdLevel(avgScore),
+                percentageFull: Math.round(avgScore * 100),
+                peakHour: this.formatHour(peakHour.hour),
+                bestHour: this.formatHour(bestHour.hour),
+                holiday: morningScore.breakdown ? morningScore.breakdown.holiday.info : { isHoliday: false },
+                recommendation: this.getDayRecommendation(avgScore, targetDate)
+            });
+        }
+
+        // Group by weeks
+        const weeks = [];
+        for (let i = 0; i < predictions.length; i += 7) {
+            const weekDays = predictions.slice(i, i + 7);
+            const weekAvg = weekDays.reduce((sum, d) => sum + d.scores.average, 0) / weekDays.length;
+            weeks.push({
+                weekNumber: Math.floor(i / 7) + 1,
+                startDate: weekDays[0].date,
+                endDate: weekDays[weekDays.length - 1].date,
+                days: weekDays,
+                averageScore: Math.round(weekAvg * 100) / 100,
+                crowdLevel: this.scoreToCrowdLevel(weekAvg)
+            });
+        }
+
+        // Find best and worst days
+        const sortedByAvg = [...predictions].sort((a, b) => a.scores.average - b.scores.average);
+        const holidaysInPeriod = predictions.filter(p => p.holiday && p.holiday.isHoliday);
+
+        return {
+            destination,
+            forecastType: '30-day',
+            predictions,
+            weeks,
+            highlights: {
+                bestDay: sortedByAvg[0],
+                worstDay: sortedByAvg[sortedByAvg.length - 1],
+                holidaysInPeriod,
+                lowCrowdDays: predictions.filter(p => p.scores.average < 0.35).length,
+                highCrowdDays: predictions.filter(p => p.scores.average > 0.70).length,
+                weekendDays: predictions.filter(p => p.isWeekend).length
+            },
+            generatedAt: new Date().toISOString()
+        };
+    }
+
     // ========== HELPER FUNCTIONS ==========
 
     formatHour(hour) {

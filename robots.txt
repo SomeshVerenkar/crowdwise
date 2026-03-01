@@ -2,5 +2,11 @@ User-agent: *
 Allow: /
 Disallow: /backend/
 Disallow: /node_modules/
+Disallow: /promo/
+Disallow: /blog-templates/
+Disallow: /*.ps1$
+Disallow: /*.md$
+Disallow: /styles-old.css
+Disallow: /styles-v3-backup.css
 
 Sitemap: https://crowdwise.in/sitemap.xml
