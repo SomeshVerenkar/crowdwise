@@ -2084,7 +2084,7 @@ body {
     padding: 12px 14px;
     border: 1.5px solid var(--border);
     border-radius: var(--radius);
-    font-size: 14px;
+    font-size: 16px;
     font-family: 'Inter', sans-serif;
     transition: var(--transition);
     box-sizing: border-box;
@@ -2127,7 +2127,7 @@ body {
     padding: 12px 14px;
     border: 1.5px solid var(--border);
     border-radius: var(--radius);
-    font-size: 14px;
+    font-size: 16px;
     font-family: 'Inter', sans-serif;
     transition: var(--transition);
 }
@@ -2655,7 +2655,7 @@ body {
     .crowd-pills::-webkit-scrollbar { display: none; }
     .crowd-pill { flex-shrink: 0; padding: 9px 12px; font-size: 12px; gap: 6px; }
     .pill-tooltip { display: none !important; }
-    .state-select { width: 100%; padding: 11px 14px; font-size: 14px; }
+    .state-select { width: 100%; padding: 11px 14px; font-size: 16px; }
 
     .sort-options { display: flex; overflow-x: auto; gap: 6px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
     .sort-options::-webkit-scrollbar { display: none; }
@@ -2746,7 +2746,7 @@ body {
     .hero-title { font-size: 24px; }
     .hero-subtitle { font-size: 12px; }
     .search-container { padding: 10px; }
-    .search-input { padding: 12px 14px; font-size: 15px; }
+    .search-input { padding: 12px 14px; font-size: 16px; }
     .search-btn { padding: 14px 20px; font-size: 14px; }
     .suggestion-tag { padding: 6px 10px; font-size: 11px; }
     .crowd-pill { padding: 8px 10px; font-size: 11px; }
@@ -3178,7 +3178,7 @@ body {
     .feedback-modal h2 { font-size: 18px; padding-right: 40px; }
     .feedback-subtitle { font-size: 13px; }
     .feedback-form-group label { font-size: 11px; }
-    .feedback-input, .feedback-select, .feedback-textarea { padding: 10px 14px; font-size: 14px; }
+    .feedback-input, .feedback-select, .feedback-textarea { padding: 10px 14px; font-size: 16px; }
     .star-rating .star { font-size: 24px; }
     .feedback-actions { flex-direction: column; gap: 8px; }
     .feedback-cancel-btn, .feedback-submit-btn { flex: none; padding: 12px 16px; }
@@ -3618,7 +3618,7 @@ body {
     .sheet-title { font-size: 16px; }
     .sheet-count-badge { font-size: 11px; padding: 2px 8px; }
     .sheet-search-wrap { padding: 7px 12px; margin-bottom: 7px; gap: 8px; }
-    .sheet-search-input { font-size: 14px; }
+    .sheet-search-input { font-size: 16px; }
     /* Crowd pills row */
     .sheet-pills-row { margin-bottom: 5px; }
     .sheet-pills-row .crowd-pill { padding: 4px 9px; font-size: 11px; gap: 4px; }
@@ -3631,7 +3631,7 @@ body {
     .discover-pill { padding: 4px 9px; font-size: 11px; }
     /* State + clear row */
     .sheet-bottom-filters { gap: 6px; }
-    .sheet-state-wrap .state-select { padding: 5px 26px 5px 9px; font-size: 11px; min-width: 90px; }
+    .sheet-state-wrap .state-select { padding: 5px 26px 5px 9px; font-size: 16px; min-width: 90px; }
     .clear-filters { padding: 5px 10px; font-size: 11px; }
     /* Cards area */
     .sheet-body { padding: 14px 12px 80px; }

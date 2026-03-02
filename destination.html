@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>Destination - CrowdWise India</title>
     <meta name="description" content="Real-time crowd prediction for Indian tourist destinations. Check crowd levels and plan your visit.">
     <link rel="stylesheet" href="styles.css?v=5.0">
@@ -559,11 +559,24 @@
                 ${info.holiday ? `<div class="cal-tooltip-row"><span>🎉</span><span>${info.holiday}</span></div>` : ''}
                 ${info.isWeekend ? `<div class="cal-tooltip-row"><span>📅</span><span>Weekend</span></div>` : ''}
             `;
-            // Position tooltip near cursor
+            // Position tooltip near the tapped/clicked day cell, flipping above if near bottom
             const rect = event.target.closest('.cal-day').getBoundingClientRect();
-            tooltip.style.top = (rect.bottom + 8) + 'px';
-            tooltip.style.left = Math.min(rect.left, window.innerWidth - 220) + 'px';
+            const TOOLTIP_HEIGHT = 140; // approx rendered height
+            const TOOLTIP_WIDTH = 220;
+            const spaceBelow = window.innerHeight - rect.bottom;
+            const top = spaceBelow < TOOLTIP_HEIGHT + 12
+                ? Math.max(8, rect.top - TOOLTIP_HEIGHT - 8)  // flip above
+                : rect.bottom + 8;                             // default below
+            const left = Math.min(Math.max(8, rect.left), window.innerWidth - TOOLTIP_WIDTH - 8);
+            tooltip.style.top = top + 'px';
+            tooltip.style.left = left + 'px';
             tooltip.classList.add('show');
+            // Auto-dismiss on next touch anywhere (mobile)
+            const dismissOnTouch = function() {
+                tooltip.classList.remove('show');
+                document.removeEventListener('touchstart', dismissOnTouch, true);
+            };
+            document.addEventListener('touchstart', dismissOnTouch, true);
         };
 
         window.hideCalTooltip = function() {
