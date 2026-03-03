@@ -2305,7 +2305,9 @@ function navigateToDestination(destinationId) {
         sessionStorage.setItem('cw_sheetOpen', 'true');
         if (sheetBody) sessionStorage.setItem('cw_sheetScrollY', String(sheetBody.scrollTop));
     }
-    window.location.href = `destination.html?id=${destinationId}`;
+    const _destObj = allDestinations.find(d => d.id === destinationId);
+    const _slug = _destObj ? _destObj.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') : destinationId;
+    window.location.href = `destination.html?dest=${_slug}`;
 }
 
 async function showDetails(destinationId) {
