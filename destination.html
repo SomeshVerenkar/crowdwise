@@ -100,11 +100,15 @@
         .cal-day-pct { font-size: 9px; font-weight: 600; opacity: 0.8; margin-top: 2px; }
         .cal-day-holiday { position: absolute; top: 3px; right: 5px; font-size: 8px; }
 
-        /* Calendar tooltip */
-        .cal-tooltip { display: none; position: fixed; background: #1a1a2e; color: #fff; padding: 12px 16px; border-radius: 10px; font-size: 13px; z-index: 9999; pointer-events: none; box-shadow: 0 8px 24px rgba(0,0,0,0.25); min-width: 180px; }
-        .cal-tooltip.show { display: block; }
-        .cal-tooltip-date { font-weight: 700; margin-bottom: 6px; font-size: 14px; }
-        .cal-tooltip-row { display: flex; justify-content: space-between; gap: 12px; padding: 2px 0; }
+        /* Calendar day detail card (bottom) */
+        .cal-day-detail { display: none; margin-top: 16px; padding: 18px 20px; background: #1a1a2e; color: #fff; border-radius: 14px; font-size: 14px; box-shadow: 0 8px 28px rgba(0,0,0,0.18); animation: calDetailIn 0.18s ease; }
+        @keyframes calDetailIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .cal-day-detail.show { display: block; }
+        .cal-day-detail-date { font-weight: 700; font-size: 15px; margin-bottom: 14px; opacity: 0.9; }
+        .cal-day-detail-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 13px; }
+        .cal-day-detail-row:last-child { border-bottom: none; }
+        .cal-day-detail-row span:last-child { font-weight: 600; }
+        .cal-day.selected { outline: 2.5px solid #6366f1; outline-offset: 2px; }
 
         /* CTA row */
         .dest-cta-row { display: flex; gap: 12px; margin-top: 24px; }
@@ -132,9 +136,6 @@
         </div>
     </div>
 
-    <!-- Calendar tooltip (shared) -->
-    <div class="cal-tooltip" id="calTooltip"></div>
-
     <!-- Scripts (same order as index.html) -->
     <script src="config.js"></script>
     <script src="data.js"></script>
@@ -149,12 +150,20 @@
     <script>
     // ========== DESTINATION PAGE LOGIC ==========
     (function() {
+        function toSlug(name) {
+            return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        }
         const params = new URLSearchParams(window.location.search);
-        const destId = parseInt(params.get('id'), 10);
-        if (!destId) { window.location.href = 'index.html'; return; }
-
-        const dest = destinations.find(d => d.id === destId);
+        const destSlug = params.get('dest');
+        const destIdParam = parseInt(params.get('id'), 10);
+        let dest;
+        if (destSlug) {
+            dest = destinations.find(d => toSlug(d.name) === destSlug);
+        } else if (destIdParam) {
+            dest = destinations.find(d => d.id === destIdParam);
+        }
         if (!dest) { window.location.href = 'index.html'; return; }
+        const destId = dest.id;
 
         // --- helpers ---
         function getCrowdLabel(level) {
@@ -413,6 +422,7 @@
                 <!-- Tab 2: Crowd Calendar -->
                 <div class="dest-tab-panel" id="dpanel-cal">
                     <div id="calendarContainer"></div>
+                    <div class="cal-day-detail" id="calDayDetail"></div>
                 </div>
 
             </div>
@@ -507,9 +517,7 @@
                     const fg = textForScore(info.score);
                     const holidayDot = info.holiday ? '<span class="cal-day-holiday">🎉</span>' : '';
                     html += `<div class="cal-day ${isToday ? 'today' : ''}" style="background:${bg}; color:${fg};"
-                        onmouseenter="showCalTooltip(event, '${dateStr}')"
-                        onmouseleave="hideCalTooltip()"
-                        ontouchstart="showCalTooltip(event, '${dateStr}')"
+                        onclick="showCalDetail('${dateStr}', this)"
                         >
                         ${holidayDot}
                         <span class="cal-day-num">${day}</span>
@@ -544,43 +552,29 @@
             renderCalendar();
         };
 
-        // Tooltip
-        window.showCalTooltip = function(event, dateStr) {
+        // Day detail card at the bottom of the calendar
+        window.showCalDetail = function(dateStr, cell) {
             const data = getYearData();
             const info = data[dateStr];
             if (!info) return;
-            const tooltip = document.getElementById('calTooltip');
+
+            // Highlight selected cell
+            document.querySelectorAll('#calendarContainer .cal-day.selected').forEach(el => el.classList.remove('selected'));
+            if (cell) cell.classList.add('selected');
+
+            const card = document.getElementById('calDayDetail');
             const d = new Date(dateStr + 'T12:00:00');
             const dayName = d.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-            tooltip.innerHTML = `
-                <div class="cal-tooltip-date">${dayName}</div>
-                <div class="cal-tooltip-row"><span>Crowd</span><span>${info.emoji} ${info.label}</span></div>
-                <div class="cal-tooltip-row"><span>Level</span><span>${info.percentFull}% full</span></div>
-                ${info.holiday ? `<div class="cal-tooltip-row"><span>🎉</span><span>${info.holiday}</span></div>` : ''}
-                ${info.isWeekend ? `<div class="cal-tooltip-row"><span>📅</span><span>Weekend</span></div>` : ''}
+            const dayType = info.isWeekend ? 'Weekend' : 'Weekday';
+            card.innerHTML = `
+                <div class="cal-day-detail-date">📅 ${dayName}</div>
+                <div class="cal-day-detail-row"><span>Crowd Level</span><span>${info.emoji} ${info.label}</span></div>
+                <div class="cal-day-detail-row"><span>Expected Fill</span><span>${info.percentFull}% full</span></div>
+                <div class="cal-day-detail-row"><span>Day Type</span><span>${dayType}</span></div>
+                ${info.holiday ? `<div class="cal-day-detail-row"><span>🎉 Holiday</span><span>${info.holiday}</span></div>` : ''}
             `;
-            // Position tooltip near the tapped/clicked day cell, flipping above if near bottom
-            const rect = event.target.closest('.cal-day').getBoundingClientRect();
-            const TOOLTIP_HEIGHT = 140; // approx rendered height
-            const TOOLTIP_WIDTH = 220;
-            const spaceBelow = window.innerHeight - rect.bottom;
-            const top = spaceBelow < TOOLTIP_HEIGHT + 12
-                ? Math.max(8, rect.top - TOOLTIP_HEIGHT - 8)  // flip above
-                : rect.bottom + 8;                             // default below
-            const left = Math.min(Math.max(8, rect.left), window.innerWidth - TOOLTIP_WIDTH - 8);
-            tooltip.style.top = top + 'px';
-            tooltip.style.left = left + 'px';
-            tooltip.classList.add('show');
-            // Auto-dismiss on next touch anywhere (mobile)
-            const dismissOnTouch = function() {
-                tooltip.classList.remove('show');
-                document.removeEventListener('touchstart', dismissOnTouch, true);
-            };
-            document.addEventListener('touchstart', dismissOnTouch, true);
-        };
-
-        window.hideCalTooltip = function() {
-            document.getElementById('calTooltip').classList.remove('show');
+            card.classList.add('show');
+            card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         };
 
         // Tab switching
