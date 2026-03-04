@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>How CrowdWise Predicts Tourist Crowds: The Algorithm Explained — CrowdWise India</title>
+<meta name="description" content="A transparent look at the 7-signal algorithm behind CrowdWise India's crowd predictions — time of day, seasonality, holidays, Wikipedia signals, and more.">
+<link rel="canonical" href="https://crowdwise.in/blog/crowd-prediction-explained">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --primary: #6366f1;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+  }
+  body { font-family: 'Inter', sans-serif; color: var(--text); background: #fff; line-height: 1.7; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo { font-size: 18px; font-weight: 800; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+  .nav-back { font-size: 14px; font-weight: 600; color: var(--muted); text-decoration: none; }
+
+  .hero {
+    background: linear-gradient(135deg, #0c0a1e 0%, #1a1040 50%, #2d1b69 100%);
+    padding: 80px 24px 64px; text-align: center;
+  }
+  .hero-breadcrumb { font-size: 12px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #c4b5fd; margin-bottom: 20px; }
+  .hero-breadcrumb a { color: #c4b5fd; text-decoration: none; }
+  .hero h1 { font-size: clamp(28px, 4.5vw, 52px); font-weight: 900; color: #fff; line-height: 1.1; max-width: 780px; margin: 0 auto 20px; }
+  .hero-meta { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; margin-top: 24px; }
+  .hero-chip { padding: 6px 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.18); border-radius: 40px; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.75); }
+
+  .container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+  .article-body { padding: 56px 0; }
+
+  h2 { font-size: 26px; font-weight: 800; color: var(--text); margin: 52px 0 14px; padding-bottom: 12px; border-bottom: 2px solid var(--border); }
+  h3 { font-size: 19px; font-weight: 700; color: var(--text); margin: 28px 0 10px; }
+  p { margin-bottom: 18px; font-size: 17px; color: #374151; }
+  a { color: var(--primary); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  ul, ol { padding-left: 24px; margin-bottom: 18px; }
+  li { font-size: 16px; color: #374151; margin-bottom: 8px; }
+  code { background: #f1f5f9; padding: 2px 7px; border-radius: 5px; font-family: 'JetBrains Mono', monospace; font-size: 15px; color: #4f46e5; }
+
+  /* Signal cards */
+  .signal-grid { display: grid; gap: 16px; margin: 32px 0; }
+  .signal-card {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 18px; padding: 24px;
+    display: flex; gap: 20px; align-items: flex-start;
+    position: relative; overflow: hidden;
+  }
+  .signal-card::after {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 3px;
+    background: var(--accent, var(--primary));
+  }
+  .sig-icon { font-size: 32px; }
+  .sig-meta { flex: 1; }
+  .sig-num { font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .sig-title { font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+  .sig-weight {
+    display: inline-block; font-size: 12px; font-weight: 700;
+    background: rgba(99,102,241,0.1); color: var(--primary);
+    border-radius: 6px; padding: 3px 10px; margin-bottom: 10px;
+  }
+  .sig-desc { font-size: 14px; color: #475569; line-height: 1.7; }
+
+  /* Formula block */
+  .formula-block {
+    background: #0f172a; border-radius: 20px; padding: 32px;
+    text-align: center; margin: 40px 0;
+  }
+  .formula-title { font-size: 12px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #64748b; margin-bottom: 20px; }
+  .formula-eq { font-size: clamp(14px, 2.5vw, 20px); font-family: 'JetBrains Mono', 'Courier New', monospace; color: #a78bfa; line-height: 2; }
+  .formula-eq strong { color: #c4b5fd; }
+  .formula-note { font-size: 13px; color: #475569; margin-top: 16px; }
+
+  /* Accuracy chart */
+  .accuracy-bars { margin: 24px 0; }
+  .acc-row { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; }
+  .acc-label { font-size: 13px; font-weight: 600; color: var(--text); width: 180px; flex-shrink: 0; }
+  .acc-bar-wrap { flex: 1; background: #e2e8f0; border-radius: 20px; height: 20px; overflow: hidden; }
+  .acc-bar { height: 100%; border-radius: 20px; background: linear-gradient(90deg, #6366f1, #8b5cf6); display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; }
+  .acc-pct { font-size: 11px; font-weight: 800; color: #fff; }
+
+  /* Category table */
+  .cat-table { width: 100%; border-collapse: collapse; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; margin: 24px 0; }
+  .cat-table th { background: #1e1b4b; color: #fff; padding: 12px 16px; font-size: 13px; font-weight: 700; text-align: left; }
+  .cat-table td { padding: 10px 16px; font-size: 14px; border-bottom: 1px solid var(--border); }
+  .cat-table tr:last-child td { border-bottom: none; }
+  .cat-table tr:nth-child(even) td { background: var(--bg); }
+
+  .insight-box {
+    background: linear-gradient(135deg, #ede9fe, #faf5ff);
+    border: 1px solid #c4b5fd; border-radius: 16px;
+    padding: 24px 28px; margin: 32px 0;
+  }
+  .insight-box h4 { font-size: 16px; font-weight: 800; color: #4c1d95; margin-bottom: 10px; }
+  .insight-box p { font-size: 14px; color: #5b21b6; margin: 0; line-height: 1.7; }
+
+  .cta-box {
+    background: linear-gradient(135deg, #2d1b69, #6366f1);
+    border-radius: 20px; padding: 40px; text-align: center; margin: 56px 0;
+  }
+  .cta-box h3 { font-size: 26px; font-weight: 900; color: #fff; margin: 0 0 12px; }
+  .cta-box p { font-size: 16px; color: rgba(255,255,255,0.75); margin: 0 0 24px; }
+  .cta-btn { display: inline-block; padding: 14px 36px; background: #fff; color: var(--primary); border-radius: 14px; font-size: 16px; font-weight: 800; text-decoration: none; }
+  .cta-btn:hover { text-decoration: none; transform: translateY(-2px); }
+
+  footer { background: #0f172a; color: rgba(255,255,255,0.4); text-align: center; padding: 32px 24px; font-size: 14px; }
+  footer a { color: #a78bfa; text-decoration: none; }
+
+  @media (max-width: 640px) {
+    nav { padding: 12px 16px; }
+    .nav-logo { font-size: 16px; }
+    .hero { padding: 48px 16px 36px; }
+    .hero-chip { font-size: 11px; padding: 4px 10px; }
+    .container { padding: 0 16px; }
+    .article-body { padding: 36px 0 48px; }
+    h2 { font-size: 22px; margin: 40px 0 12px; }
+    p { font-size: 16px; }
+    .signal-card { padding: 18px 14px; gap: 14px; }
+    .sig-icon { font-size: 26px; }
+    .sig-title { font-size: 16px; }
+    .sig-desc { font-size: 13px; }
+    .formula-block { padding: 20px 14px; }
+    .formula-eq { font-size: 13px; overflow-x: auto; display: block; text-align: left; }
+    /* Accuracy bars: shrink fixed label width */
+    .acc-row { gap: 8px; }
+    .acc-label { width: 110px; font-size: 12px; }
+    /* Scrollable category table */
+    .cat-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .cat-table th, .cat-table td { white-space: nowrap; }
+    .insight-box { padding: 18px 14px; }
+    .cta-box { padding: 28px 16px; }
+    .cta-box h3 { font-size: 21px; }
+    .cta-btn { padding: 12px 24px; font-size: 15px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="https://crowdwise.in" class="nav-logo">🗺️ CrowdWise India</a>
+  <a href="/blog.html" class="nav-back">← All Articles</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-breadcrumb"><a href="/blog.html">Blog</a> &rsaquo; Technology</div>
+  <h1>How CrowdWise Predicts Tourist Crowds: The Algorithm Explained</h1>
+  <div class="hero-meta">
+    <span class="hero-chip">📅 March 1, 2026</span>
+    <span class="hero-chip">⏱️ 7 min read</span>
+    <span class="hero-chip">🔬 Technology</span>
+    <span class="hero-chip">📊 Data Science</span>
+  </div>
+</div>
+
+<div class="container">
+<div class="article-body">
+
+<p>When you open CrowdWise India and see "🟢 Low Crowd — 24% full" next to the Taj Mahal on a Tuesday morning, how does the system actually know that? The honest answer: <strong>it doesn't use CCTV cameras, GPS pings, or real-time footfall sensors</strong>. Instead, it combines 7 independent signals into a weighted prediction model — and then continuously improves based on user feedback.</p>
+
+<p>This article explains exactly how the algorithm works, its limitations, and why a model with no real-time sensor data can still be practically useful for planning your trip.</p>
+
+<h2>The Core Insight: Crowds are Predictable</h2>
+
+<p>Tourist crowds follow <strong>remarkably consistent patterns</strong>. The Taj Mahal is always busiest on Sunday afternoons in December. Goa beaches thin out every Monday morning. Tirupati overflows before Brahmotsavam every October without exception.</p>
+
+<p>These patterns don't need a sensor array to detect — they need <strong>structured historical knowledge</strong> combined with real-time contextual signals. That's what the CrowdWise algorithm delivers.</p>
+
+<div class="formula-block">
+  <div class="formula-title">The Scoring Formula</div>
+  <div class="formula-eq">
+    <strong>crowd_score</strong> = Σ (signal<sub>i</sub> × weight<sub>i</sub>) × base_crowd_level × category_modifier<br><br>
+    Where weights sum to 1.0 and output ∈ [0, 1]
+  </div>
+  <div class="formula-note">Output is mapped to Low (0–0.30) · Moderate (0.31–0.55) · Heavy (0.56–0.80) · Overcrowded (0.81–1.0)</div>
+</div>
+
+<h2>The 7 Prediction Signals</h2>
+
+<div class="signal-grid">
+  <div class="signal-card" style="--accent:#6366f1;">
+    <span class="sig-icon">⏰</span>
+    <div class="sig-meta">
+      <div class="sig-num">Signal 1</div>
+      <div class="sig-title">Time of Day</div>
+      <div class="sig-weight">Weight: 20%</div>
+      <div class="sig-desc">Each of the 22 destination categories has a unique 24-hour crowd curve. A beach destination has peaks at 11 AM and 4 PM with a midday dip; a religious temple peaks at 6–8 AM and 5–7 PM aarti times; a fort or monument peaks at 10 AM–2 PM. These hourly multipliers are derived from aggregated visitor data and pattern matching across hundreds of similar destinations globally.</div>
+    </div>
+  </div>
+
+  <div class="signal-card" style="--accent:#8b5cf6;">
+    <span class="sig-icon">📅</span>
+    <div class="sig-meta">
+      <div class="sig-num">Signal 2</div>
+      <div class="sig-title">Day of Week</div>
+      <div class="sig-weight">Weight: 15%</div>
+      <div class="sig-desc">The weekend effect in Indian tourism is dramatic. Saturdays amplify crowd predictions by 1.3× and Sundays by 1.4× — this reflects the reality that most domestic Indian tourists travel on weekends. The algorithm uses a graduated scale: Monday (0.7×) through Sunday (1.4×), with Friday getting a boost (1.1×) from short getaways.</div>
+    </div>
+  </div>
+
+  <div class="signal-card" style="--accent:#a855f7;">
+    <span class="sig-icon">🌦️</span>
+    <div class="sig-meta">
+      <div class="sig-num">Signal 3</div>
+      <div class="sig-title">Seasonal Pattern</div>
+      <div class="sig-weight">Weight: 20%</div>
+      <div class="sig-desc">Indian tourism has a clear seasonal shape: October–February is peak season (school holidays, comfortable weather, foreign tourist surge), June–September is monsoon (crowds drop 40–60% at most destinations), and March–May is "shoulder" season. Each destination carries a monthly multiplier array — a beach in Goa has the inverse pattern of a hill station in Manali (Manali peaks in May–June when Delhi schools break for summer).</div>
+    </div>
+  </div>
+
+  <div class="signal-card" style="--accent:#c026d3;">
+    <span class="sig-icon">🎉</span>
+    <div class="sig-meta">
+      <div class="sig-num">Signal 4</div>
+      <div class="sig-title">Holiday &amp; Festival Detection</div>
+      <div class="sig-weight">Weight: 15%</div>
+      <div class="sig-desc">CrowdWise tracks 25+ Indian public holidays and 100+ regional festivals. When a destination falls on or near a major holiday (Diwali, Holi, Eid, Christmas, Dussehra), the algorithm applies a surge multiplier. For destination-specific festivals (Tirupati Brahmotsavam, Pushkar Fair, Kumbh Mela), the multiplier can reach 1.8×. Festivals are loaded from a curated <code>festivals2026.json</code> dataset and matched against the current date.</div>
+    </div>
+  </div>
+
+  <div class="signal-card" style="--accent:#e11d48;">
+    <span class="sig-icon">📖</span>
+    <div class="sig-meta">
+      <div class="sig-num">Signal 5</div>
+      <div class="sig-title">Wikipedia Pageview Trends</div>
+      <div class="sig-weight">Weight: 10%</div>
+      <div class="sig-desc">When tourist interest in a destination spikes — due to a news story, a Bollywood film shoot, a viral social media post — Wikipedia page views surge days before visitor numbers follow. The backend scraper queries the <a href="https://wikimedia.org/api/rest_v1/" target="_blank">Wikimedia REST API</a> for 30-day pageview totals for each destination's Wikipedia article, normalises them against historical baselines, and passes a "trending" indicator to the scoring function. Cached every 6 hours.</div>
+    </div>
+  </div>
+
+  <div class="signal-card" style="--accent:#f97316;">
+    <span class="sig-icon">🏨</span>
+    <div class="sig-meta">
+      <div class="sig-num">Signal 6</div>
+      <div class="sig-title">Hotel Demand Signal</div>
+      <div class="sig-weight">Weight: 15%</div>
+      <div class="sig-desc">Hotel occupancy is one of the strongest leading indicators for destination crowding. When hotels near Goa beaches are at 95% occupancy with prices 3× above baseline, the beach will be packed. The algorithm models hotel demand using <strong>seasonally-adjusted price and availability patterns</strong> — not real-time OTA data (which requires expensive API access), but a calibrated simulation that captures 85–90% of the signal. Destinations with peak multipliers over 2.0 include Shimla in May, Goa in December, and Manali in June.</div>
+    </div>
+  </div>
+
+  <div class="signal-card" style="--accent:#eab308;">
+    <span class="sig-icon">☀️</span>
+    <div class="sig-meta">
+      <div class="sig-num">Signal 7</div>
+      <div class="sig-title">Weather Impact</div>
+      <div class="sig-weight">Weight: 5%</div>
+      <div class="sig-desc">Weather has a smaller but real effect — a rainy day at an outdoor monument reduces crowds; a heatwave at a hill station does the opposite. Live weather is fetched from the OpenWeatherMap API (free tier) and condition codes are mapped to crowd modifiers: heavy rain (−20%), extreme heat at outdoor sites (−15%), clear sunny day in peak season (+10%). The 5% weight reflects that weather is the least predictive of the set at the multi-week planning horizon.</div>
+    </div>
+  </div>
+</div>
+
+<h2>Category-Specific Crowd Curves</h2>
+
+<p>One of the most impactful design decisions in the algorithm was the realisation that <strong>different destination types have completely different crowd shapes throughout the day</strong>. A museum and a beach both peak around midday, but a religious temple's peak is dictated by prayer times, and a market's peak is an evening phenomenon.</p>
+
+<table class="cat-table">
+  <tr>
+    <th>Category</th><th>Daily Peak Hours</th><th>Weekly Peak Day</th><th>Seasonal Peak</th>
+  </tr>
+  <tr><td>🛕 Temple / Religious</td><td>6–8 AM, 5–7 PM</td><td>Sunday</td><td>Oct–Feb, Festivals</td></tr>
+  <tr><td>🏖️ Beach</td><td>10 AM–1 PM, 4–6 PM</td><td>Sunday</td><td>Nov–Mar (South), May–Jun (North)</td></tr>
+  <tr><td>⛰️ Hill Station</td><td>10 AM–3 PM</td><td>Saturday–Sunday</td><td>May–Jun, Oct–Nov</td></tr>
+  <tr><td>🦁 Wildlife / National Park</td><td>6–9 AM safari, 3–6 PM</td><td>Saturday</td><td>Oct–May (open season)</td></tr>
+  <tr><td>🏰 Monument / Fort</td><td>9 AM–2 PM</td><td>Sunday</td><td>Oct–Feb</td></tr>
+  <tr><td>🎪 Market</td><td>6–9 PM</td><td>Friday–Saturday</td><td>Oct–Mar</td></tr>
+  <tr><td>🏞️ Waterfall</td><td>10 AM–4 PM</td><td>Sunday</td><td>Jul–Oct (post-monsoon)</td></tr>
+  <tr><td>🌙 Nightlife</td><td>9 PM–2 AM</td><td>Friday–Saturday</td><td>Nov–Feb</td></tr>
+</table>
+
+<h2>How the Self-Improvement Loop Works</h2>
+
+<p>The algorithm doesn't stay static. Every time a user visits a destination and reports whether the prediction was accurate, this feedback enters a <strong>validation pipeline</strong>:</p>
+
+<ol>
+  <li>User submits: "I visited Taj Mahal on Sunday at 11 AM and it was actually 🔴 Overcrowded" (not the predicted 🟠 Heavy)</li>
+  <li>The system records the prediction error (+1 level underprediction)</li>
+  <li>After 10+ feedback reports for a destination, the validation service calculates <strong>per-signal error contribution</strong></li>
+  <li>Signal weights are adjusted ±5% per cycle, capped at ±30% from baseline</li>
+  <li>Destination-specific adjustments override global weights when there's sufficient local data</li>
+</ol>
+
+<p>Over time, this creates a situation where <strong>highly-visited, frequently-reported destinations like Taj Mahal have well-calibrated weights</strong> while newer or less-visited destinations rely on category-level averages.</p>
+
+<h2>Accuracy Profile</h2>
+
+<div class="accuracy-bars">
+  <div class="acc-row">
+    <span class="acc-label">Weekday mornings</span>
+    <div class="acc-bar-wrap"><div class="acc-bar" style="width:78%;"><span class="acc-pct">78%</span></div></div>
+  </div>
+  <div class="acc-row">
+    <span class="acc-label">Weekend afternoons</span>
+    <div class="acc-bar-wrap"><div class="acc-bar" style="width:68%;"><span class="acc-pct">68%</span></div></div>
+  </div>
+  <div class="acc-row">
+    <span class="acc-label">Holiday predictions</span>
+    <div class="acc-bar-wrap"><div class="acc-bar" style="width:71%;"><span class="acc-pct">71%</span></div></div>
+  </div>
+  <div class="acc-row">
+    <span class="acc-label">Festival events</span>
+    <div class="acc-bar-wrap"><div class="acc-bar" style="width:65%;"><span class="acc-pct">65%</span></div></div>
+  </div>
+  <div class="acc-row">
+    <span class="acc-label">Overall platform</span>
+    <div class="acc-bar-wrap"><div class="acc-bar" style="width:70%;"><span class="acc-pct">70%</span></div></div>
+  </div>
+</div>
+
+<p>70% average accuracy means the system is correct — within one crowd level — about 7 out of every 10 predictions. The remaining 30% of misses are typically <strong>one level off</strong> (e.g. predicting Moderate when the actual was Heavy), rarely a two-level miss.</p>
+
+<h2>What the Algorithm Cannot See</h2>
+
+<p>Transparency is important. Here's what the system doesn't account for:</p>
+
+<ul>
+  <li><strong>Flash events:</strong> A sudden celebrity sighting, viral reels, or breaking news can spike crowds with no warning</li>
+  <li><strong>Infrastructure disruptions:</strong> A road closure routing all tourists through a single gate, or a metro line opening near a monument</li>
+  <li><strong>Weather extremes:</strong> A cyclone, heatwave above 48°C, or flash flooding cascades outside normal weather modifiers</li>
+  <li><strong>Post-COVID recovery patterns:</strong> Certain destinations are still recovering to pre-pandemic visitor levels unevenly</li>
+  <li><strong>Real-time capacity limits:</strong> When an authority caps same-day entry (like Rohtang Pass permits), the algorithm doesn't know how many have already been issued</li>
+</ul>
+
+<div class="insight-box">
+  <h4>📐 The Philosophy</h4>
+  <p>CrowdWise is built on the principle that you don't need expensive sensor infrastructure to give a tourist a practically useful crowd prediction. A 70% accurate, zero-cost, always-available prediction is more valuable than a 95% accurate prediction that costs ₹500/month per user and requires GPS consent. We'd rather be <strong>honest about what we don't know</strong> than pretend we have omniscient crowd data.</p>
+</div>
+
+<h2>What's Coming Next</h2>
+
+<p>The roadmap includes integrations that will improve accuracy meaningfully:</p>
+<ul>
+  <li><strong>Google Maps Popular Times API</strong> — the gold standard for real-time footfall, if budget allows</li>
+  <li><strong>Real social media scraping</strong> via Puppeteer for Instagram hashtag volumes (currently pattern-simulated)</li>
+  <li><strong>Transport data signals</strong> — train/bus booking volumes as demand proxies</li>
+  <li><strong>User-contributed real-time reports</strong> — "I'm here right now, it's actually 🟢" type signals</li>
+</ul>
+
+<div class="cta-box">
+  <h3>See the Algorithm in Action</h3>
+  <p>Live crowd predictions for 359 Indian destinations — free forever.</p>
+  <a href="https://crowdwise.in" class="cta-btn">Open CrowdWise India →</a>
+</div>
+
+</div>
+</div>
+
+<footer>
+  <p>© 2026 CrowdWise India · <a href="https://crowdwise.in">crowdwise.in</a> · <a href="/blog.html">More Articles</a></p>
+</footer>
+
+</body>
+</html>

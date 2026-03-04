@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Press Kit — CrowdWise India | Tourist Crowd Tracker</title>
+    <meta name="description" content="Official press kit for CrowdWise India. Stats, product story, screenshots, press copy, and contact information for journalists and creators.">
+    <link rel="canonical" href="https://crowdwise.in/promo/press-kit.html">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; background: #0a0a0f; color: #e8e8f0; line-height: 1.65; overflow-x: hidden; }
+
+        /* ── NAV ── */
+        .pk-nav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(10,10,15,0.92); backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            padding: 14px 32px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .pk-nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .pk-nav-brand .icon { font-size: 1.5rem; }
+        .pk-nav-brand .name { font-weight: 800; font-size: 1.1rem; background: linear-gradient(135deg, #a78bfa, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .pk-nav-back { color: #a78bfa; text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: opacity .2s; }
+        .pk-nav-back:hover { opacity: .7; }
+
+        /* ── HERO ── */
+        .pk-hero {
+            position: relative; overflow-x: hidden;
+            padding: 100px 32px 80px;
+            text-align: center;
+            background: radial-gradient(ellipse 120% 80% at 50% 0%, rgba(124,58,237,0.35) 0%, transparent 60%),
+                        radial-gradient(ellipse 80% 60% at 80% 30%, rgba(37,99,235,0.25) 0%, transparent 50%),
+                        #0a0a0f;
+        }
+        .pk-hero-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(167,139,250,0.12); border: 1px solid rgba(167,139,250,0.3);
+            color: #a78bfa; border-radius: 100px; padding: 6px 16px;
+            font-size: 0.82rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+        .pk-hero h1 {
+            font-size: clamp(2.4rem, 6vw, 4rem); font-weight: 900; line-height: 1.1;
+            background: linear-gradient(135deg, #f8f8ff 0%, #a78bfa 60%, #60a5fa 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+        .pk-hero p {
+            font-size: 1.2rem; color: #9ca3af; max-width: 640px; margin: 0 auto 40px;
+        }
+        .pk-hero-cta-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+        .pk-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 14px 28px; border-radius: 10px;
+            font-size: 0.95rem; font-weight: 600; cursor: pointer;
+            text-decoration: none; transition: transform .2s, box-shadow .2s; border: none;
+        }
+        .pk-btn:hover { transform: translateY(-2px); }
+        .pk-btn-primary {
+            background: linear-gradient(135deg, #7c3aed, #2563eb);
+            color: #fff; box-shadow: 0 8px 24px rgba(124,58,237,0.4);
+        }
+        .pk-btn-primary:hover { box-shadow: 0 12px 32px rgba(124,58,237,0.55); }
+        .pk-btn-ghost {
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+            color: #e8e8f0;
+        }
+        .pk-btn-ghost:hover { background: rgba(255,255,255,0.1); }
+
+        /* ── SECTIONS ── */
+        .pk-section { padding: 80px 32px; max-width: 1100px; margin: 0 auto; }
+        .pk-section-title {
+            font-size: 1.9rem; font-weight: 800; margin-bottom: 8px;
+            background: linear-gradient(135deg, #f8f8ff, #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .pk-section-sub { color: #6b7280; font-size: 1rem; margin-bottom: 48px; }
+        .pk-divider { width: 48px; height: 3px; background: linear-gradient(90deg, #7c3aed, #2563eb); border-radius: 2px; margin: 12px 0 48px; }
+
+        /* ── STATS GRID ── */
+        .pk-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; }
+        .pk-stat-card {
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px; padding: 32px 24px; text-align: center;
+            transition: border-color .2s;
+        }
+        .pk-stat-card:hover { border-color: rgba(167,139,250,0.3); }
+        .pk-stat-num {
+            font-size: 2.8rem; font-weight: 900; line-height: 1;
+            background: linear-gradient(135deg, #a78bfa, #60a5fa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .pk-stat-label { font-size: 0.9rem; color: #9ca3af; font-weight: 500; }
+
+        /* ── STORY ── */
+        .pk-story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+        @media (max-width: 720px) { .pk-story-grid { grid-template-columns: 1fr; } }
+        .pk-story-text p { color: #9ca3af; margin-bottom: 18px; font-size: 1rem; }
+        .pk-story-text p strong { color: #e8e8f0; }
+        .pk-story-aside {
+            background: rgba(124,58,237,0.08); border: 1px solid rgba(124,58,237,0.2);
+            border-radius: 16px; padding: 28px;
+        }
+        .pk-story-aside h4 { font-size: 0.75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #a78bfa; margin-bottom: 16px; }
+        .pk-aside-item { display: flex; gap: 12px; margin-bottom: 14px; align-items: flex-start; }
+        .pk-aside-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 1px; }
+        .pk-aside-text { font-size: 0.9rem; color: #9ca3af; }
+        .pk-aside-text strong { color: #e8e8f0; display: block; font-size: 0.95rem; margin-bottom: 2px; }
+
+        /* ── FEATURES ── */
+        .pk-features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .pk-feature-card {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 14px; padding: 28px 24px;
+            transition: background .2s, border-color .2s;
+        }
+        .pk-feature-card:hover { background: rgba(255,255,255,0.05); border-color: rgba(167,139,250,0.2); }
+        .pk-feature-icon { font-size: 2rem; margin-bottom: 14px; }
+        .pk-feature-title { font-size: 1.05rem; font-weight: 700; color: #f0f0ff; margin-bottom: 8px; }
+        .pk-feature-desc { font-size: 0.9rem; color: #6b7280; line-height: 1.55; }
+
+        /* ── TECH STACK ── */
+        .pk-tech-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+        .pk-tech-row {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 10px; padding: 18px 20px;
+            display: flex; align-items: center; gap: 14px;
+        }
+        .pk-tech-logo { font-size: 1.6rem; width: 36px; text-align: center; flex-shrink: 0; }
+        .pk-tech-name { font-size: 0.95rem; font-weight: 600; color: #e8e8f0; }
+        .pk-tech-desc { font-size: 0.82rem; color: #6b7280; }
+
+        /* ── COPY KIT ── */
+        .pk-copy-tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+        .pk-tab-btn {
+            padding: 8px 18px; border-radius: 8px; font-size: 0.88rem; font-weight: 600;
+            cursor: pointer; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04);
+            color: #9ca3af; transition: all .2s;
+        }
+        .pk-tab-btn.active { background: rgba(124,58,237,0.2); border-color: rgba(124,58,237,0.4); color: #a78bfa; }
+        .pk-copy-panel { display: none; }
+        .pk-copy-panel.active { display: block; }
+        .pk-copy-block {
+            background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px; padding: 24px; position: relative; margin-bottom: 20px;
+        }
+        .pk-copy-label { font-size: 0.72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #6b7280; margin-bottom: 12px; }
+        .pk-copy-text { font-size: 0.92rem; color: #c4c4d8; line-height: 1.7; white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word; }
+        .pk-copy-btn {
+            position: absolute; top: 16px; right: 16px;
+            background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.3);
+            color: #a78bfa; padding: 6px 14px; border-radius: 6px;
+            font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: all .2s;
+        }
+        .pk-copy-btn:hover { background: rgba(124,58,237,0.25); }
+        .pk-copy-btn.copied { color: #34d399; border-color: rgba(52,211,153,0.4); background: rgba(52,211,153,0.1); }
+        .pk-hashtag-cloud { display: flex; flex-wrap: wrap; gap: 10px; }
+        .pk-hashtag {
+            bg: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.2);
+            background: rgba(124,58,237,0.08);
+            color: #a78bfa; padding: 6px 14px; border-radius: 100px;
+            font-size: 0.85rem; font-weight: 500; cursor: pointer;
+            transition: all .2s; user-select: none;
+        }
+        .pk-hashtag:hover { background: rgba(124,58,237,0.18); }
+        .pk-hashtag.copied { background: rgba(52,211,153,0.1); color: #34d399; border-color: rgba(52,211,153,0.3); }
+
+        /* ── DEMO SECTION ── */
+        .pk-demo-card {
+            background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(37,99,235,0.12));
+            border: 1px solid rgba(167,139,250,0.2); border-radius: 20px;
+            padding: 48px 40px; text-align: center;
+        }
+        .pk-demo-card h3 { font-size: 1.6rem; font-weight: 800; color: #f0f0ff; margin-bottom: 12px; }
+        .pk-demo-card p { color: #9ca3af; margin-bottom: 32px; max-width: 480px; margin-left: auto; margin-right: auto; }
+        .pk-demo-screens {
+            display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 36px;
+        }
+        .pk-screen {
+            background: #1a1a2e; border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px; padding: 16px 20px; text-align: left; min-width: 180px;
+        }
+        .pk-screen-title { font-size: 0.72rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; }
+        .pk-screen-dest { font-size: 0.95rem; font-weight: 700; color: #e8e8f0; margin-bottom: 6px; }
+        .pk-screen-level { display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 600; padding: 4px 10px; border-radius: 100px; }
+        .level-low { background: rgba(34,197,94,0.15); color: #4ade80; }
+        .level-mod { background: rgba(234,179,8,0.15); color: #facc15; }
+        .level-heavy { background: rgba(249,115,22,0.15); color: #fb923c; }
+        .level-over { background: rgba(239,68,68,0.15); color: #f87171; }
+
+        /* ── CONTACT ── */
+        .pk-contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+        .pk-contact-card {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 14px; padding: 28px;
+            transition: border-color .2s;
+        }
+        .pk-contact-card:hover { border-color: rgba(167,139,250,0.2); }
+        .pk-contact-icon { font-size: 1.8rem; margin-bottom: 12px; }
+        .pk-contact-title { font-size: 0.75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #6b7280; margin-bottom: 6px; }
+        .pk-contact-value { font-size: 1.05rem; font-weight: 600; color: #e8e8f0; margin-bottom: 6px; }
+        .pk-contact-value a { color: #a78bfa; text-decoration: none; }
+        .pk-contact-value a:hover { text-decoration: underline; }
+        .pk-contact-note { font-size: 0.82rem; color: #6b7280; }
+
+        /* ── FOOTER ── */
+        .pk-footer {
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding: 36px 32px; text-align: center;
+            color: #4b5563; font-size: 0.88rem;
+        }
+        .pk-footer a { color: #7c3aed; text-decoration: none; }
+        .pk-footer a:hover { text-decoration: underline; }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 600px) {
+            .pk-nav { padding: 12px 16px; }
+            .pk-hero { padding: 60px 16px 72px; }
+            .pk-hero h1 { font-size: clamp(2rem, 8vw, 3rem); }
+            .pk-hero p { font-size: 1.05rem; }
+            .pk-hero-cta-row { flex-direction: column; align-items: stretch; }
+            .pk-btn { justify-content: center; }
+            .pk-section { padding: 52px 16px; }
+            .pk-section-title { font-size: 1.5rem; }
+            .pk-stat-num { font-size: 2.2rem; }
+            /* Copy kit: button repositions below label on narrow phones */
+            .pk-copy-block { padding: 16px 14px 14px; }
+            .pk-copy-btn { position: static; display: block; margin-top: 12px; width: 100%; text-align: center; }
+            .pk-copy-tabs { gap: 6px; }
+            .pk-tab-btn { padding: 8px 12px; font-size: 0.82rem; }
+            /* Demo screens: single column */
+            .pk-demo-screens { flex-direction: column; align-items: center; }
+            .pk-screen { width: 100%; max-width: 280px; }
+            .pk-demo-card { padding: 32px 20px; }
+            .pk-story-aside { padding: 20px 16px; }
+            .pk-contact-grid { grid-template-columns: 1fr; }
+            /* Force single column for all auto-fit grids on phones */
+            .pk-features-grid { grid-template-columns: 1fr; }
+            .pk-tech-grid { grid-template-columns: 1fr; }
+            .pk-stats { grid-template-columns: 1fr 1fr; }
+            /* Long copy text should never break out of its box */
+            .pk-copy-block { overflow: hidden; }
+            .pk-copy-text { font-size: 0.85rem; }
+            /* footer padding */
+            .pk-footer { padding: 28px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="pk-nav">
+    <a href="../index.html" class="pk-nav-brand">
+        <span class="icon">🗺️</span>
+        <span class="name">CrowdWise India</span>
+    </a>
+    <a href="../index.html" class="pk-nav-back">← Back to App</a>
+</nav>
+
+<!-- HERO -->
+<section class="pk-hero">
+    <div class="pk-hero-badge">📰 Official Press Kit — v4.0 · 2026</div>
+    <h1>CrowdWise India<br>Press Kit</h1>
+    <p>Everything journalists, creators, and partners need to cover India's first real-time tourist crowd intelligence platform.</p>
+    <div class="pk-hero-cta-row">
+        <a href="demo-video.html" class="pk-btn pk-btn-primary">▶ Watch Demo Video</a>
+        <a href="https://crowdwise.in" class="pk-btn pk-btn-ghost">🌐 Visit Live App</a>
+    </div>
+</section>
+
+<!-- STATS -->
+<section class="pk-section">
+    <p class="pk-section-title">At a Glance</p>
+    <div class="pk-divider"></div>
+    <div class="pk-stats">
+        <div class="pk-stat-card">
+            <div class="pk-stat-num">359</div>
+            <div class="pk-stat-label">Tourist Destinations</div>
+        </div>
+        <div class="pk-stat-card">
+            <div class="pk-stat-num">38</div>
+            <div class="pk-stat-label">States & Union Territories</div>
+        </div>
+        <div class="pk-stat-card">
+            <div class="pk-stat-num">7</div>
+            <div class="pk-stat-label">Prediction Signals</div>
+        </div>
+        <div class="pk-stat-card">
+            <div class="pk-stat-num">22</div>
+            <div class="pk-stat-label">Destination Categories</div>
+        </div>
+        <div class="pk-stat-card">
+            <div class="pk-stat-num">65–75%</div>
+            <div class="pk-stat-label">Prediction Accuracy</div>
+        </div>
+        <div class="pk-stat-card">
+            <div class="pk-stat-num">₹0</div>
+            <div class="pk-stat-label">Cost to Users — Free Forever</div>
+        </div>
+    </div>
+</section>
+
+<!-- STORY -->
+<section class="pk-section" style="padding-top:0">
+    <p class="pk-section-title">The Story</p>
+    <div class="pk-divider"></div>
+    <div class="pk-story-grid">
+        <div class="pk-story-text">
+            <p>India sees <strong>over 2 billion domestic tourist visits per year</strong>, yet travellers have had no reliable way to know how crowded a destination will be before they arrive. The result: ruined weekends, missed photo opportunities, and avoidable stress at some of the world's most iconic sites.</p>
+            <p>CrowdWise India was built to solve this. Launched in early 2026, the platform covers <strong>359 destinations across all 38 Indian states and Union Territories</strong> — from the Taj Mahal at Agra to lesser-known gems in the Northeast — providing crowd-level forecasts without requiring any registration, payment, or data from the user.</p>
+            <p>The platform runs a <strong>multi-signal prediction algorithm</strong> weighing time-of-day patterns, day of week, month-level seasonality, Indian public holidays, Wikipedia page-view trends, hotel demand signals, and live weather. It generates crowd levels updated in real time, entirely in the user's browser — no server round-trips, no loading spinners.</p>
+            <p>CrowdWise India is <strong>100% free, no login required</strong> and deploys as a static site served globally via Cloudflare's CDN — meaning it loads fast from anywhere in India on any device or connection speed.</p>
+        </div>
+        <div>
+            <div class="pk-story-aside">
+                <h4>Quick Facts</h4>
+                <div class="pk-aside-item">
+                    <span class="pk-aside-icon">🚀</span>
+                    <div class="pk-aside-text">
+                        <strong>Product Type</strong>
+                        Real-time tourist crowd intelligence platform
+                    </div>
+                </div>
+                <div class="pk-aside-item">
+                    <span class="pk-aside-icon">🌐</span>
+                    <div class="pk-aside-text">
+                        <strong>Live URL</strong>
+                        crowdwise.in
+                    </div>
+                </div>
+                <div class="pk-aside-item">
+                    <span class="pk-aside-icon">📅</span>
+                    <div class="pk-aside-text">
+                        <strong>Launch Year</strong>
+                        2026 (v4.0 current)
+                    </div>
+                </div>
+                <div class="pk-aside-item">
+                    <span class="pk-aside-icon">🔓</span>
+                    <div class="pk-aside-text">
+                        <strong>Access</strong>
+                        Fully free, zero login, no tracking
+                    </div>
+                </div>
+                <div class="pk-aside-item">
+                    <span class="pk-aside-icon">🇮🇳</span>
+                    <div class="pk-aside-text">
+                        <strong>Coverage</strong>
+                        All 38 Indian states and UTs, 359 destinations
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section class="pk-section" style="padding-top:0">
+    <p class="pk-section-title">Key Features</p>
+    <div class="pk-divider"></div>
+    <div class="pk-features-grid">
+        <div class="pk-feature-card">
+            <div class="pk-feature-icon">🎯</div>
+            <div class="pk-feature-title">Real-Time Crowd Levels</div>
+            <div class="pk-feature-desc">Live crowd scores (Low / Moderate / Heavy / Overcrowded) with percentage-full estimates, recalculated on every visit purely client-side.</div>
+        </div>
+        <div class="pk-feature-card">
+            <div class="pk-feature-icon">⏰</div>
+            <div class="pk-feature-title">Best Time Finder</div>
+            <div class="pk-feature-desc">Hourly crowd forecast for the full day shown as a visual time-slot grid with a ✦ BEST badge on the lowest-crowd window.</div>
+        </div>
+        <div class="pk-feature-card">
+            <div class="pk-feature-icon">📅</div>
+            <div class="pk-feature-title">Crowd Calendar</div>
+            <div class="pk-feature-desc">Monthly crowd heatmap with colour-coded days so travellers can plan trips weeks or months ahead and avoid peak seasons.</div>
+        </div>
+        <div class="pk-feature-card">
+            <div class="pk-feature-icon">🔍</div>
+            <div class="pk-feature-title">Fuzzy Search & Smart Filters</div>
+            <div class="pk-feature-desc">Instant fuzzy-match search across 359 destinations with category, state, and crowd-level filters — no page reload ever.</div>
+        </div>
+        <div class="pk-feature-card">
+            <div class="pk-feature-icon">🔔</div>
+            <div class="pk-feature-title">Crowd Alerts</div>
+            <div class="pk-feature-desc">Set a desired crowd threshold for any destination. The app fires a browser push notification when conditions are met — no sign-up required.</div>
+        </div>
+        <div class="pk-feature-card">
+            <div class="pk-feature-icon">🌤️</div>
+            <div class="pk-feature-title">Live Weather Integration</div>
+            <div class="pk-feature-desc">Real-time weather data from OpenWeatherMap shown alongside crowd levels. Rainy-day patterns automatically factor into predictions.</div>
+        </div>
+        <div class="pk-feature-card">
+            <div class="pk-feature-icon">🎪</div>
+            <div class="pk-feature-title">Festival Awareness</div>
+            <div class="pk-feature-desc">Full Indian festival calendar for 2026 built in. Crowd predictions automatically spike during Diwali, Holi, Eid, Christmas, and 100+ more Indian festivals tracked year-round.</div>
+        </div>
+        <div class="pk-feature-card">
+            <div class="pk-feature-icon">🧭</div>
+            <div class="pk-feature-title">Destination Detail Pages</div>
+            <div class="pk-feature-desc">Each of the 359 destinations has a shareable URL showing full forecast, crowd calendar, operating hours, and nearby attraction links.</div>
+        </div>
+        <div class="pk-feature-card">
+            <div class="pk-feature-icon">🏆</div>
+            <div class="pk-feature-title">Gamification & Feedback Loop</div>
+            <div class="pk-feature-desc">Users earn points and badges for submitting crowd reports. Feedback automatically tunes the algorithm's accuracy over time.</div>
+        </div>
+    </div>
+</section>
+
+<!-- DEMO SECTION -->
+<section class="pk-section" style="padding-top:0">
+    <p class="pk-section-title">Product Demo</p>
+    <div class="pk-divider"></div>
+    <div class="pk-demo-card">
+        <h3>See CrowdWise India in Action</h3>
+        <p>A full 8-scene cinematic walkthrough of every major feature — built for screen recording, reviews, and embeds.</p>
+        <div class="pk-demo-screens">
+            <div class="pk-screen">
+                <div class="pk-screen-title">Right Now</div>
+                <div class="pk-screen-dest">🕌 Taj Mahal</div>
+                <div><span class="pk-screen-level level-low">🟢 Low Crowd</span></div>
+            </div>
+            <div class="pk-screen">
+                <div class="pk-screen-title">Right Now</div>
+                <div class="pk-screen-dest">🛕 Tirupati</div>
+                <div><span class="pk-screen-level level-over">🔴 Overcrowded</span></div>
+            </div>
+            <div class="pk-screen">
+                <div class="pk-screen-title">Right Now</div>
+                <div class="pk-screen-dest">🏖️ Goa Beaches</div>
+                <div><span class="pk-screen-level level-mod">🟡 Moderate</span></div>
+            </div>
+            <div class="pk-screen">
+                <div class="pk-screen-title">Right Now</div>
+                <div class="pk-screen-dest">🏔️ Manali</div>
+                <div><span class="pk-screen-level level-heavy">🟠 Heavy Crowd</span></div>
+            </div>
+        </div>
+        <a href="demo-video.html" class="pk-btn pk-btn-primary" style="font-size:1rem; padding:16px 36px;">▶ Open Full Demo →</a>
+    </div>
+</section>
+
+<!-- COPY KIT -->
+<section class="pk-section" style="padding-top:0">
+    <p class="pk-section-title">Copy Kit</p>
+    <p class="pk-section-sub">Ready-to-use text for articles, social posts, and product descriptions. Click any block to copy.</p>
+    <div class="pk-divider" style="margin-top:0"></div>
+
+    <div class="pk-copy-tabs">
+        <button class="pk-tab-btn active" onclick="showTab('taglines')">Taglines</button>
+        <button class="pk-tab-btn" onclick="showTab('short')">Short Bio</button>
+        <button class="pk-tab-btn" onclick="showTab('long')">Long Description</button>
+        <button class="pk-tab-btn" onclick="showTab('social')">Social Captions</button>
+        <button class="pk-tab-btn" onclick="showTab('hashtags')">Hashtags</button>
+    </div>
+
+    <!-- TAGLINES -->
+    <div class="pk-copy-panel active" id="tab-taglines">
+        <div class="pk-copy-block">
+            <div class="pk-copy-label">Primary Tagline</div>
+            <div class="pk-copy-text">Travel without the rush.</div>
+            <button class="pk-copy-btn" onclick="copyBlock(this)">Copy</button>
+        </div>
+        <div class="pk-copy-block">
+            <div class="pk-copy-label">Extended Tagline</div>
+            <div class="pk-copy-text">India's first real-time crowd intelligence platform for 359 tourist destinations — completely free.</div>
+            <button class="pk-copy-btn" onclick="copyBlock(this)">Copy</button>
+        </div>
+        <div class="pk-copy-block">
+            <div class="pk-copy-label">Value Proposition</div>
+            <div class="pk-copy-text">Know before you go. CrowdWise India tells you how crowded any tourist destination will be — right now, tomorrow, or next month.</div>
+            <button class="pk-copy-btn" onclick="copyBlock(this)">Copy</button>
+        </div>
+        <div class="pk-copy-block">
+            <div class="pk-copy-label">Alternative (Problem-focused)</div>
+            <div class="pk-copy-text">Tired of showing up at iconic sites only to find thousands of other tourists? CrowdWise India predicts crowd levels so you never waste a trip again.</div>
+            <button class="pk-copy-btn" onclick="copyBlock(this)">Copy</button>
+        </div>
+    </div>
+
+    <!-- SHORT BIO -->
+    <div class="pk-copy-panel" id="tab-short">
+        <div class="pk-copy-block">
+            <div class="pk-copy-label">50-Word Description</div>
+            <div class="pk-copy-text">CrowdWise India is a free tourist crowd intelligence platform covering 359 destinations across all 38 Indian states. It uses 7 live signals — including time-of-day patterns, seasonality, Indian holidays, Wikipedia trends, and weather — to predict crowd levels in real time. No login. No cost. Works instantly in any browser.</div>
+            <button class="pk-copy-btn" onclick="copyBlock(this)">Copy</button>
+        </div>
+        <div class="pk-copy-block">
+            <div class="pk-copy-label">App Store Style (160 chars)</div>
+            <div class="pk-copy-text">Real-time crowd levels for 359 Indian tourist spots. Plan trips around peak crowds. Free, instant, no login needed.</div>
+            <button class="pk-copy-btn" onclick="copyBlock(this)">Copy</button>
+        </div>
+    </div>
+
+    <!-- LONG DESC -->
+    <div class="pk-copy-panel" id="tab-long">
+        <div class="pk-copy-block">
+            <div class="pk-copy-label">Full Press Description</div>
+            <div class="pk-copy-text">CrowdWise India is an independent travel intelligence platform that solves one of domestic tourism's most persistent frustrations: arriving at a destination to find it overwhelmed with crowds.
+
+Covering 359 tourist destinations across all 38 Indian states and Union Territories — from the Taj Mahal in Uttar Pradesh to Gurudongmar Lake in Sikkim — CrowdWise India provides real-time crowd-level predictions, hourly forecasts, monthly crowd calendars, and browser push alerts, entirely free of charge and with no user registration required.
+
+The platform's prediction engine combines seven weighted signals: time-of-day patterns (22 destination category curves), day-of-week factors, month-level seasonality, Indian public holidays and festivals, Wikipedia page-view trends as tourist-interest proxies, hotel demand patterns, and live weather conditions. The result is a crowd level — Low, Moderate, Heavy, or Overcrowded — updated on every page visit.
+
+CrowdWise India launched in 2026 and is built on vanilla JavaScript for maximum portability, deployed globally via Cloudflare Pages for sub-second load times across India. The backend API (Node.js / PostgreSQL on AWS) powers data collection and the gamified feedback loop through which user crowd reports continuously improve prediction accuracy.
+
+The platform is free to use at crowdwise.in with no paywall, no advertisements, and no data collection from users.</div>
+            <button class="pk-copy-btn" onclick="copyBlock(this)">Copy</button>
+        </div>
+    </div>
+
+    <!-- SOCIAL -->
+    <div class="pk-copy-panel" id="tab-social">
+        <div class="pk-copy-block">
+            <div class="pk-copy-label">Instagram / Facebook Caption</div>
+            <div class="pk-copy-text">Planning to visit the Taj Mahal this weekend? 👀
+
+Before you go — check CrowdWise India. It shows you live crowd levels for 359 tourist destinations across every Indian state. No app download. No login. Completely free. 🇮🇳
+
+See how crowded it'll be before you leave home ↓
+crowdwise.in
+
+#CrowdWise #TravelIndia #IncredibleIndia #TravelHacks</div>
+            <button class="pk-copy-btn" onclick="copyBlock(this)">Copy</button>
+        </div>
+        <div class="pk-copy-block">
+            <div class="pk-copy-label">Twitter / X Thread Opener</div>
+            <div class="pk-copy-text">I built a tool to solve one of the most frustrating things about domestic travel in India 🇮🇳
+
+Showing up at tourist spots only to find them packed with thousands of people.
+
+CrowdWise India predicts crowd levels for 359 destinations in real time. Free. No login.
+
+→ crowdwise.in</div>
+            <button class="pk-copy-btn" onclick="copyBlock(this)">Copy</button>
+        </div>
+        <div class="pk-copy-block">
+            <div class="pk-copy-label">LinkedIn Post</div>
+            <div class="pk-copy-text">India sees over 2 billion domestic tourist visits a year — yet travellers have had no reliable way to know how crowded a destination will be before they arrive.
+
+CrowdWise India was built to change that.
+
+🗺️ 359 destinations across all 38 states
+📊 7-signal prediction algorithm (time, seasonality, holidays, weather + more)
+⏰ Hourly forecast + monthly crowd calendar
+🔔 Browser crowd alerts — no sign-up required
+💰 Completely free, forever
+
+The platform runs entirely in the browser via Cloudflare's global edge network, meaning it loads fast from any corner of India.
+
+Try it at crowdwise.in and let me know what you think.</div>
+            <button class="pk-copy-btn" onclick="copyBlock(this)">Copy</button>
+        </div>
+        <div class="pk-copy-block">
+            <div class="pk-copy-label">YouTube Description</div>
+            <div class="pk-copy-text">CrowdWise India is a free real-time tourist crowd prediction platform covering 359 destinations across all 38 Indian states. In this video I walk through all major features: live crowd levels, the hourly Best Time Finder, monthly crowd calendar, smart filters, crowd alerts, and the festival-aware prediction algorithm.
+
+🌐 Try it free: https://crowdwise.in
+📖 How it works: https://crowdwise.in/blog/crowd-prediction-explained.html
+✍️ Travel guides: https://crowdwise.in/blog.html
+
+Timestamps:
+0:00 The problem — packed tourist spots
+0:30 Live crowd levels for 359 Indian destinations
+1:15 Finding the best time to visit today
+2:00 Monthly crowd calendar
+2:45 Setting crowd alerts
+3:20 How the algorithm works
+4:00 Available at crowdwise.in — free forever</div>
+            <button class="pk-copy-btn" onclick="copyBlock(this)">Copy</button>
+        </div>
+    </div>
+
+    <!-- HASHTAGS -->
+    <div class="pk-copy-panel" id="tab-hashtags">
+        <p style="color:#6b7280; font-size:0.9rem; margin-bottom:20px;">Click any hashtag to copy it individually.</p>
+        <div class="pk-hashtag-cloud">
+            <span class="pk-hashtag" onclick="copyHashtag(this)">#CrowdWise</span>
+            <span class="pk-hashtag" onclick="copyHashtag(this)">#CrowdWiseIndia</span>
+            <span class="pk-hashtag" onclick="copyHashtag(this)">#TravelIndia</span>
+            <span class="pk-hashtag" onclick="copyHashtag(this)">#IncredibleIndia</span>
+            <span class="pk-hashtag" onclick="copyHashtag(this)">#IndiaTravel</span>
+            <span class="pk-hashtag" onclick="copyHashtag(this)">#TravelHacks</span>
+            <span class="pk-hashtag" onclick="copyHashtag(this)">#SmartTravel</span>
+            <span class="pk-hashtag" onclick="copyHashtag(this)">#TravelApp</span>
+            <span class="pk-hashtag" onclick="copyHashtag(this)">#AvoidCrowds</span>
+            <span class="pk-hashtag" onclick="copyHashtag(this)">#TouristTracker</span>
+            <span class="pk-hashtag" onclick="copyHashtag(this)">#TravelPlanning</span>
+            <span class="pk-hashtag" onclick="copyHashtag(this)">#IndianTourism</span>
+            <span class="pk-hashtag" onclick="copyHashtag(this)">#TajMahal</span>
+            <span class="pk-hashtag" onclick="copyHashtag(this)">#GoaTravel</span>
+            <span class="pk-hashtag" onclick="copyHashtag(this)">#ManaliTrip</span>
+            <span class="pk-hashtag" onclick="copyHashtag(this)">#JaipurDiaries</span>
+            <span class="pk-hashtag" onclick="copyHashtag(this)">#KeralaBackwaters</span>
+            <span class="pk-hashtag" onclick="copyHashtag(this)">#VaranasiDiaries</span>
+            <span class="pk-hashtag" onclick="copyHashtag(this)">#WeekendGetaway</span>
+            <span class="pk-hashtag" onclick="copyHashtag(this)">#StressFreeTravel</span>
+            <span class="pk-hashtag" onclick="copyHashtag(this)">#WanderIndia</span>
+            <span class="pk-hashtag" onclick="copyHashtag(this)">#TravelTech</span>
+            <span class="pk-hashtag" onclick="copyHashtag(this)">#IndieHacker</span>
+            <span class="pk-hashtag" onclick="copyHashtag(this)">#BuildInPublic</span>
+            <span class="pk-hashtag" onclick="copyHashtag(this)">#MadeInIndia</span>
+        </div>
+    </div>
+</section>
+
+<!-- CONTACT -->
+<section class="pk-section" style="padding-top:0">
+    <p class="pk-section-title">Media Contact</p>
+    <div class="pk-divider"></div>
+    <div class="pk-contact-grid">
+        <div class="pk-contact-card">
+            <div class="pk-contact-icon">🌐</div>
+            <div class="pk-contact-title">Live Platform</div>
+            <div class="pk-contact-value"><a href="https://crowdwise.in" target="_blank">crowdwise.in</a></div>
+            <div class="pk-contact-note">Try the live product before covering it</div>
+        </div>
+        <div class="pk-contact-card">
+            <div class="pk-contact-icon">📹</div>
+            <div class="pk-contact-title">Demo Video</div>
+            <div class="pk-contact-value"><a href="demo-video.html">Full 8-scene product walkthrough</a></div>
+            <div class="pk-contact-note">Built for screen recording, embeds, and review screenshots</div>
+        </div>
+        <div class="pk-contact-card">
+            <div class="pk-contact-icon">📝</div>
+            <div class="pk-contact-title">Blog / Articles</div>
+            <div class="pk-contact-value"><a href="../blog.html">crowdwise.in/blog.html</a></div>
+            <div class="pk-contact-note">Destination guides, algorithm explainer, how-to articles</div>
+        </div>
+        <div class="pk-contact-card">
+            <div class="pk-contact-icon">📊</div>
+            <div class="pk-contact-title">Algorithm Deep-Dive</div>
+            <div class="pk-contact-value"><a href="../blog/crowd-prediction-explained.html">How the prediction works</a></div>
+            <div class="pk-contact-note">Full technical transparency — 7 signals, weights, accuracy methodology</div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="pk-footer">
+    <p>CrowdWise India · <a href="https://crowdwise.in">crowdwise.in</a> · Free &amp; open for press use · All stats as of March 2026</p>
+    <p style="margin-top:8px; color:#374151;">
+        <a href="../index.html">App</a> · <a href="../blog.html">Blog</a> · <a href="demo-video.html">Demo Video</a>
+    </p>
+</footer>
+
+<script>
+    // Tab switching
+    function showTab(id) {
+        document.querySelectorAll('.pk-copy-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.pk-tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('tab-' + id).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    // Copy block text
+    function copyBlock(btn) {
+        var block = btn.closest('.pk-copy-block');
+        var text = block.querySelector('.pk-copy-text').innerText;
+        navigator.clipboard.writeText(text).then(function() {
+            btn.textContent = '✓ Copied!';
+            btn.classList.add('copied');
+            setTimeout(function() {
+                btn.textContent = 'Copy';
+                btn.classList.remove('copied');
+            }, 2000);
+        }).catch(function() {
+            var ta = document.createElement('textarea');
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            btn.textContent = '✓ Copied!';
+            btn.classList.add('copied');
+            setTimeout(function() {
+                btn.textContent = 'Copy';
+                btn.classList.remove('copied');
+            }, 2000);
+        });
+    }
+
+    // Copy individual hashtag
+    function copyHashtag(el) {
+        var tag = el.innerText;
+        navigator.clipboard.writeText(tag).then(function() {
+            el.classList.add('copied');
+            var orig = el.innerText;
+            el.innerText = '✓ ' + tag;
+            setTimeout(function() {
+                el.innerText = orig;
+                el.classList.remove('copied');
+            }, 1500);
+        });
+    }
+</script>
+</body>
+</html>

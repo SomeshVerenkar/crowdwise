@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en" style="background:#000">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#000000">
+<title>CrowdWise India — Product Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --green: #22c55e;
+    --amber: #f59e0b;
+    --orange: #f97316;
+    --red: #ef4444;
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    margin: 0; padding: 0;
+    background: #000;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* ── 1280×720 stage: scaled + centred by JS ── */
+  #stage {
+    position: absolute;
+    width: 1280px;
+    height: 720px;
+    overflow: hidden;
+    transform-origin: 0 0;
+    background: #000;
+  }
+
+  /* ── Portrait-mode rotate prompt (dismissible, not blocking) ── */
+  #rotateOverlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.93);
+    z-index: 99999;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 20px;
+    padding: 48px 28px;
+  }
+  /* Only auto-show on portrait; JS can also force-show/hide */
+  @media (orientation: portrait) {
+    #rotateOverlay.auto { display: flex; }
+  }
+  .rotate-icon {
+    font-size: 72px;
+    animation: rotateAnim 2.4s ease-in-out infinite;
+    display: block;
+  }
+  @keyframes rotateAnim {
+    0%, 40%, 100% { transform: rotate(0deg); }
+    60%, 90%     { transform: rotate(90deg); }
+  }
+  #rotateOverlay h2 {
+    font-size: clamp(1.3rem, 6vw, 1.8rem);
+    font-weight: 800; color: #f0f0ff;
+    background: linear-gradient(135deg, #a78bfa, #60a5fa);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  #rotateOverlay p {
+    font-size: clamp(0.9rem, 4vw, 1.05rem);
+    color: #6b7280; max-width: 280px; line-height: 1.6;
+  }
+  #rotateContinueBtn {
+    margin-top: 8px;
+    padding: 12px 28px;
+    background: rgba(124,58,237,0.15);
+    border: 1px solid rgba(124,58,237,0.4);
+    border-radius: 10px;
+    color: #a78bfa;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s;
+  }
+  #rotateContinueBtn:hover,
+  #rotateContinueBtn:active { background: rgba(124,58,237,0.3); }
+
+  /* ─── SCENE SYSTEM ─── */
+  .scene {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.7s ease;
+    pointer-events: none;
+  }
+  .scene.active { opacity: 1; pointer-events: all; }
+  .scene.exit   { opacity: 0; }
+
+  /* ─── PROGRESS BAR ─── */
+  #progressBar {
+    position: fixed;
+    bottom: 0; left: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary), #a78bfa, #ec4899);
+    width: 0%;
+    transition: width 0.4s linear;
+    z-index: 9999;
+    box-shadow: 0 0 12px rgba(99,102,241,0.8);
+  }
+
+  /* Timer ring */
+  #timerRing {
+    position: fixed;
+    bottom: 20px; right: 20px;
+    z-index: 9999;
+  }
+  #timerRing svg { width: 44px; height: 44px; transform: rotate(-90deg); }
+  #timerRing circle { fill: none; stroke: rgba(255,255,255,0.15); stroke-width: 3; }
+  #timerRing .progress-ring { stroke: var(--primary); stroke-width: 3; stroke-dasharray: 113; stroke-dashoffset: 113; transition: stroke-dashoffset 0.1s linear; }
+  #slideNum {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.6);
+    transform: rotate(90deg);
+  }
+
+  /* Pause indicator */
+  #pauseHint {
+    position: fixed;
+    top: 20px; right: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.4);
+    z-index: 9999;
+    letter-spacing: 0.05em;
+    transition: color 0.3s;
+  }
+  #pauseHint.paused { color: rgba(255,255,255,0.9); }
+
+  /* ═══════════════════════════════════════════════
+     SCENE 1 — HOOK / PROBLEM
+  ═══════════════════════════════════════════════ */
+  #s1 {
+    background: radial-gradient(ellipse at 30% 50%, #1e0a3c 0%, #0a0011 70%);
+  }
+  #s1 .center {
+    text-align: center;
+    max-width: 780px;
+  }
+  #s1 .hook-eyebrow {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: #a78bfa;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.3s forwards;
+  }
+  #s1 h1 {
+    font-size: 72px;
+    font-weight: 900;
+    line-height: 1.08;
+    color: #fff;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.6s forwards;
+  }
+  #s1 h1 span { color: #f87171; }
+  #s1 .sub {
+    font-size: 22px;
+    color: rgba(255,255,255,0.55);
+    font-weight: 400;
+    opacity: 0;
+    animation: fadeUp 0.7s 1s forwards;
+  }
+  .crowd-emoji-row {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 32px;
+    opacity: 0;
+    animation: fadeUp 0.6s 1.4s forwards;
+  }
+  .crowd-emoji-row span {
+    font-size: 32px;
+    animation: shake 0.3s infinite alternate;
+  }
+  .crowd-emoji-row span:nth-child(2) { animation-delay: 0.05s; }
+  .crowd-emoji-row span:nth-child(3) { animation-delay: 0.1s; }
+  .crowd-emoji-row span:nth-child(4) { animation-delay: 0.15s; }
+  .crowd-emoji-row span:nth-child(5) { animation-delay: 0.2s; }
+
+  /* ═══════════════════════════════════════════════
+     SCENE 2 — SOLUTION INTRO
+  ═══════════════════════════════════════════════ */
+  #s2 {
+    background: radial-gradient(ellipse at 60% 40%, #0f1b4d 0%, #050812 70%);
+  }
+  .solution-logo {
+    font-size: 88px;
+    text-align: center;
+    opacity: 0;
+    animation: zoomIn 0.7s 0.2s forwards;
+  }
+  .solution-name {
+    font-size: 64px;
+    font-weight: 900;
+    text-align: center;
+    background: linear-gradient(135deg, #818cf8, #c084fc, #f472b6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.7s forwards;
+  }
+  .solution-tagline {
+    font-size: 22px;
+    color: rgba(255,255,255,0.6);
+    text-align: center;
+    margin-top: 12px;
+    opacity: 0;
+    animation: fadeUp 0.6s 1.1s forwards;
+  }
+  .stats-row {
+    display: flex;
+    gap: 48px;
+    margin-top: 48px;
+    justify-content: center;
+    opacity: 0;
+    animation: fadeUp 0.7s 1.5s forwards;
+  }
+  .stat-pill {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 20px 32px;
+    background: rgba(99,102,241,0.12);
+    border: 1px solid rgba(99,102,241,0.3);
+    border-radius: 16px;
+  }
+  .stat-pill-num {
+    font-size: 36px;
+    font-weight: 900;
+    color: #a78bfa;
+  }
+  .stat-pill-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* ═══════════════════════════════════════════════
+     SCENES 3–6 — PHONE DEMO FRAME
+  ═══════════════════════════════════════════════ */
+  .demo-stage {
+    display: flex;
+    align-items: center;
+    gap: 80px;
+    width: 100%;
+    height: 100%;
+    padding: 40px 80px;
+  }
+
+  /* LEFT: phone mockup */
+  .phone-wrap {
+    flex-shrink: 0;
+    position: relative;
+  }
+  .phone-frame {
+    width: 320px;
+    height: 580px;
+    background: #0d0d1a;
+    border-radius: 44px;
+    border: 8px solid #2a2a40;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.08),
+      0 40px 100px rgba(0,0,0,0.7),
+      0 0 80px rgba(99,102,241,0.15);
+    overflow: hidden;
+    position: relative;
+  }
+  .phone-notch {
+    position: absolute;
+    top: 10px; left: 50%;
+    transform: translateX(-50%);
+    width: 100px; height: 24px;
+    background: #0d0d1a;
+    border-radius: 12px;
+    z-index: 10;
+  }
+  .phone-screen {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #f1f5f9;
+    position: relative;
+  }
+
+  /* ── App screen: search ── */
+  .app-header {
+    background: linear-gradient(135deg, #1e1b4b, #312e81);
+    padding: 42px 16px 16px;
+    position: relative;
+  }
+  .app-logo-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .app-logo-txt {
+    font-size: 18px;
+    font-weight: 800;
+    color: #fff;
+  }
+  .app-logo-sub {
+    font-size: 10px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 500;
+  }
+  .app-search-bar {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 12px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.8);
+    position: relative;
+  }
+  .cursor {
+    display: inline-block;
+    width: 2px;
+    height: 14px;
+    background: #a78bfa;
+    margin-left: 2px;
+    animation: blink 0.8s step-end infinite;
+  }
+
+  /* Destination cards in phone */
+  .app-cards { padding: 12px 10px; overflow: hidden; }
+  .app-card {
+    background: #fff;
+    border-radius: 14px;
+    margin-bottom: 10px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  .app-card.show { opacity: 1; transform: translateY(0); transition: all 0.4s ease; }
+  .app-card-emoji { font-size: 26px; width: 40px; text-align: center; }
+  .app-card-info { flex: 1; min-width: 0; }
+  .app-card-name { font-size: 13px; font-weight: 700; color: #1e1b4b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .app-card-state { font-size: 10px; color: #94a3b8; margin-top: 2px; }
+  .crowd-dot {
+    width: 32px; height: 20px;
+    border-radius: 20px;
+    font-size: 9px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .crowd-dot.low     { background: #dcfce7; color: #166534; }
+  .crowd-dot.mod     { background: #fef9c3; color: #854d0e; }
+  .crowd-dot.heavy   { background: #fed7aa; color: #9a3412; }
+  .crowd-dot.packed  { background: #fecaca; color: #991b1b; }
+
+  /* ── App screen: destination detail ── */
+  .dest-screen { background: #f8fafc; height: 100%; }
+  .dest-header {
+    background: linear-gradient(160deg, #312e81, #6366f1);
+    padding: 40px 14px 20px;
+    color: #fff;
+  }
+  .dest-back { font-size: 18px; margin-bottom: 8px; opacity: 0.7; }
+  .dest-name { font-size: 16px; font-weight: 800; margin-bottom: 4px; }
+  .dest-state-lbl { font-size: 11px; opacity: 0.65; }
+  .dest-crowd-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(255,255,255,0.18);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-top: 10px;
+  }
+  .dest-stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 12px;
+  }
+  .dest-stat {
+    background: #fff;
+    border-radius: 12px;
+    padding: 10px 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .dest-stat-lbl { font-size: 9px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 3px; }
+  .dest-stat-val { font-size: 13px; font-weight: 700; color: #1e1b4b; }
+
+  /* ── Calendar screen ── */
+  .cal-screen { background: #f8fafc; padding: 40px 10px 10px; height: 100%; }
+  .cal-mini-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding: 0 4px;
+  }
+  .cal-mini-title { font-size: 13px; font-weight: 800; color: #1e1b4b; }
+  .cal-mini-nav { font-size: 18px; color: #6366f1; cursor: pointer; }
+  .cal-grid-mini {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+    margin-bottom: 10px;
+  }
+  .cgm-hdr { font-size: 8px; font-weight: 700; color: #94a3b8; text-align: center; padding: 3px 0; }
+  .cgm-day {
+    aspect-ratio: 1;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .cgm-day.empty { background: none; }
+  .cgm-day.selected { outline: 2px solid #6366f1; outline-offset: 1px; transform: scale(1.15); }
+  .cgm-pct { font-size: 7px; opacity: 0.8; margin-top: 1px; }
+  .cal-detail-card {
+    background: #1e1b4b;
+    border-radius: 12px;
+    padding: 12px 14px;
+    color: #fff;
+    margin-top: 8px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.35s ease;
+  }
+  .cal-detail-card.show { opacity: 1; transform: translateY(0); }
+  .cdc-date { font-size: 11px; font-weight: 700; opacity: 0.8; margin-bottom: 8px; }
+  .cdc-row { display: flex; justify-content: space-between; font-size: 11px; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .cdc-row:last-child { border-bottom: none; }
+  .cdc-val { font-weight: 700; }
+
+  /* RIGHT: feature annotations */
+  .annotation-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 24px;
+    opacity: 0;
+    animation: fadeLeft 0.7s 0.5s forwards;
+  }
+  .anno-eyebrow {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 8px;
+  }
+  .anno-title {
+    font-size: 38px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .anno-body {
+    font-size: 16px;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.7;
+    max-width: 400px;
+  }
+  .anno-feature-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 4px;
+  }
+  .anno-feat {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+  .anno-feat.show { opacity: 1; transform: translateX(0); transition: all 0.4s ease; }
+  .anno-feat-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    background: rgba(99,102,241,0.15);
+  }
+  .anno-feat-text { font-size: 15px; font-weight: 600; color: rgba(255,255,255,0.85); }
+
+  /* Demo scene backgrounds */
+  #s3 { background: linear-gradient(140deg, #0f172a 0%, #1e1b4b 100%); }
+  #s4 { background: linear-gradient(140deg, #0c1a0c 0%, #052e1a 100%); }
+  #s5 { background: linear-gradient(140deg, #1a0f0f 0%, #2d0e0e 100%); }
+
+  /* ═══════════════════════════════════════════════
+     SCENE 6 — CROWD CALENDAR DEMO
+  ═══════════════════════════════════════════════ */
+  #s6 { background: linear-gradient(140deg, #0d1117 0%, #161b22 100%); }
+
+  /* ═══════════════════════════════════════════════
+     SCENE 7 — FEATURE GRID
+  ═══════════════════════════════════════════════ */
+  #s7 {
+    background: radial-gradient(ellipse at 50% 45%, #1a1233 0%, #06040f 80%);
+  }
+  .feat-grid-wrap { text-align: center; width: 100%; padding: 40px 80px; }
+  .feat-grid-eyebrow {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 12px;
+    opacity: 0;
+    animation: fadeUp 0.5s 0.2s forwards;
+  }
+  .feat-grid-title {
+    font-size: 52px;
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.5s forwards;
+  }
+  .features-grid-demo {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  .feat-card-demo {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 20px;
+    padding: 28px 20px;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  .feat-card-demo.show { opacity: 1; transform: translateY(0); transition: all 0.5s ease; }
+  .fcd-icon { font-size: 40px; margin-bottom: 16px; }
+  .fcd-title { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .fcd-desc { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.6; }
+
+  /* ═══════════════════════════════════════════════
+     SCENE 8 — FINAL CTA
+  ═══════════════════════════════════════════════ */
+  #s8 {
+    background: radial-gradient(ellipse at 50% 50%, #1e0a5e 0%, #030005 60%);
+  }
+  .cta-center { text-align: center; }
+  .cta-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(99,102,241,0.15);
+    border: 1px solid rgba(99,102,241,0.4);
+    border-radius: 40px;
+    padding: 8px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #a78bfa;
+    letter-spacing: 0.05em;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.2s forwards;
+  }
+  .cta-main {
+    font-size: 80px;
+    font-weight: 900;
+    line-height: 1;
+    color: #fff;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.5s forwards;
+  }
+  .cta-main span {
+    background: linear-gradient(135deg, #818cf8, #c084fc, #f472b6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .cta-url-box {
+    margin: 36px auto;
+    display: inline-block;
+    padding: 20px 56px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border-radius: 20px;
+    font-size: 40px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: 0.04em;
+    box-shadow: 0 20px 60px rgba(99,102,241,0.5);
+    opacity: 0;
+    animation: scaleIn 0.7s 0.9s forwards;
+  }
+  .cta-chips {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 8px;
+    opacity: 0;
+    animation: fadeUp 0.6s 1.4s forwards;
+  }
+  .cta-chip {
+    padding: 10px 24px;
+    border-radius: 40px;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    font-size: 15px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.7);
+  }
+
+  /* ═══════════════════════════════════════════════
+     SHARED ANIMATIONS
+  ═══════════════════════════════════════════════ */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeLeft {
+    from { opacity: 0; transform: translateX(24px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes zoomIn {
+    from { opacity: 0; transform: scale(0.6); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.75); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+  @keyframes shake {
+    from { transform: rotate(-4deg) translateX(-1px); }
+    to   { transform: rotate(4deg) translateX(1px); }
+  }
+  @keyframes typing {
+    from { width: 0; }
+  }
+
+  /* Typewriter text */
+  .typewriter {
+    overflow: hidden;
+    white-space: nowrap;
+    display: inline-block;
+    animation: typing 1.2s steps(20) 0.6s forwards;
+    width: 0;
+    font-size: 13px;
+    color: rgba(255,255,255,0.85);
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── Portrait rotate prompt (auto-shown in portrait, dismissible) ─── -->
+<div id="rotateOverlay" class="auto">
+  <span class="rotate-icon">📱</span>
+  <h2>Rotate your phone</h2>
+  <p>This demo is designed for landscape view. Rotate for the best experience.</p>
+  <button id="rotateContinueBtn" onclick="dismissRotateOverlay()">Continue in Portrait →</button>
+</div>
+
+<!-- ─── 1280×720 stage (scaled to fit by JS) ─── -->
+<div id="stage">
+
+<!-- ─── SCENE 1: HOOK ─── -->
+<div class="scene active" id="s1">
+  <div class="center">
+    <div class="hook-eyebrow">🇮🇳 India's Most Visited Tourist Spots</div>
+    <h1>Everyone goes.<br>Nobody plans <span>for the crowd.</span></h1>
+    <p class="sub">Until now.</p>
+    <div class="crowd-emoji-row">
+      <span>😤</span><span>😤</span><span>😤</span><span>😤</span><span>😤</span>
+      <span>😤</span><span>😤</span><span>😤</span><span>😤</span><span>😤</span>
+    </div>
+  </div>
+</div>
+
+<!-- ─── SCENE 2: SOLUTION INTRO ─── -->
+<div class="scene" id="s2">
+  <div style="text-align:center;">
+    <div class="solution-logo">🗺️</div>
+    <div class="solution-name">CrowdWise India</div>
+    <div class="solution-tagline">Know the crowd before you go</div>
+    <div class="stats-row">
+      <div class="stat-pill"><span class="stat-pill-num">359</span><span class="stat-pill-label">Destinations</span></div>
+      <div class="stat-pill"><span class="stat-pill-num">38</span><span class="stat-pill-label">States &amp; UTs</span></div>
+      <div class="stat-pill"><span class="stat-pill-num">100%</span><span class="stat-pill-label">Free</span></div>
+      <div class="stat-pill"><span class="stat-pill-num">Real-time</span><span class="stat-pill-label">Predictions</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── SCENE 3: SEARCH + CARDS ─── -->
+<div class="scene" id="s3">
+  <div class="demo-stage">
+    <div class="phone-wrap">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen" id="screen-s3">
+          <div class="app-header">
+            <div class="app-logo-row">
+              <span style="font-size:20px;">🗺️</span>
+              <div>
+                <div class="app-logo-txt">CrowdWise India</div>
+                <div class="app-logo-sub">Live Crowd Intelligence</div>
+              </div>
+            </div>
+            <div class="app-search-bar">
+              <span>🔍</span>
+              <span class="typewriter" id="typeText">Taj Mahal</span>
+              <span class="cursor"></span>
+            </div>
+          </div>
+          <div class="app-cards" id="cardsResult">
+            <div class="app-card" id="card1">
+              <div class="app-card-emoji">🕌</div>
+              <div class="app-card-info"><div class="app-card-name">Taj Mahal</div><div class="app-card-state">📍 Uttar Pradesh</div></div>
+              <div class="crowd-dot low">Low</div>
+            </div>
+            <div class="app-card" id="card2">
+              <div class="app-card-emoji">🛕</div>
+              <div class="app-card-info"><div class="app-card-name">Tirupati Balaji Temple</div><div class="app-card-state">📍 Andhra Pradesh</div></div>
+              <div class="crowd-dot packed">Packed</div>
+            </div>
+            <div class="app-card" id="card3">
+              <div class="app-card-emoji">🏖️</div>
+              <div class="app-card-info"><div class="app-card-name">Calangute Beach, Goa</div><div class="app-card-state">📍 Goa</div></div>
+              <div class="crowd-dot mod">Mid</div>
+            </div>
+            <div class="app-card" id="card4">
+              <div class="app-card-emoji">⛰️</div>
+              <div class="app-card-info"><div class="app-card-name">Rohtang Pass, Manali</div><div class="app-card-state">📍 Himachal Pradesh</div></div>
+              <div class="crowd-dot heavy">Busy</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="annotation-panel">
+      <div>
+        <div class="anno-eyebrow">Step 1 — Discover</div>
+        <div class="anno-title">Search 359<br>destinations instantly</div>
+        <div class="anno-body">Every major tourist spot in India — from Taj Mahal to remote hill stations — with real-time crowd levels.</div>
+        <div class="anno-feature-list">
+          <div class="anno-feat" id="af1"><div class="anno-feat-icon">🟢</div><div class="anno-feat-text">Live crowd level for every destination</div></div>
+          <div class="anno-feat" id="af2"><div class="anno-feat-icon">🔍</div><div class="anno-feat-text">Fuzzy search — city, monument, or beach</div></div>
+          <div class="anno-feat" id="af3"><div class="anno-feat-icon">📍</div><div class="anno-feat-text">Filter by state, category, crowd level</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── SCENE 4: DESTINATION DETAIL ─── -->
+<div class="scene" id="s4">
+  <div class="demo-stage">
+    <div class="phone-wrap">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="dest-screen">
+            <div class="dest-header">
+              <div class="dest-back">← Back</div>
+              <div style="font-size:36px; margin-bottom:6px;">🕌</div>
+              <div class="dest-name">Taj Mahal, Agra</div>
+              <div class="dest-state-lbl">📍 Uttar Pradesh · Heritage</div>
+              <div class="dest-crowd-badge">🟢 Low Crowd · 28% full</div>
+            </div>
+            <div class="dest-stats-row">
+              <div class="dest-stat"><div class="dest-stat-lbl">Best Time Today</div><div class="dest-stat-val">⏰ 6 – 9 AM</div></div>
+              <div class="dest-stat"><div class="dest-stat-lbl">Visitors/day</div><div class="dest-stat-val">~8,000</div></div>
+              <div class="dest-stat"><div class="dest-stat-lbl">Weather</div><div class="dest-stat-val">☀️ 28°C Sunny</div></div>
+              <div class="dest-stat"><div class="dest-stat-lbl">Confidence</div><div class="dest-stat-val">74% accurate</div></div>
+            </div>
+            <div style="padding: 0 12px;">
+              <div style="font-size:10px; font-weight:700; color:#94a3b8; text-transform:uppercase; margin-bottom:8px;">Nearby Attractions</div>
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <span style="background:#ede9fe; color:#6d28d9; border-radius:20px; padding:4px 10px; font-size:10px; font-weight:600;">Agra Fort</span>
+                <span style="background:#ede9fe; color:#6d28d9; border-radius:20px; padding:4px 10px; font-size:10px; font-weight:600;">Mehtab Bagh</span>
+                <span style="background:#ede9fe; color:#6d28d9; border-radius:20px; padding:4px 10px; font-size:10px; font-weight:600;">Fatehpur Sikri</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="annotation-panel">
+      <div>
+        <div class="anno-eyebrow">Step 2 — Deep Dive</div>
+        <div class="anno-title">Full destination<br>intel at a glance</div>
+        <div class="anno-body">Crowd level, visitor estimates, best visiting time, weather, nearby spots — everything a traveller needs before stepping out.</div>
+        <div class="anno-feature-list">
+          <div class="anno-feat" id="bf1"><div class="anno-feat-icon">📊</div><div class="anno-feat-text">Crowd % and today's peak & quiet hours</div></div>
+          <div class="anno-feat" id="bf2"><div class="anno-feat-icon">☀️</div><div class="anno-feat-text">Live weather from OpenWeatherMap</div></div>
+          <div class="anno-feat" id="bf3"><div class="anno-feat-icon">🎉</div><div class="anno-feat-text">Holiday & festival crowd warnings</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── SCENE 5: BEST TIME FINDER ─── -->
+<div class="scene" id="s5">
+  <div class="demo-stage">
+    <div class="phone-wrap">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen" style="background:#f8fafc;">
+          <div style="background:linear-gradient(135deg,#312e81,#6366f1); padding: 40px 14px 16px; color:#fff;">
+            <div style="font-size:10px; opacity:0.6; margin-bottom:4px;">← Taj Mahal</div>
+            <div style="font-size:15px; font-weight:800; margin-bottom:3px;">⏰ Best Time Finder</div>
+            <div style="font-size:11px; opacity:0.65;">Today — Sunday, March 1 2026</div>
+          </div>
+          <div style="padding:10px;">
+            <!-- Time slots -->
+            <div id="bts1" style="display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:10px;padding:9px 12px;margin-bottom:6px;box-shadow:0 1px 4px rgba(0,0,0,.06);opacity:0;transition:all 0.3s;">
+              <span style="font-size:12px;font-weight:600;color:#1e1b4b;">6:00 – 8:00 AM</span>
+              <span style="background:#dcfce7;color:#166534;border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;">✦ BEST 🟢 Low</span>
+            </div>
+            <div id="bts2" style="display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:10px;padding:9px 12px;margin-bottom:6px;box-shadow:0 1px 4px rgba(0,0,0,.06);opacity:0;transition:all 0.3s 0.1s;">
+              <span style="font-size:12px;font-weight:600;color:#1e1b4b;">8:00 – 10:00 AM</span>
+              <span style="background:#fef9c3;color:#854d0e;border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;">🟡 Moderate</span>
+            </div>
+            <div id="bts3" style="display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:10px;padding:9px 12px;margin-bottom:6px;box-shadow:0 1px 4px rgba(0,0,0,.06);opacity:0;transition:all 0.3s 0.2s;">
+              <span style="font-size:12px;font-weight:600;color:#1e1b4b;">10:00 AM – 12:00 PM</span>
+              <span style="background:#fed7aa;color:#9a3412;border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;">🟠 Heavy</span>
+            </div>
+            <div id="bts4" style="display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:10px;padding:9px 12px;margin-bottom:6px;box-shadow:0 1px 4px rgba(0,0,0,.06);opacity:0;transition:all 0.3s 0.3s;">
+              <span style="font-size:12px;font-weight:600;color:#1e1b4b;">12:00 – 2:00 PM</span>
+              <span style="background:#fecaca;color:#991b1b;border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;">🔴 Packed</span>
+            </div>
+            <div id="bts5" style="display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:10px;padding:9px 12px;margin-bottom:6px;box-shadow:0 1px 4px rgba(0,0,0,.06);opacity:0;transition:all 0.3s 0.4s;">
+              <span style="font-size:12px;font-weight:600;color:#1e1b4b;">4:00 – 6:00 PM</span>
+              <span style="background:#fef9c3;color:#854d0e;border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;">🟡 Moderate</span>
+            </div>
+            <div id="bts6" style="display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:10px;padding:9px 12px;margin-bottom:6px;box-shadow:0 1px 4px rgba(0,0,0,.06);opacity:0;transition:all 0.3s 0.5s;">
+              <span style="font-size:12px;font-weight:600;color:#1e1b4b;">6:00 – 8:00 PM</span>
+              <span style="background:#dcfce7;color:#166534;border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;">🟢 Low</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="annotation-panel">
+      <div>
+        <div class="anno-eyebrow">Step 3 — Plan</div>
+        <div class="anno-title">Hour-by-hour<br>crowd forecast</div>
+        <div class="anno-body">See exactly when each destination is quiet vs packed — today, tomorrow, and across the whole year.</div>
+        <div class="anno-feature-list">
+          <div class="anno-feat" id="cf1"><div class="anno-feat-icon">🌅</div><div class="anno-feat-text">Today's full-day prediction in 2-hr slots</div></div>
+          <div class="anno-feat" id="cf2"><div class="anno-feat-icon">🏆</div><div class="anno-feat-text">✦ BEST badge marks lowest-crowd slot</div></div>
+          <div class="anno-feat" id="cf3"><div class="anno-feat-icon">📅</div><div class="anno-feat-text">Crowd calendar for next 12 months</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── SCENE 6: CROWD CALENDAR ─── -->
+<div class="scene" id="s6">
+  <div class="demo-stage">
+    <div class="phone-wrap">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="cal-screen">
+            <div class="cal-mini-header">
+              <span class="cal-mini-nav">‹</span>
+              <span class="cal-mini-title">📅 March 2026</span>
+              <span class="cal-mini-nav">›</span>
+            </div>
+            <div class="cal-grid-mini" id="calGrid"></div>
+            <div class="cal-detail-card" id="calDetail">
+              <div class="cdc-date">📅 Sunday, March 15, 2026</div>
+              <div class="cdc-row"><span>Crowd Level</span><span class="cdc-val">🟡 Moderate Crowd</span></div>
+              <div class="cdc-row"><span>Expected Fill</span><span class="cdc-val">52% full</span></div>
+              <div class="cdc-row"><span>Day Type</span><span class="cdc-val">Weekend</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="annotation-panel">
+      <div>
+        <div class="anno-eyebrow">Step 4 — Calendar View</div>
+        <div class="anno-title">12 months of<br>crowd intelligence</div>
+        <div class="anno-body">Tap any day to see its predicted crowd level. Plan the perfect trip date months in advance — never get surprised again.</div>
+        <div class="anno-feature-list">
+          <div class="anno-feat" id="df1"><div class="anno-feat-icon">🟢</div><div class="anno-feat-text">Colour-coded calendar — green to red</div></div>
+          <div class="anno-feat" id="df2"><div class="anno-feat-icon">🎉</div><div class="anno-feat-text">Holidays marked — avoid peak days</div></div>
+          <div class="anno-feat" id="df3"><div class="anno-feat-icon">📲</div><div class="anno-feat-text">Tap any day for full detail card</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── SCENE 7: FEATURE GRID ─── -->
+<div class="scene" id="s7">
+  <div class="feat-grid-wrap">
+    <div class="feat-grid-eyebrow">Everything You Need</div>
+    <div class="feat-grid-title">One platform. Every destination.</div>
+    <div class="features-grid-demo">
+      <div class="feat-card-demo" id="fc1"><div class="fcd-icon">📊</div><div class="fcd-title">Live Crowd Levels</div><div class="fcd-desc">Low · Moderate · Heavy · Overcrowded — updated in real time</div></div>
+      <div class="feat-card-demo" id="fc2"><div class="fcd-icon">⏰</div><div class="fcd-title">Best Time Finder</div><div class="fcd-desc">Hour-by-hour crowd forecast with ✦ BEST slot highlighted</div></div>
+      <div class="feat-card-demo" id="fc3"><div class="fcd-icon">📅</div><div class="fcd-title">Crowd Calendar</div><div class="fcd-desc">12 months of predictions — plan any trip date in advance</div></div>
+      <div class="feat-card-demo" id="fc4"><div class="fcd-icon">☀️</div><div class="fcd-title">Live Weather</div><div class="fcd-desc">Temperature, condition, and how weather affects crowd levels</div></div>
+      <div class="feat-card-demo" id="fc5"><div class="fcd-icon">🎉</div><div class="fcd-title">Festival Tracking</div><div class="fcd-desc">100+ Indian festivals tracked — no holiday crowd surprises</div></div>
+      <div class="feat-card-demo" id="fc6"><div class="fcd-icon">📍</div><div class="fcd-title">359 Destinations</div><div class="fcd-desc">Temples, beaches, forts, hills, wildlife — across all 38 states</div></div>
+      <div class="feat-card-demo" id="fc7"><div class="fcd-icon">🏆</div><div class="fcd-title">Gamification</div><div class="fcd-desc">Earn badges, points, and XP for exploring India smarter</div></div>
+      <div class="feat-card-demo" id="fc8"><div class="fcd-icon">🆓</div><div class="fcd-title">100% Free</div><div class="fcd-desc">No sign-up. No ads. No subscriptions. Just travel smarter.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── SCENE 8: CTA ─── -->
+<div class="scene" id="s8">
+  <div class="cta-center">
+    <div class="cta-badge">🚀 Launch — March 2026</div>
+    <div class="cta-main">Plan smarter.<br><span>Travel better.</span></div>
+    <div class="cta-url-box">crowdwise.in</div>
+    <div class="cta-chips">
+      <div class="cta-chip">✅ No Sign-Up</div>
+      <div class="cta-chip">✅ 359 Destinations</div>
+      <div class="cta-chip">✅ Instant & Free</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /#stage -->
+
+<!-- ─── UI CHROME (viewport-level, position:fixed works here) ─── -->
+<div id="progressBar"></div>
+<div id="timerRing">
+  <svg viewBox="0 0 40 40">
+    <circle cx="20" cy="20" r="18"/>
+    <circle class="progress-ring" id="timerCircle" cx="20" cy="20" r="18"/>
+  </svg>
+  <div id="slideNum">1/8</div>
+</div>
+<div id="pauseHint">SPACE to pause</div>
+
+<script>
+  // ── Responsive stage scaling (phone & tablet) ──
+  var stage = document.getElementById('stage');
+  function scaleStage() {
+    var vw = window.innerWidth;
+    var vh = window.innerHeight;
+    var scale = Math.min(vw / 1280, vh / 720);
+    var ml = (vw - 1280 * scale) / 2;
+    var mt = (vh - 720 * scale) / 2;
+    stage.style.transform = 'scale(' + scale + ')';
+    stage.style.left = Math.max(0, ml) + 'px';
+    stage.style.top  = Math.max(0, mt) + 'px';
+  }
+  scaleStage();
+  window.addEventListener('resize', scaleStage);
+  window.addEventListener('orientationchange', function() {
+    // Re-calculate after the browser finishes the orientation animation
+    setTimeout(scaleStage, 300);
+  });
+
+  // Portrait overlay logic
+  var portraitDismissed = false;
+  function dismissRotateOverlay() {
+    portraitDismissed = true;
+    document.getElementById('rotateOverlay').style.display = 'none';
+  }
+  // Re-show overlay if user swings back to portrait (unless they already dismissed)
+  window.addEventListener('orientationchange', function() {
+    setTimeout(function() {
+      var overlay = document.getElementById('rotateOverlay');
+      if (!portraitDismissed && window.innerHeight > window.innerWidth) {
+        overlay.style.display = 'flex';
+      } else {
+        overlay.style.display = 'none';
+      }
+    }, 350);
+  });
+  const SCENES = ['s1','s2','s3','s4','s5','s6','s7','s8'];
+  const DURATIONS = [6000, 6000, 8000, 7000, 8000, 8000, 8000, 7000]; // ms per scene
+  var current = 0;
+  var paused  = false;
+
+  /* ── per-scene entrance hooks ── */
+  const onEnter = {
+    s3() {
+      // Cards stagger in after typewriter
+      setTimeout(() => {
+        ['card1','card2','card3','card4'].forEach((id, i) => {
+          setTimeout(() => document.getElementById(id).classList.add('show'), i * 150);
+        });
+      }, 1400);
+      // Feature list
+      setTimeout(() => {
+        ['af1','af2','af3'].forEach((id, i) => {
+          setTimeout(() => document.getElementById(id).classList.add('show'), i * 180);
+        });
+      }, 2200);
+    },
+    s4() {
+      ['bf1','bf2','bf3'].forEach((id, i) => {
+        setTimeout(() => document.getElementById(id).classList.add('show'), 800 + i * 200);
+      });
+    },
+    s5() {
+      ['bts1','bts2','bts3','bts4','bts5','bts6'].forEach((id, i) => {
+        setTimeout(() => { document.getElementById(id).style.opacity = '1'; }, 700 + i * 180);
+      });
+      ['cf1','cf2','cf3'].forEach((id, i) => {
+        setTimeout(() => document.getElementById(id).classList.add('show'), 2500 + i * 200);
+      });
+    },
+    s6() {
+      buildMiniCal();
+      ['df1','df2','df3'].forEach((id, i) => {
+        setTimeout(() => document.getElementById(id).classList.add('show'), 800 + i * 200);
+      });
+      // Simulate click on day 15
+      setTimeout(() => {
+        const cells = document.querySelectorAll('#calGrid .cgm-day:not(.empty)');
+        cells.forEach(c => c.classList.remove('selected'));
+        if (cells[14]) cells[14].classList.add('selected');
+        document.getElementById('calDetail').classList.add('show');
+      }, 2200);
+    },
+    s7() {
+      const ids = ['fc1','fc2','fc3','fc4','fc5','fc6','fc7','fc8'];
+      ids.forEach((id, i) => {
+        setTimeout(() => document.getElementById(id).classList.add('show'), 800 + i * 120);
+      });
+    }
+  };
+
+  function buildMiniCal() {
+    const grid = document.getElementById('calGrid');
+    grid.innerHTML = '';
+    ['S','M','T','W','T','F','S'].forEach(d => {
+      const el = document.createElement('div');
+      el.className = 'cgm-hdr';
+      el.textContent = d;
+      grid.appendChild(el);
+    });
+    // March 2026 starts on Sunday (0)
+    const startDow = 0;
+    const total = 31;
+    const crowdColors = ['#dcfce7','#dcfce7','#bbf7d0','#fef9c3','#fed7aa','#fecaca','#fca5a5'];
+    const textColors = ['#166534','#166534','#166534','#854d0e','#9a3412','#991b1b','#991b1b'];
+    for (let i = 0; i < startDow; i++) {
+      const e = document.createElement('div'); e.className = 'cgm-day empty'; grid.appendChild(e);
+    }
+    for (let d = 1; d <= total; d++) {
+      const el = document.createElement('div');
+      el.className = 'cgm-day';
+      const variant = (d % 7);
+      el.style.background = crowdColors[variant];
+      el.style.color = textColors[variant];
+      el.innerHTML = `<span>${d}</span><span class="cgm-pct">${20 + variant * 10}%</span>`;
+      el.dataset.day = d;
+      el.addEventListener('click', () => {
+        document.querySelectorAll('#calGrid .cgm-day').forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+        document.getElementById('calDetail').classList.add('show');
+      });
+      grid.appendChild(el);
+    }
+  }
+
+  /* ── Scene transition ── */
+  function showScene(idx) {
+    document.getElementById(SCENES[current]).classList.remove('active');
+    current = idx;
+    sceneStart = Date.now(); // reset wall-clock for new scene
+    document.getElementById(SCENES[current]).classList.add('active');
+    document.getElementById('slideNum').textContent = (current + 1) + '/8';
+    if (onEnter[SCENES[current]]) onEnter[SCENES[current]]();
+  }
+
+  function advance() {
+    if (current < SCENES.length - 1) showScene(current + 1);
+    else showScene(0);
+  }
+  function retreat() {
+    if (current > 0) showScene(current - 1);
+  }
+
+  /* ── Wall-clock timer (Date.now based — reliable on all mobile browsers) ──
+     rAF is throttled/paused by iOS Safari and Android Chrome during orientation
+     changes, battery-save mode, or when the browser detects no pending paints.
+     setInterval + Date.now() runs unconditionally. ── */
+  var sceneStart = Date.now();  // wall-clock ms when current scene began
+  var pausedAt   = null;        // wall-clock ms when paused started
+
+  function updateUI() {
+    if (paused) return;
+    var now     = Date.now();
+    var elapsed = now - sceneStart;
+    var dur     = DURATIONS[current];
+    var pct     = Math.min(elapsed / dur, 1);
+
+    // Total progress bar
+    var totalMs  = DURATIONS.slice(0, current).reduce(function(a,b){return a+b;}, 0) + elapsed;
+    var totalDur = DURATIONS.reduce(function(a,b){return a+b;}, 0);
+    document.getElementById('progressBar').style.width = (totalMs / totalDur * 100) + '%';
+
+    // Timer ring
+    var circumference = 113;
+    document.getElementById('timerCircle').style.strokeDashoffset = circumference * (1 - pct);
+
+    if (pct >= 1) advance();
+  }
+
+  // 40ms interval = 25 fps — smooth enough for progress, reliable everywhere
+  setInterval(updateUI, 40);
+
+  /* ── Controls ── */
+  var isTouchDevice = ('ontouchstart' in window);
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === ' ' || e.key === 'k') {
+      e.preventDefault();
+      paused = !paused;
+      if (paused) {
+        pausedAt = Date.now();
+        document.getElementById('pauseHint').textContent = '▶ Click or SPACE to resume';
+        document.getElementById('pauseHint').classList.add('paused');
+      } else {
+        // Shift sceneStart forward so elapsed doesn't count paused time
+        if (pausedAt !== null) sceneStart += Date.now() - pausedAt;
+        pausedAt = null;
+        document.getElementById('pauseHint').textContent = 'SPACE to pause';
+        document.getElementById('pauseHint').classList.remove('paused');
+      }
+    }
+    if (e.key === 'ArrowRight') { sceneStart = Date.now() - DURATIONS[current]; }
+    if (e.key === 'ArrowLeft')  { retreat(); }
+  });
+
+  document.addEventListener('click', function() {
+    if (paused) {
+      paused = false;
+      if (pausedAt !== null) sceneStart += Date.now() - pausedAt;
+      pausedAt = null;
+      document.getElementById('pauseHint').textContent = isTouchDevice ? 'Tap to advance' : 'SPACE to pause';
+      document.getElementById('pauseHint').classList.remove('paused');
+    } else {
+      sceneStart = Date.now() - DURATIONS[current]; // force advance on next updateUI tick
+    }
+  });
+
+  // Touch: tap to advance (mobile primary interaction)
+  if (isTouchDevice) {
+    document.getElementById('pauseHint').textContent = 'Tap to advance';
+    document.addEventListener('touchstart', function(e) {
+      // Only prevent default on the stage/scenes so links inside still work
+      if (e.target.tagName !== 'A' && e.target.tagName !== 'BUTTON') {
+        e.preventDefault();
+      }
+      if (paused) {
+        paused = false;
+        if (pausedAt !== null) sceneStart += Date.now() - pausedAt;
+        pausedAt = null;
+        document.getElementById('pauseHint').textContent = 'Tap to advance';
+        document.getElementById('pauseHint').classList.remove('paused');
+      } else {
+        sceneStart = Date.now() - DURATIONS[current];
+      }
+    }, { passive: false });
+  }
+
+  // Kick off scene 1 hooks
+  if (onEnter[SCENES[0]]) onEnter[SCENES[0]]();
+</script>
+</body>
+</html>

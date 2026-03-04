@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>How to Use CrowdWise India: Complete Beginner's Guide (2026) — CrowdWise India</title>
+<meta name="description" content="Step-by-step guide to using CrowdWise India — check live crowd levels, use the Best Time Finder, read the Crowd Calendar, and set smart alerts for 359 destinations.">
+<link rel="canonical" href="https://crowdwise.in/blog/how-to-use-crowdwise">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --primary: #6366f1;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+  }
+  body { font-family: 'Inter', sans-serif; color: var(--text); background: #fff; line-height: 1.7; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo { font-size: 18px; font-weight: 800; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+  .nav-back { font-size: 14px; font-weight: 600; color: var(--muted); text-decoration: none; }
+  .nav-back:hover { color: var(--primary); }
+
+  .hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #1e40af 100%);
+    padding: 80px 24px 64px; text-align: center;
+  }
+  .hero-breadcrumb { font-size: 12px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #93c5fd; margin-bottom: 20px; }
+  .hero-breadcrumb a { color: #93c5fd; text-decoration: none; }
+  .hero h1 { font-size: clamp(28px, 4.5vw, 52px); font-weight: 900; color: #fff; line-height: 1.1; max-width: 760px; margin: 0 auto 20px; }
+  .hero-meta { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; margin-top: 24px; }
+  .hero-chip { padding: 6px 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.18); border-radius: 40px; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.75); }
+
+  .container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+  .article-body { padding: 56px 0; }
+
+  h2 { font-size: 26px; font-weight: 800; color: var(--text); margin: 52px 0 14px; padding-bottom: 12px; border-bottom: 2px solid var(--border); }
+  h3 { font-size: 19px; font-weight: 700; color: var(--text); margin: 28px 0 10px; }
+  p { margin-bottom: 18px; font-size: 17px; color: #374151; }
+  a { color: var(--primary); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  ul, ol { padding-left: 24px; margin-bottom: 18px; }
+  li { font-size: 16px; color: #374151; margin-bottom: 8px; }
+
+  /* Step blocks */
+  .step-block {
+    display: flex; gap: 24px; margin: 36px 0;
+    padding: 28px; background: var(--bg);
+    border: 1px solid var(--border); border-radius: 20px;
+    align-items: flex-start;
+  }
+  .step-num {
+    width: 52px; height: 52px; border-radius: 14px;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 900; color: #fff;
+    flex-shrink: 0;
+  }
+  .step-content { flex: 1; }
+  .step-label { font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--primary); margin-bottom: 6px; }
+  .step-title { font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+  .step-body { font-size: 15px; color: #475569; line-height: 1.7; }
+
+  /* Screen mockup callout */
+  .screen-callout {
+    background: #1e1b4b; border-radius: 18px; padding: 24px;
+    margin: 24px 0; position: relative; overflow: hidden;
+  }
+  .screen-callout::after {
+    content: '📱'; position: absolute; right: 20px; top: 50%;
+    transform: translateY(-50%); font-size: 64px; opacity: 0.15;
+  }
+  .sc-label { font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #818cf8; margin-bottom: 10px; }
+  .sc-items { list-style: none; padding: 0; margin: 0; }
+  .sc-items li { font-size: 14px; color: rgba(255,255,255,0.8); padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; gap: 10px; }
+  .sc-items li:last-child { border-bottom: none; }
+
+  /* Crowd level reference */
+  .level-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 24px 0; }
+  .level-card {
+    border-radius: 14px; padding: 16px 18px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .level-card.green  { background: #f0fdf4; border: 1px solid #bbf7d0; }
+  .level-card.yellow { background: #fefce8; border: 1px solid #fde68a; }
+  .level-card.orange { background: #fff7ed; border: 1px solid #fed7aa; }
+  .level-card.red    { background: #fef2f2; border: 1px solid #fecaca; }
+  .level-emoji { font-size: 28px; }
+  .level-label { font-size: 15px; font-weight: 700; }
+  .level-pct { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .tip-box {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: #fffbeb; border: 1px solid #fde68a; border-radius: 14px;
+    padding: 16px 18px; margin: 20px 0;
+  }
+  .tip-box-icon { font-size: 22px; flex-shrink: 0; }
+  .tip-box-text { font-size: 14px; color: #78350f; font-weight: 500; line-height: 1.6; }
+  .tip-box-text strong { color: #451a03; }
+
+  .note-box {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 14px;
+    padding: 16px 18px; margin: 20px 0;
+  }
+  .note-box-icon { font-size: 22px; flex-shrink: 0; }
+  .note-box-text { font-size: 14px; color: #1e40af; font-weight: 500; line-height: 1.6; }
+
+  .faq-block { margin: 40px 0; }
+  .faq-item { border: 1px solid var(--border); border-radius: 14px; margin-bottom: 12px; overflow: hidden; }
+  .faq-q { padding: 16px 20px; font-size: 16px; font-weight: 700; color: var(--text); cursor: pointer; background: var(--bg); }
+  .faq-a { padding: 0 20px 16px; font-size: 15px; color: #475569; background: #fff; line-height: 1.7; }
+
+  .cta-box {
+    background: linear-gradient(135deg, #1e40af, #4f46e5);
+    border-radius: 20px; padding: 40px; text-align: center; margin: 56px 0;
+  }
+  .cta-box h3 { font-size: 26px; font-weight: 900; color: #fff; margin: 0 0 12px; }
+  .cta-box p { font-size: 16px; color: rgba(255,255,255,0.75); margin: 0 0 24px; }
+  .cta-btn {
+    display: inline-block; padding: 14px 36px; background: #fff; color: var(--primary);
+    border-radius: 14px; font-size: 16px; font-weight: 800; text-decoration: none;
+    transition: transform 0.15s;
+  }
+  .cta-btn:hover { transform: translateY(-2px); text-decoration: none; }
+
+  footer { background: #1e1b4b; color: rgba(255,255,255,0.5); text-align: center; padding: 32px 24px; font-size: 14px; }
+  footer a { color: #a78bfa; text-decoration: none; }
+
+  @media (max-width: 640px) {
+    nav { padding: 12px 16px; }
+    .nav-logo { font-size: 16px; }
+    .hero { padding: 48px 16px 36px; }
+    .hero-chip { font-size: 11px; padding: 4px 10px; }
+    .container { padding: 0 16px; }
+    .article-body { padding: 36px 0 48px; }
+    h2 { font-size: 22px; margin: 40px 0 12px; }
+    h3 { font-size: 17px; }
+    p { font-size: 16px; }
+    /* Step blocks stack vertically on phones */
+    .step-block { flex-direction: column; padding: 20px 16px; gap: 14px; }
+    .step-num { width: 44px; height: 44px; border-radius: 12px; font-size: 18px; }
+    .step-title { font-size: 17px; }
+    /* Crowd level grid: 1 col on very small screens */
+    .level-grid { grid-template-columns: 1fr; }
+    .screen-callout { padding: 18px 16px; }
+    .screen-callout::after { display: none; }
+    .cta-box { padding: 28px 16px; }
+    .cta-box h3 { font-size: 21px; }
+    .cta-btn { padding: 12px 24px; font-size: 15px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="https://crowdwise.in" class="nav-logo">🗺️ CrowdWise India</a>
+  <a href="/blog.html" class="nav-back">← All Articles</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-breadcrumb"><a href="/blog.html">Blog</a> &rsaquo; Tutorial</div>
+  <h1>How to Use CrowdWise India: Complete Beginner's Guide (2026)</h1>
+  <div class="hero-meta">
+    <span class="hero-chip">📅 March 1, 2026</span>
+    <span class="hero-chip">⏱️ 6 min read</span>
+    <span class="hero-chip">🛠️ Tutorial</span>
+    <span class="hero-chip">🆓 100% Free</span>
+  </div>
+</div>
+
+<div class="container">
+<div class="article-body">
+
+<p>CrowdWise India is a real-time crowd tracking platform that tells you — before you arrive — whether your destination is empty and serene or packed with thousands of other visitors. It covers <strong>359 tourist destinations across all 38 Indian states and Union Territories</strong>, and it's completely free with no account or sign-up required.</p>
+
+<p>This guide walks you through every feature from your first search to setting up crowd alerts, in about 5 minutes.</p>
+
+<h2>Understanding Crowd Levels</h2>
+
+<p>Before diving in, here's what each crowd level means:</p>
+
+<div class="level-grid">
+  <div class="level-card green">
+    <span class="level-emoji">🟢</span>
+    <div><div class="level-label">Low Crowd</div><div class="level-pct">0–30% capacity · Best time to visit</div></div>
+  </div>
+  <div class="level-card yellow">
+    <span class="level-emoji">🟡</span>
+    <div><div class="level-label">Moderate Crowd</div><div class="level-pct">31–55% · Comfortable, some queues</div></div>
+  </div>
+  <div class="level-card orange">
+    <span class="level-emoji">🟠</span>
+    <div><div class="level-label">Heavy Crowd</div><div class="level-pct">56–80% · Busy, notable queues</div></div>
+  </div>
+  <div class="level-card red">
+    <span class="level-emoji">🔴</span>
+    <div><div class="level-label">Overcrowded</div><div class="level-pct">81–100% · Very long waits, limited entry</div></div>
+  </div>
+</div>
+
+<h2>Step-by-Step: Using CrowdWise</h2>
+
+<div class="step-block">
+  <div class="step-num">1</div>
+  <div class="step-content">
+    <div class="step-label">Open the App</div>
+    <div class="step-title">Go to crowdwise.in</div>
+    <div class="step-body">CrowdWise is a web app — no download, no install, no account. Open it on your phone or desktop browser. It works offline for basic predictions (you'll need a connection for live weather data). The app immediately shows you the current crowd levels for popular destinations in the bottom sheet.</div>
+  </div>
+</div>
+
+<div class="step-block">
+  <div class="step-num">2</div>
+  <div class="step-content">
+    <div class="step-label">Find Your Destination</div>
+    <div class="step-title">Search or browse all 359 destinations</div>
+    <div class="step-body">
+      <strong>To search:</strong> Tap the search bar at the top of the screen and type any destination name, state, or category (e.g. "beach", "temple", "hill station"). CrowdWise uses fuzzy search — "taj" will find Taj Mahal, "goa bea" will find Goa's beaches.<br><br>
+      <strong>To browse:</strong> Scroll through the destination cards in the bottom sheet. Use the filter pills to narrow by category (Temples, Beaches, Forts, etc.) or by crowd level (show only 🟢 Low Crowd destinations right now).
+    </div>
+  </div>
+</div>
+
+<div class="step-block">
+  <div class="step-num">3</div>
+  <div class="step-content">
+    <div class="step-label">Read the Crowd Card</div>
+    <div class="step-title">Understand what you're seeing on the main screen</div>
+    <div class="step-body">
+      Tap any destination to see its crowd card. Here's what each number means:
+    </div>
+    <div class="screen-callout">
+      <div class="sc-label">Crowd Card — What Each Section Means</div>
+      <ul class="sc-items">
+        <li>🟢 <strong>Crowd Level</strong> — Low / Moderate / Heavy / Overcrowded right now</li>
+        <li>📊 <strong>% Full</strong> — Estimated percentage of max visitor capacity</li>
+        <li>👥 <strong>Visitor Estimate</strong> — Approximate number of people there now</li>
+        <li>⏰ <strong>Best Time Today</strong> — The quietest window remaining today</li>
+        <li>☀️ <strong>Weather</strong> — Current temperature and condition at the destination</li>
+        <li>🎉 <strong>Festival Warning</strong> — If a major festival falls on your visit date</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="step-block">
+  <div class="step-num">4</div>
+  <div class="step-content">
+    <div class="step-label">Use the Best Time Finder</div>
+    <div class="step-title">See every hour of today, ranked by crowd level</div>
+    <div class="step-body">
+      In the destination detail sheet, tap <strong>"Best Time Finder"</strong>. A panel appears with 2-hour slots from 6 AM to 10 PM, each showing its crowd level. The lowest-crowd slot gets a <strong>✦ BEST</strong> badge. The grid always shows slots in chronological order — no past-time dimming, so you can plan any visit.<br><br>
+      The Best Time Finder accounts for: operating hours (museums/parks close at different times), day of week (Sunday is always the most crowded), and whether the destination has a weekly closure (e.g., Taj Mahal is closed Fridays).
+    </div>
+  </div>
+</div>
+
+<div class="step-block">
+  <div class="step-num">5</div>
+  <div class="step-content">
+    <div class="step-label">Use the Crowd Calendar</div>
+    <div class="step-title">Plan future dates — months in advance</div>
+    <div class="step-body">
+      Open the <strong>Crowd Calendar</strong> from the destination detail page. Every day of the year is colour-coded from 🟢 to 🔴. Tap any day to see a detail card with predicted crowd level, estimated capacity %, what type of day it is (weekday/weekend/holiday), and any festivals scheduled.
+    </div>
+  </div>
+</div>
+
+<div class="tip-box">
+  <span class="tip-box-icon">💡</span>
+  <div class="tip-box-text"><strong>Power User Tip:</strong> For multi-day trips, open the calendar for each destination in your itinerary and find a date where all of them show 🟢 or 🟡. This is especially useful for Rajasthan circuit trips — Jaipur, Jodhpur, Udaipur and Jaisalmer often peak at different times.</div>
+</div>
+
+<div class="step-block">
+  <div class="step-num">6</div>
+  <div class="step-content">
+    <div class="step-label">Open the Destination Detail Page</div>
+    <div class="step-title">Full profile — historical trends, nearby spots, tips</div>
+    <div class="step-body">
+      Tap <strong>"View Full Details"</strong> from any destination card to open its dedicated page (e.g. <code>crowdwise.in/destination.html?dest=taj-mahal</code>). Here you'll find full historical crowd patterns by month, nearby attractions with their own live crowd levels, practical travel info (opening hours, entry fees, best transport), and the full Crowd Calendar.
+    </div>
+  </div>
+</div>
+
+<h2>Filtering &amp; Discovering Destinations</h2>
+
+<h3>Category Filters</h3>
+<p>Use the filter pills in the bottom sheet to browse by type: <strong>Temples, Beaches, Hill Stations, Forts, Wildlife, Museums, Markets, Waterfalls</strong>, and more. Each category has its own crowd pattern — beach crowds peak on weekends and summer, while wildlife sanctuaries are busiest on winter mornings.</p>
+
+<h3>Crowd Level Filter</h3>
+<p>Filter to show only <strong>🟢 Low Crowd</strong> destinations right now — ideal when you have flexible plans and just want to explore somewhere quiet today. This "what's quiet right now?" filter is one of the most used features on the platform.</p>
+
+<h3>State Filter</h3>
+<p>Planning a trip to Kerala? Filter by state to see all 20+ Kerala destinations at once, sorted by current crowd level. Great for building a multi-stop itinerary.</p>
+
+<div class="note-box">
+  <span class="note-box-icon">ℹ️</span>
+  <div class="note-box-text">All 359 destinations include complete metadata: category, state, operating hours, average visitor counts, and crowd pattern profiles. The algorithm runs 7 signals simultaneously — time of day, day of week, season, holidays, festivals, weather, and social buzz — to generate each prediction.</div>
+</div>
+
+<h2>Understanding Prediction Accuracy</h2>
+
+<p>CrowdWise India's predictions are <strong>65–75% accurate</strong> on average. This means:</p>
+<ul>
+  <li>If the app predicts "Low Crowd" for a Monday morning in March, it will be correct ~70% of the time</li>
+  <li>Predictions are most accurate for <strong>weekday mornings</strong> (most predictable) and least accurate during <strong>unexpected weather events</strong></li>
+  <li>Tirupati and Golden Temple always have an asterisk — pilgrim surges can spike unpredictably</li>
+</ul>
+
+<p>You can help improve accuracy! After visiting a destination, the app will ask you to confirm whether the prediction was right. These feedback reports are anonymised and feed the <strong>self-improving validation system</strong>, which adjusts algorithm weights over time.</p>
+
+<h2>Frequently Asked Questions</h2>
+
+<div class="faq-block">
+  <div class="faq-item">
+    <div class="faq-q">❓ Is CrowdWise India free to use?</div>
+    <div class="faq-a">Yes, completely free. No subscription, no sign-up, no in-app purchases. All 359 destinations, all features, always free.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">❓ Does it work offline?</div>
+    <div class="faq-a">Basic crowd predictions work offline since the algorithm runs in your browser using destination data bundled with the app. Live weather data requires an internet connection.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">❓ How often are predictions updated?</div>
+    <div class="faq-a">The crowd algorithm recalculates every time you load or refresh a destination — it uses the real current time, day, and date to generate the prediction. Weather data is refreshed every 30 minutes.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">❓ Why is my destination showing as "Closed"?</div>
+    <div class="faq-a">Some destinations have weekly closure days (Taj Mahal closes Fridays, some museums close Mondays) or specific operating hours. The app shows "Closed" outside these windows along with the next opening time.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">❓ How do I use it for temple visits?</div>
+    <div class="faq-a">Temples have unique crowd patterns — they're often busiest during early morning aarti and evening aarti (6–8 AM and 5–7 PM). The Best Time Finder shows the quietest window between these peaks, typically 11 AM–2 PM for most temples. However, avoid the annual festival dates shown in the calendar.</div>
+  </div>
+</div>
+
+<div class="cta-box">
+  <h3>Ready to Plan Smarter?</h3>
+  <p>Check current crowd levels at 359 Indian destinations — free, instant, no sign-up.</p>
+  <a href="https://crowdwise.in" class="cta-btn">Open CrowdWise India →</a>
+</div>
+
+</div>
+</div>
+
+<footer>
+  <p>© 2026 CrowdWise India · <a href="https://crowdwise.in">crowdwise.in</a> · <a href="/blog.html">More Articles</a></p>
+</footer>
+
+</body>
+</html>
