@@ -8,6 +8,7 @@ let currentSort = 'default';
 let currentCrowdFilter = 'all';
 let currentCategoryFilter = 'all';
 let currentDiscoverFilter = 'all';
+let currentCountryFilter = 'india';
 
 // Transform destination data to include required fields
 function transformDestinationData(dest) {
@@ -325,13 +326,15 @@ function updateSheetCounts() {
     const count = filteredDestinations.length;
     const searchTerm = ((document.getElementById('searchInput') || {}).value || '').trim();
 
-    // Update count badges
+    // Update count badges — all in one place so they're always in sync
     const el1 = document.getElementById('viewAllCount');
     const el2 = document.getElementById('sheetCount');
     const el3 = document.getElementById('stickySheetCount');
+    const elIndia = document.getElementById('countIndia');
     if (el1) el1.textContent = count;
     if (el2) el2.textContent = count;
     if (el3) el3.textContent = count;
+    if (elIndia) elIndia.textContent = count;
 
     // Update sheet title to reflect active search
     const titleEl = document.querySelector('.sheet-title');
@@ -1287,6 +1290,15 @@ function showToast(message) {
     }, 4000);
 }
 
+function filterByCountry(country) {
+    currentCountryFilter = country;
+    document.querySelectorAll('.country-pill').forEach(btn => btn.classList.remove('active'));
+    const activePill = document.querySelector(`.country-pill[data-country="${country}"]`);
+    if (activePill) activePill.classList.add('active');
+    applyCurrentFilters();
+    renderDestinations();
+}
+
 // ========== FILTER FUNCTIONALITY ==========
 function filterByCrowd(level, silent) {
     currentCrowdFilter = level;
@@ -1406,12 +1418,18 @@ function applyCurrentFilters() {
         
         // State filter
         const matchesState = state === 'all' || dest.state === state;
+
+        // Country filter — destinations without a country field are treated as India
+        const destCountry = (dest.country || 'india').toLowerCase();
+        const matchesCountry = currentCountryFilter === 'all' || destCountry === currentCountryFilter;
         
-        return matchesSearch && matchesCrowd && matchesCategory && matchesDiscover && matchesState;
+        return matchesSearch && matchesCrowd && matchesCategory && matchesDiscover && matchesState && matchesCountry;
     });
     
     // Apply sorting
     applySorting();
+    
+    // countIndia is updated in updateSheetCounts() — no separate computation needed
 }
 
 function quickFilter(level) {
@@ -1448,8 +1466,13 @@ function clearAllFilters() {
     currentCrowdFilter = 'all';
     currentCategoryFilter = 'all';
     currentDiscoverFilter = 'all';
+    currentCountryFilter = 'india';
     currentSort = 'default';
     
+    document.querySelectorAll('.country-pill').forEach(btn => btn.classList.remove('active'));
+    const indiaPill = document.querySelector('.country-pill[data-country="india"]');
+    if (indiaPill) indiaPill.classList.add('active');
+
     document.querySelectorAll('.crowd-pill').forEach(btn => btn.classList.remove('active'));
     const allPill = document.querySelector('.crowd-pill[data-filter="all"]');
     if (allPill) allPill.classList.add('active');
@@ -1709,7 +1732,7 @@ function resetAlertModal() {
                 <option value="moderate">When crowd is Moderate 🟡</option>
             </select>
             <input type="email" placeholder="Your email address" class="alert-input" id="alertEmail">
-            <button class="alert-submit" onclick="submitAlert()">Set Alert →</button>
+            <button class="alert-submit" disabled onclick="submitAlert()">Set Alert →</button>
         </div>
     `;
     

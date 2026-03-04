@@ -320,7 +320,7 @@
             <button class="sticky-view-all-btn" onclick="openDestinationsSheet()">
                 <span class="sticky-va-icon">📍</span>
                 <span class="sticky-va-text">Browse all destinations</span>
-                <span class="sticky-va-count" id="stickySheetCount">347</span>
+                <span class="sticky-va-count" id="stickySheetCount">359</span>
                 <span class="sticky-va-arrow">→</span>
             </button>
         </div>
@@ -372,21 +372,21 @@
                     <p class="sf-hub-sub">Plan before you go</p>
                 </div>
                 <div class="sf-hub-actions">
-                    <button class="sf-row" onclick="showAlertModal()">
+                    <button class="sf-row" disabled onclick="showAlertModal()">
                         <span class="sf-row-icon">🔔</span>
                         <span class="sf-row-body">
                             <span class="sf-row-title">Crowd Alerts</span>
                             <span class="sf-row-desc">Get notified when it quiets down</span>
                         </span>
-                        <span class="sf-row-cta">Set alert →</span>
+                        <span class="sf-row-cta sf-row-cta--soon">Coming Soon</span>
                     </button>
-                    <button class="sf-row" onclick="showItineraryModal()">
+                    <button class="sf-row" disabled onclick="showItineraryModal()">
                         <span class="sf-row-icon">🧭</span>
                         <span class="sf-row-body">
                             <span class="sf-row-title">Crowd-free Itinerary</span>
                             <span class="sf-row-desc">Skip peak hours all day</span>
                         </span>
-                        <span class="sf-row-cta">Generate →</span>
+                        <span class="sf-row-cta sf-row-cta--soon">Coming Soon</span>
                     </button>
                     <button class="sf-row" onclick="showBestTimeModal()">
                         <span class="sf-row-icon">🌦️</span>
@@ -494,10 +494,15 @@
         <!-- Sheet header -->
         <div class="sheet-header">
             <div class="sheet-title-row">
-                <h3 class="sheet-title">All Destinations <span class="sheet-count-badge" id="sheetCount">347</span></h3>
+                <h3 class="sheet-title">All Destinations <span class="sheet-count-badge" id="sheetCount">359</span></h3>
                 <button class="sheet-close-btn" onclick="closeDestinationsSheet()">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 </button>
+            </div>
+            <!-- Country filter -->
+            <div class="sheet-country-row" id="countryRow">
+                <button class="country-pill active" onclick="filterByCountry('india')" data-country="india">🇮🇳 India <span class="country-pill-count" id="countIndia">359</span></button>
+                <button class="country-pill coming-soon" disabled title="More countries coming soon">🌍 More coming soon</button>
             </div>
             <!-- Sheet search -->
             <div class="sheet-search-wrap">
@@ -604,7 +609,7 @@
                         <option value="moderate">When crowd is Moderate 🟡</option>
                     </select>
                     <input type="email" placeholder="Your email address" class="alert-input" id="alertEmail">
-                    <button class="alert-submit" onclick="submitAlert()">Set Alert →</button>
+                    <button class="alert-submit" disabled onclick="submitAlert()">Set Alert →</button>
                 </div>
             </div>
         </div>
@@ -651,7 +656,7 @@
                     <div id="itineraryResult" class="itinerary-result" style="display: none;">
                         <!-- Results will be shown here -->
                     </div>
-                    <button class="alert-submit" onclick="generateItinerary()">Generate Itinerary →</button>
+                    <button class="alert-submit" disabled onclick="generateItinerary()">Generate Itinerary →</button>
                 </div>
             </div>
         </div>

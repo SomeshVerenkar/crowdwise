@@ -1717,6 +1717,32 @@ body {
     transform: translateX(3px);
 }
 
+/* Disabled sf-row (Coming Soon) */
+.sf-row:disabled {
+    opacity: 0.52;
+    cursor: not-allowed;
+    pointer-events: none;
+    filter: grayscale(0.3);
+}
+.sf-row:disabled:hover {
+    background: transparent;
+    border-color: transparent;
+    transform: none;
+    box-shadow: none;
+}
+.sf-row-cta--soon {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    background: var(--bg-light);
+    border-radius: 20px;
+    padding: 3px 9px;
+    border: 1px solid var(--border-light);
+    letter-spacing: 0.03em;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
 /* ========== ABOUT & FEATURES ========== */
 
 /* ========== ABOUT & FEATURES ========== */
@@ -2149,6 +2175,12 @@ body {
 }
 
 .alert-submit:hover { background: var(--primary-dark); }
+.alert-submit:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+    filter: grayscale(0.2);
+}
 
 .best-time-result, .itinerary-result {
     background: var(--bg-light);
@@ -3563,6 +3595,61 @@ body {
     color: white;
 }
 
+/* Country filter row in sheet header */
+.sheet-country-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+.sheet-country-row::-webkit-scrollbar { display: none; }
+.country-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+    flex-shrink: 0;
+    font-family: 'Inter', sans-serif;
+}
+.country-pill:hover:not(:disabled):not(.active) {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: rgba(99,102,241,0.05);
+}
+.country-pill.active {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+}
+.country-pill.coming-soon {
+    opacity: 0.42;
+    cursor: not-allowed;
+    font-style: italic;
+    font-size: 12px;
+}
+.country-pill-count {
+    display: inline-block;
+    background: rgba(255,255,255,0.28);
+    border-radius: 10px;
+    padding: 1px 7px;
+    font-size: 11px;
+    font-weight: 700;
+}
+.country-pill:not(.active) .country-pill-count {
+    background: var(--bg-light);
+    color: var(--text-secondary);
+}
+
 /* State filter row in sheet */
 .sheet-bottom-filters {
     display: flex;
@@ -3614,6 +3701,9 @@ body {
     }
     /* --- Compact filter header --- */
     .sheet-header { padding: 4px 14px 10px; }
+    .sheet-country-row { padding: 6px 0 2px; gap: 6px; }
+    .country-pill { padding: 5px 12px; font-size: 12px; }
+    .country-pill-count { font-size: 10px; padding: 1px 5px; }
     .sheet-title-row { margin-bottom: 8px; }
     .sheet-title { font-size: 16px; }
     .sheet-count-badge { font-size: 11px; padding: 2px 8px; }

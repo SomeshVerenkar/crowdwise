@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <title>Travel Tips & Crowd Insights - CrowdWise India Blog</title>
+    <title>Travel Tips &amp; Crowd Insights — CrowdWise India Blog</title>
     <meta name="description" content="Expert travel tips, crowd analysis, and destination guides for Indian tourist spots. Learn when to visit, how to avoid crowds, and make the most of your trip.">
     <meta name="keywords" content="travel tips india, best time to visit, avoid crowds, tourist destination guide, travel planning india, crowd analysis">
     
-    <!-- Open Graph -->
-    <meta property="og:title" content="CrowdWise India Blog - Travel Tips & Insights">
+    <meta property="og:title" content="CrowdWise India Blog — Travel Tips &amp; Crowd Insights">
     <meta property="og:description" content="Expert travel tips and crowd insights for Indian destinations">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://crowdwise.in/blog.html">
@@ -22,283 +21,186 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
-        .blog-container {
-            max-width: 1200px;
-            margin: 80px auto 40px;
-            padding: 0 20px;
-        }
-        
-        .blog-header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-        
-        .blog-header h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 15px;
-        }
-        
-        .blog-header p {
-            font-size: 1.2rem;
-            color: #666;
-        }
-        
-        .blog-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 30px;
-            margin-bottom: 60px;
-        }
-        
-        .blog-card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-        }
-        
-        .blog-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-        
-        .blog-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        
-        .blog-content {
-            padding: 25px;
-        }
-        
-        .blog-category {
-            display: inline-block;
-            padding: 5px 15px;
-            background: #f0f4ff;
-            color: #667eea;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-        
-        .blog-card h3 {
-            font-size: 1.4rem;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: #1a1a1a;
-            line-height: 1.4;
-        }
-        
-        .blog-excerpt {
-            color: #666;
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-        
-        .blog-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 15px;
-            border-top: 1px solid #eee;
-            font-size: 0.9rem;
-            color: #999;
-        }
-        
-        .read-more {
-            color: #667eea;
-            font-weight: 600;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .read-more:hover {
-            gap: 10px;
-        }
-        
-        .coming-soon {
-            text-align: center;
-            padding: 80px 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 20px;
-            margin: 40px 0;
-        }
-        
-        .coming-soon h2 {
-            font-size: 2rem;
-            margin-bottom: 15px;
-        }
-        
-        .coming-soon p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            margin-bottom: 25px;
-        }
-        
-        .notify-btn {
-            background: white;
-            color: #667eea;
-            padding: 15px 40px;
-            border: none;
-            border-radius: 30px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        
-        .notify-btn:hover {
-            transform: scale(1.05);
-        }
+        .blog-page{max-width:1200px;margin:0 auto;padding:100px 24px 80px}
+        .blog-hero{text-align:center;margin-bottom:72px}
+        .blog-hero-eyebrow{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#6366f1;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:40px;padding:6px 18px;margin-bottom:20px}
+        .blog-hero h1{font-size:clamp(36px,5vw,60px);font-weight:900;background:linear-gradient(135deg,#1e1b4b,#6366f1,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1;margin-bottom:18px}
+        .blog-hero-sub{font-size:18px;color:#64748b;max-width:520px;margin:0 auto;line-height:1.6}
+        .featured-article{display:grid;grid-template-columns:1fr 1fr;gap:0;background:#fff;border:1px solid #e2e8f0;border-radius:24px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.07);margin-bottom:64px;text-decoration:none;color:inherit;transition:transform .2s,box-shadow .2s}
+        .featured-article:hover{transform:translateY(-4px);box-shadow:0 16px 60px rgba(0,0,0,.12)}
+        .featured-visual{background:linear-gradient(135deg,#1e1b4b,#4f46e5,#7c3aed);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 40px;text-align:center;min-height:340px}
+        .featured-visual-icon{font-size:80px;margin-bottom:20px}
+        .featured-visual-label{font-size:13px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+        .featured-body{padding:48px 44px;display:flex;flex-direction:column;justify-content:center}
+        .featured-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#fef9c3,#fef08a);color:#713f12;border-radius:20px;padding:5px 14px;font-size:12px;font-weight:700;margin-bottom:20px;width:fit-content}
+        .featured-body h2{font-size:28px;font-weight:900;color:#1e293b;line-height:1.25;margin-bottom:16px}
+        .featured-body p{font-size:16px;color:#64748b;line-height:1.7;margin-bottom:24px}
+        .featured-meta{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+        .meta-chip{font-size:13px;font-weight:600;color:#94a3b8}
+        .read-btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border-radius:12px;padding:12px 24px;font-size:15px;font-weight:700;text-decoration:none;width:fit-content;transition:opacity .15s}
+        .read-btn:hover{opacity:.88}
+        .section-label{font-size:12px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#6366f1;margin-bottom:28px;padding-bottom:12px;border-bottom:2px solid #e2e8f0}
+        .article-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:72px}
+        .article-card{background:#fff;border:1px solid #e2e8f0;border-radius:20px;overflow:hidden;text-decoration:none;color:inherit;transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column}
+        .article-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.1)}
+        .article-card-visual{padding:36px 28px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
+        .article-card-icon{font-size:48px}
+        .article-card-cat{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;border-radius:20px;padding:4px 12px}
+        .article-card-body{padding:4px 24px 28px;flex:1;display:flex;flex-direction:column}
+        .article-card-body h3{font-size:18px;font-weight:800;color:#1e293b;line-height:1.3;margin-bottom:10px}
+        .article-card-body p{font-size:14px;color:#64748b;line-height:1.65;flex:1;margin-bottom:18px}
+        .article-card-footer{display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px solid #f1f5f9}
+        .article-card-date{font-size:12px;color:#94a3b8;font-weight:600}
+        .article-card-read{font-size:12px;font-weight:700;color:#6366f1}
+        .newsletter-banner{background:linear-gradient(135deg,#1e1b4b,#312e81,#4f46e5);border-radius:24px;padding:48px 40px;text-align:center;margin-bottom:72px}
+        .newsletter-banner h2{font-size:32px;font-weight:900;color:#fff;margin-bottom:12px}
+        .newsletter-banner p{font-size:16px;color:rgba(255,255,255,.65);margin-bottom:28px;max-width:460px;margin-left:auto;margin-right:auto}
+        .newsletter-form{display:flex;gap:12px;max-width:440px;margin:0 auto}
+        .newsletter-input{flex:1;padding:13px 18px;border-radius:12px;border:none;font-size:15px;font-family:inherit;outline:none}
+        .newsletter-btn{padding:13px 24px;background:#fff;color:#4f46e5;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap}
+        .back-to-app{display:flex;align-items:center;justify-content:space-between;background:#f8fafc;border:1px solid #e2e8f0;border-radius:20px;padding:28px 32px}
+        .back-to-app-text h3{font-size:20px;font-weight:800;color:#1e293b;margin-bottom:4px}
+        .back-to-app-text p{font-size:14px;color:#64748b}
+        .back-to-app-btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border-radius:12px;padding:12px 24px;font-size:15px;font-weight:700;text-decoration:none;white-space:nowrap}
+        @media(max-width:900px){.featured-article{grid-template-columns:1fr}.featured-visual{min-height:220px;padding:40px}.article-grid{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:600px){.blog-page{padding:80px 16px 60px}.article-grid{grid-template-columns:1fr}.featured-body{padding:28px}.back-to-app{flex-direction:column;gap:16px;text-align:center}.newsletter-form{flex-direction:column}}
     </style>
+
 </head>
 <body>
-    <!-- Header (same as main site) -->
-    <header class="header" style="position: fixed; top: 0; width: 100%; z-index: 1000; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-        <div class="container" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; max-width: 1400px; margin: 0 auto;">
-            <a href="index.html" style="text-decoration: none; color: inherit;">
-                <div class="logo" style="display: flex; align-items: center; gap: 12px;">
-                    <div class="logo-icon" style="font-size: 2rem;">🗺️</div>
-                    <div class="logo-text">
-                        <span class="logo-name" style="font-size: 1.5rem; font-weight: 700; display: block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">CrowdWise</span>
-                        <span class="logo-tagline" style="font-size: 0.75rem; color: #666;">Travel without the rush</span>
+    <nav class="navbar" id="mainNav">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">
+                <span class="brand-icon">🗺️</span>
+                <div class="brand-text">
+                    <span class="brand-name">CrowdWise India</span>
+                    <span class="brand-tagline">Know the crowd before you go</span>
+                </div>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="blog.html" class="nav-link active">Blog</a>
+            </div>
+            <a href="index.html" class="nav-cta">Check Crowds →</a>
+        </div>
+    </nav>
+
+    <div class="blog-page">
+
+        <div class="blog-hero">
+            <div class="blog-hero-eyebrow">📖 CrowdWise Blog</div>
+            <h1>Travel Smarter<br>with Crowd Intelligence</h1>
+            <p class="blog-hero-sub">Data-backed guides, destination timings, and inside tips for visiting India's 359 top tourist spots.</p>
+        </div>
+
+        <a href="blog/best-times-india.html" class="featured-article">
+            <div class="featured-visual">
+                <div class="featured-visual-icon">🗺️</div>
+                <div class="featured-visual-label">Featured Guide</div>
+            </div>
+            <div class="featured-body">
+                <div class="featured-badge">⭐ Most Read Guide</div>
+                <h2>Best &amp; Worst Times to Visit India's Top 10 Tourist Destinations (2026)</h2>
+                <p>Data-backed timing guide for Taj Mahal, Goa, Manali, Kerala, Jaipur and 6 more — including hidden quiet windows most tourists miss.</p>
+                <div class="featured-meta">
+                    <span class="meta-chip">📅 March 1, 2026</span>
+                    <span class="meta-chip">⏱️ 9 min read</span>
+                    <span class="meta-chip">🗺️ Travel Guide</span>
+                </div>
+                <span class="read-btn">Read Guide →</span>
+            </div>
+        </a>
+
+        <div class="section-label">All Articles</div>
+        <div class="article-grid">
+
+            <a href="blog/how-to-use-crowdwise.html" class="article-card">
+                <div class="article-card-visual" style="background:linear-gradient(135deg,#eff6ff,#dbeafe)">
+                    <div class="article-card-icon">📱</div>
+                    <span class="article-card-cat" style="background:#dbeafe;color:#1e40af">Tutorial</span>
+                </div>
+                <div class="article-card-body">
+                    <h3>How to Use CrowdWise India: Complete Beginner's Guide</h3>
+                    <p>Everything from your first search to the Crowd Calendar and Best Time Finder — walk through every feature in 6 minutes.</p>
+                    <div class="article-card-footer">
+                        <span class="article-card-date">📅 Mar 1, 2026 · 6 min</span>
+                        <span class="article-card-read">Read →</span>
                     </div>
                 </div>
             </a>
-            <nav>
-                <a href="index.html" style="margin-left: 20px; color: #667eea; text-decoration: none; font-weight: 500;">← Back to Dashboard</a>
-            </nav>
+
+            <a href="blog/crowd-prediction-explained.html" class="article-card">
+                <div class="article-card-visual" style="background:linear-gradient(135deg,#faf5ff,#ede9fe)">
+                    <div class="article-card-icon">🔬</div>
+                    <span class="article-card-cat" style="background:#ede9fe;color:#5b21b6">Technology</span>
+                </div>
+                <div class="article-card-body">
+                    <h3>How CrowdWise Predicts Crowds: The Algorithm Explained</h3>
+                    <p>A transparent deep-dive into the 7 prediction signals — time of day, seasonality, festivals, Wikipedia pageviews, hotel demand, and more.</p>
+                    <div class="article-card-footer">
+                        <span class="article-card-date">📅 Mar 1, 2026 · 7 min</span>
+                        <span class="article-card-read">Read →</span>
+                    </div>
+                </div>
+            </a>
+
+            <div class="article-card" style="opacity:.55;pointer-events:none">
+                <div class="article-card-visual" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7)">
+                    <div class="article-card-icon">📊</div>
+                    <span class="article-card-cat" style="background:#dcfce7;color:#166534">Coming Soon</span>
+                </div>
+                <div class="article-card-body">
+                    <h3>India's 38 States Ranked by Tourist Crowd Density</h3>
+                    <p>A state-by-state breakdown of when and where India gets the most tourist traffic — with seasonal breakdowns and hidden gems.</p>
+                    <div class="article-card-footer">
+                        <span class="article-card-date">Coming soon</span>
+                        <span class="article-card-read" style="color:#94a3b8">soon</span>
+                    </div>
+                </div>
+            </div>
+
         </div>
-    </header>
 
-    <!-- Blog Container -->
-    <div class="blog-container">
-        <div class="blog-header">
-            <h1>🚀 CrowdWise Travel Blog</h1>
-            <p>Expert tips, insights, and guides to help you travel smarter</p>
-        </div>
-
-        <!-- Coming Soon Section -->
-        <div class="coming-soon">
-            <h2>📝 Blog Coming Soon!</h2>
-            <p>We're working on amazing content including destination guides, crowd analysis tips, and travel hacks.</p>
-            <p>Get notified when we publish our first articles!</p>
-            <button class="notify-btn" onclick="notifyMe()">Notify Me 🔔</button>
-        </div>
-
-        <!-- Placeholder Blog Cards (for preview) -->
-        <h2 style="text-align: center; margin: 60px 0 30px; color: #333;">📰 Coming Soon Articles</h2>
-        <div class="blog-grid">
-            <div class="blog-card" style="opacity: 0.6;">
-                <div class="blog-image"></div>
-                <div class="blog-content">
-                    <span class="blog-category">Destination Guide</span>
-                    <h3>Best Time to Visit Taj Mahal - Complete Crowd Analysis</h3>
-                    <p class="blog-excerpt">Discover the perfect timing to visit India's iconic monument without the crowds. Detailed analysis of hourly, daily, and seasonal patterns.</p>
-                    <div class="blog-meta">
-                        <span>📅 Coming Soon</span>
-                        <span>⏱️ 8 min read</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="blog-card" style="opacity: 0.6;">
-                <div class="blog-image"></div>
-                <div class="blog-content">
-                    <span class="blog-category">Travel Tips</span>
-                    <h3>How to Avoid Crowds at India's Top 10 Tourist Destinations</h3>
-                    <p class="blog-excerpt">Smart strategies and insider tips to experience India's most popular attractions without the overwhelming crowds.</p>
-                    <div class="blog-meta">
-                        <span>📅 Coming Soon</span>
-                        <span>⏱️ 12 min read</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="blog-card" style="opacity: 0.6;">
-                <div class="blog-image"></div>
-                <div class="blog-content">
-                    <span class="blog-category">Planning</span>
-                    <h3>Ultimate Guide to Using Real-Time Crowd Data for Trip Planning</h3>
-                    <p class="blog-excerpt">Step-by-step guide on how to leverage crowd predictions to plan the perfect stress-free vacation in India.</p>
-                    <div class="blog-meta">
-                        <span>📅 Coming Soon</span>
-                        <span>⏱️ 10 min read</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="blog-card" style="opacity: 0.6;">
-                <div class="blog-image"></div>
-                <div class="blog-content">
-                    <span class="blog-category">Analysis</span>
-                    <h3>Most Crowded vs Least Crowded: Tourist Patterns in India</h3>
-                    <p class="blog-excerpt">Data-driven insights into tourist behavior patterns across different seasons, regions, and destination types.</p>
-                    <div class="blog-meta">
-                        <span>📅 Coming Soon</span>
-                        <span>⏱️ 15 min read</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="blog-card" style="opacity: 0.6;">
-                <div class="blog-image"></div>
-                <div class="blog-content">
-                    <span class="blog-category">Photography</span>
-                    <h3>Best Times for Tourist Photography Without Crowds</h3>
-                    <p class="blog-excerpt">Perfect timing and lighting conditions for capturing stunning photos at India's iconic landmarks without photobombers.</p>
-                    <div class="blog-meta">
-                        <span>📅 Coming Soon</span>
-                        <span>⏱️ 7 min read</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="blog-card" style="opacity: 0.6;">
-                <div class="blog-image"></div>
-                <div class="blog-content">
-                    <span class="blog-category">Technology</span>
-                    <h3>How AI Predicts Tourist Crowds: Behind the Scenes</h3>
-                    <p class="blog-excerpt">Explore the technology and algorithms that power CrowdWise's accurate crowd predictions and smart recommendations.</p>
-                    <div class="blog-meta">
-                        <span>📅 Coming Soon</span>
-                        <span>⏱️ 6 min read</span>
-                    </div>
-                </div>
+        <div class="newsletter-banner">
+            <h2>📬 Get the Monthly Crowd Report</h2>
+            <p>Upcoming festivals, peak-season alerts, and the best quiet windows for next month — straight to your inbox.</p>
+            <div class="newsletter-form">
+                <input class="newsletter-input" type="email" placeholder="your@email.com">
+                <button class="newsletter-btn" onclick="subscribeNewsletter(this)">Subscribe →</button>
             </div>
         </div>
+
+        <div class="back-to-app">
+            <div class="back-to-app-text">
+                <h3>🗺️ Ready to check live crowd levels?</h3>
+                <p>359 destinations, real-time predictions — free and instant.</p>
+            </div>
+            <a href="index.html" class="back-to-app-btn">Open CrowdWise →</a>
+        </div>
+
     </div>
 
     <script>
-        function notifyMe() {
-            const email = prompt('Enter your email to get notified when we launch the blog:');
-            if (email && email.includes('@')) {
-                // Store in localStorage for now
-                localStorage.setItem('blog_notify_email', email);
-                alert('🎉 Thank you! We\'ll notify you at ' + email + ' when the blog launches!');
-                
-                // Track the signup
-                if (typeof gtag !== 'undefined') {
-                    gtag('event', 'blog_notification_signup', {
-                        event_category: 'engagement',
-                        event_label: 'blog_launch_notification'
-                    });
-                }
-            } else if (email) {
-                alert('❌ Please enter a valid email address');
+        function subscribeNewsletter(btn) {
+            var input = btn.previousElementSibling;
+            var email = input.value.trim();
+            if (!email || !email.includes('@')) {
+                input.style.outline = '2px solid #ef4444';
+                setTimeout(function() { input.style.outline = ''; }, 2000);
+                return;
             }
+            var subs = JSON.parse(localStorage.getItem('cw_newsletter_subs') || '[]');
+            if (!subs.includes(email)) subs.push(email);
+            localStorage.setItem('cw_newsletter_subs', JSON.stringify(subs));
+            btn.textContent = '✓ Subscribed!';
+            btn.style.background = '#dcfce7';
+            btn.style.color = '#166534';
+            input.value = '';
+            setTimeout(function() {
+                btn.textContent = 'Subscribe →';
+                btn.style.background = '';
+                btn.style.color = '';
+            }, 3000);
         }
     </script>
 </body>
