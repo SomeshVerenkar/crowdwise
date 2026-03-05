@@ -2226,7 +2226,7 @@ const destinations = [
     },
     {
         id: 142,
-        name: "Sonmarg",
+        name: "Sonamarg",
         state: "Jammu & Kashmir",
         city: "Ganderbal",
         emoji: "⛰️",
@@ -3298,7 +3298,7 @@ const destinations = [
     },
     {
         id: 208,
-        name: "Kochi (Fort Kochi)",
+        name: "Fort Kochi",
         state: "Kerala",
         city: "Kochi",
         emoji: "🏛️",
@@ -3374,57 +3374,6 @@ const destinations = [
         alerts: ["Royal city with grand palaces", "Famous for Patiala peg and jutti"],
         nearbyAttractions: ["Qila Mubarak", "Moti Bagh Palace", "Sheesh Mahal", "Bahadurgarh Fort"],
         category: "heritage"
-    },
-
-    // WEST BENGAL - Missing destination
-    {
-        id: 213,
-        name: "Sundarbans National Park",
-        state: "West Bengal",
-        city: "South 24 Parganas",
-        emoji: "🐅",
-        crowdLevel: 45,
-        peakHours: "6:00 AM - 4:00 PM",
-        bestTime: "September to March",
-        avgVisitors: 2500,
-        weather: { temp: 28, condition: "Humid", humidity: 85 },
-        alerts: ["World's largest mangrove forest", "Royal Bengal Tiger habitat"],
-        nearbyAttractions: ["Sajnekhali Watch Tower", "Sudhanyakhali", "Dobanki Canopy Walk"],
-        category: "wildlife"
-    },
-
-    // DELHI - Missing destination
-    {
-        id: 214,
-        name: "Akshardham Temple",
-        state: "Delhi",
-        city: "Delhi",
-        emoji: "🛕",
-        crowdLevel: 75,
-        peakHours: "10:00 AM - 6:30 PM",
-        bestTime: "October to March",
-        avgVisitors: 25000,
-        weather: { temp: 29, condition: "Pleasant", humidity: 50 },
-        alerts: ["No phones/cameras inside", "Evening fountain show is spectacular"],
-        nearbyAttractions: ["Yamuna Sports Complex", "Commonwealth Games Village", "ISKCON Temple"],
-        category: "religious"
-    },
-
-    // JAMMU & KASHMIR - Missing destination
-    {
-        id: 215,
-        name: "Sonamarg",
-        state: "Jammu & Kashmir",
-        city: "Ganderbal",
-        emoji: "⛰️",
-        crowdLevel: 55,
-        peakHours: "9:00 AM - 5:00 PM",
-        bestTime: "May to October",
-        avgVisitors: 5000,
-        weather: { temp: 12, condition: "Cold", humidity: 70 },
-        alerts: ["Meadow of Gold", "Gateway to Amarnath"],
-        nearbyAttractions: ["Thajiwas Glacier", "Zoji La Pass", "Baltal", "Nilagrad River"],
-        category: "nature"
     },
 
     // LADAKH - Missing destinations
@@ -5206,7 +5155,7 @@ const destinations = [
     {
         id: 331,
         name: "Shankaracharya Temple",
-        state: "Jammu and Kashmir",
+        state: "Jammu & Kashmir",
         city: "Srinagar",
         emoji: "🛕",
         crowdLevel: 52,
@@ -5221,7 +5170,7 @@ const destinations = [
     {
         id: 332,
         name: "Yusmarg",
-        state: "Jammu and Kashmir",
+        state: "Jammu & Kashmir",
         city: "Budgam",
         emoji: "🌄",
         crowdLevel: 30,
@@ -5236,7 +5185,7 @@ const destinations = [
     {
         id: 333,
         name: "Dachigam National Park",
-        state: "Jammu and Kashmir",
+        state: "Jammu & Kashmir",
         city: "Srinagar",
         emoji: "🦌",
         crowdLevel: 28,
