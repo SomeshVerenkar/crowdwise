@@ -2,7 +2,7 @@
 
 ## Elevator Pitch (30 seconds)
 
-"CrowdWise India is a free web platform that provides real-time crowd predictions for 224+ tourist destinations across India. Think of it as a 'crowd weather forecast' - helping travelers plan visits at optimal times, avoid overcrowded spots, and maximize their vacation experience. No app download or sign-up required - just visit crowdwise.in and start planning smarter trips."
+"CrowdWise India is a free web platform that provides real-time crowd predictions for 1,047 tourist destinations across India. Think of it as a 'crowd weather forecast' - helping travelers plan visits at optimal times, avoid overcrowded spots, and maximize their vacation experience. No app download or sign-up required - just visit crowdwise.in and start planning smarter trips."
 
 ---
 
@@ -15,7 +15,7 @@
 - No existing solution for crowd forecasting in India
 
 ### 2. **Comprehensive Coverage**
-- 224+ destinations covered
+- 1,047 destinations covered
 - All major tourist spots across 28 states
 - Heritage sites, beaches, hill stations, temples, national parks
 - Constantly expanding coverage
@@ -102,7 +102,7 @@
 - **Cost Efficiency**: Optimize travel timing
 
 ### Platform Stats:
-- 224+ destinations covered
+- 1,047 destinations covered
 - Real-time predictions updated every hour
 - 7-day forecast range
 - Mobile-responsive design
@@ -131,7 +131,7 @@ A: Yes! There's a feedback button on the site. Your input helps improve predicti
 A: The site requires an internet connection to fetch live data, but you can bookmark destinations for quick access.
 
 **Q: What destinations are covered?**
-A: We cover 224+ major tourist destinations including:
+A: We cover 1,047 tourist destinations including:
 - UNESCO World Heritage Sites
 - Popular temples and religious sites
 - Hill stations and beaches
@@ -164,7 +164,7 @@ A: We cover 224+ major tourist destinations including:
    - Immediate value proposition
 
 2. **Show Destination List** (10 seconds)
-   - 224+ destinations visible
+   - 1,047 destinations visible
    - Filter by state/category
    - Search functionality
 

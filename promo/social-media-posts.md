@@ -7,7 +7,7 @@
 
 Planning a trip to India's iconic destinations? Say goodbye to overcrowded tourist spots!
 
-CrowdWise India provides real-time crowd predictions for 359 tourist destinations across India, helping you plan the perfect visit.
+CrowdWise India provides real-time crowd predictions for 1,047 tourist destinations across India, helping you plan the perfect visit.
 
 ✨ Key Features:
 • Live crowd levels: Low / Moderate / Heavy / Overcrowded
@@ -41,7 +41,7 @@ Hey everyone! 👋
 Found this amazing website that predicts crowd levels at tourist destinations across India!
 
 *What it does:*
-✅ Shows live crowd predictions (359 destinations!)
+✅ Shows live crowd predictions (1,047 destinations!)
 ✅ Real-time weather updates
 ✅ Best Time Finder — see the least-crowded hour today
 ✅ 100+ festivals tracked — no surprise surges
@@ -70,7 +70,7 @@ _Share this with your travel buddies!_
 Tweet 1:
 🗺️ Tired of reaching tourist spots only to find massive crowds?
 
-Introducing CrowdWise India — your smart travel companion for India's top 359 destinations!
+Introducing CrowdWise India — your smart travel companion for India's top 1,047 destinations!
 
 Know before you go. Plan smarter. Travel better.
 
@@ -83,7 +83,7 @@ What makes CrowdWise special? 🤔
 ✅ Real-time weather updates
 ✅ Best Time Finder — best hour to visit today
 ✅ 100+ Indian festivals tracked
-✅ 359 destinations across 38 states & UTs
+✅ 1,047 destinations across 38 states & UTs
 ✅ 100% FREE forever
 
 No app. No sign-up. Just smart travel. 🚀
@@ -116,7 +116,7 @@ Swipe to see how CrowdWise India is changing the way we travel →
 🌤️ Real-time weather
 ⏰ Best Time Finder — see the best hour to visit today
 🎉 100+ Indian festivals tracked
-🔍 359 destinations across India
+🔍 1,047 destinations across India
 
 🎯 Why this matters:
 • Save hours in queues
@@ -145,7 +145,7 @@ Dear [Team/Colleagues],
 
 I'm excited to share a useful tool for anyone planning trips to tourist destinations across India!
 
-**CrowdWise India** provides real-time crowd predictions for 359 tourist destinations across all 38 states & UTs, helping you plan visits at optimal times.
+**CrowdWise India** provides real-time crowd predictions for 1,047 tourist destinations across all 38 states & UTs, helping you plan visits at optimal times.
 
 🎯 **Key Benefits:**
 • Live crowd levels: Low / Moderate / Heavy / Overcrowded
@@ -192,7 +192,7 @@ Voiceover: "Meet CrowdWise India — your smart travel companion!"
 
 [SCENE 3 - 0:10-0:20]
 Visual: Website demo — showing crowd levels, Best Time Finder hourly grid, festival alerts
-Voiceover: "Get real-time crowd predictions for 359 destinations across India. See live crowd levels and the best hour to visit today."
+Voiceover: "Get real-time crowd predictions for 1,047 destinations across India. See live crowd levels and the best hour to visit today."
 
 [SCENE 4 - 0:20-0:30]
 Visual: Happy travelers at less crowded spots
@@ -221,7 +221,7 @@ That's why we built **CrowdWise India** — to help you make smarter travel deci
 
 ✨ What You Get:
 📊 Live crowd levels (Low / Moderate / Heavy / Overcrowded)
-🌤️ Real-time weather for 359 destinations
+🌤️ Real-time weather for 1,047 destinations
 ⏰ Best Time Finder — see the least-crowded hour to visit today
 🎉 100+ Indian festivals tracked (no surprise crowd surges!)
 🔔 Crowd alerts — get notified when your spot clears up
@@ -253,7 +253,7 @@ That's why we built **CrowdWise India** — to help you make smarter travel deci
 ```
 🗺️ Check crowd levels at tourist spots before you visit!
 
-CrowdWise India — 359 destinations, live predictions, FREE!
+CrowdWise India — 1,047 destinations, live predictions, FREE!
 
 crowdwise.in
 ```

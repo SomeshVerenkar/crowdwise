@@ -9,7 +9,7 @@
 
 Ever wasted hours at overcrowded tourist spots? 😰
 
-Now get *REAL-TIME crowd predictions* for 359 destinations across India! 📊
+Now get *REAL-TIME crowd predictions* for 1,047 destinations across India! 📊
 
 ✅ See crowd levels BEFORE you visit
 ✅ Live weather updates
@@ -33,7 +33,7 @@ _Forward this to your travel buddies!_ 💯
 
 Introducing *CrowdWise India* 🗺️
 
-Know crowd levels at 359 destinations BEFORE you go:
+Know crowd levels at 1,047 destinations BEFORE you go:
 
 🟢 Low crowd? Perfect time to visit!
 🟡 Moderate? Still good to go
@@ -77,7 +77,7 @@ Result?
 *How it works:*
 Just visit *crowdwise.in* → Search your destination → See live crowd predictions!
 
-Works for 359 places:
+Works for 1,047 places:
 🏛️ Monuments
 🏖️ Beaches  
 ⛰️ Hill stations
@@ -101,7 +101,7 @@ Share with family & friends! 🙌
 ```
 🗺️ *CrowdWise India*
 
-Real-time crowd predictions for 359 tourist spots across India!
+Real-time crowd predictions for 1,047 tourist spots across India!
 
 Know BEFORE you go 📊
 ✅ Live crowd levels
@@ -121,7 +121,7 @@ Share with your travel group! 🚀
 ```
 *Sharing a useful travel tool for the team* 🗺️
 
-*CrowdWise India* provides real-time crowd predictions for 359 tourist destinations across India.
+*CrowdWise India* provides real-time crowd predictions for 1,047 tourist destinations across India.
 
 *Key Features:*
 • Live crowd levels (Low / Moderate / Heavy / Overcrowded)

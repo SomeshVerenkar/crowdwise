@@ -80,6 +80,10 @@ function transformDestinationData(dest) {
     const estimated = Math.round(base * multiplier * (1 + (seed - 0.5) * variance));
     const currentEstimate = formatVisitorCount(estimated);
     
+    // Pre-compute search text once so per-keypress scans never recompute it
+    const _searchText = [dest.name, dest.state, dest.city, dest.category]
+        .filter(Boolean).join(' ').toLowerCase();
+
     return {
         ...dest,
         baseCrowdLevel,
@@ -88,6 +92,7 @@ function transformDestinationData(dest) {
         confidence,
         weather: weatherStr,
         currentEstimate: normalizedLevel === 'closed' ? null : currentEstimate,
+        _searchText,
         bestTimeToVisit: dest.bestTime || 'October to March'
     };
 }
@@ -725,30 +730,35 @@ let _heatmapRendered = false;
 function renderHeatmap() {
     const heatmapGrid = document.getElementById('heatmapGrid');
     if (!heatmapGrid || _heatmapRendered) return;
+
+    // Cap at 200 most-visited — rendering 1000+ heatmap cells at once causes
+    // layout thrash on low-end devices, and the visual density benefit
+    // above ~200 items is negligible.
+    const HEATMAP_MAX = 200;
+    const heatmapDests = allDestinations
+        .slice()
+        .sort((a, b) => (b.avgVisitors || 0) - (a.avgVisitors || 0))
+        .slice(0, HEATMAP_MAX);
+    const buildHeatmapHTML = () => heatmapDests.map(dest => `
+        <div class="heatmap-item ${dest.crowdLevel}" onclick="navigateToDestination(${dest.id})">
+            <div class="heatmap-emoji">${dest.emoji}</div>
+            <div class="heatmap-name">${dest.name}</div>
+            <div class="heatmap-crowd">${getCrowdLabel(dest.crowdLevel)}</div>
+        </div>
+    `).join('');
+
     if ('IntersectionObserver' in window) {
         const obs = new IntersectionObserver((entries, self) => {
             if (entries[0].isIntersecting) {
                 _heatmapRendered = true;
-                heatmapGrid.innerHTML = allDestinations.map(dest => `
-                    <div class="heatmap-item ${dest.crowdLevel}" onclick="navigateToDestination(${dest.id})">
-                        <div class="heatmap-emoji">${dest.emoji}</div>
-                        <div class="heatmap-name">${dest.name}</div>
-                        <div class="heatmap-crowd">${getCrowdLabel(dest.crowdLevel)}</div>
-                    </div>
-                `).join('');
+                heatmapGrid.innerHTML = buildHeatmapHTML();
                 self.disconnect();
             }
         }, { rootMargin: '200px' });
         obs.observe(heatmapGrid);
     } else {
         _heatmapRendered = true;
-        heatmapGrid.innerHTML = allDestinations.map(dest => `
-            <div class="heatmap-item ${dest.crowdLevel}" onclick="navigateToDestination(${dest.id})">
-                <div class="heatmap-emoji">${dest.emoji}</div>
-                <div class="heatmap-name">${dest.name}</div>
-                <div class="heatmap-crowd">${getCrowdLabel(dest.crowdLevel)}</div>
-            </div>
-        `).join('');
+        heatmapGrid.innerHTML = buildHeatmapHTML();
     }
 }
 
@@ -901,8 +911,14 @@ function setupSearchSuggestions() {
         setTimeout(() => suggestionsDropdown.classList.remove('active'), 200);
     });
     
+    let _searchDebounceTimer = null;
     searchInput.addEventListener('input', function() {
-        const value = this.value.toLowerCase().trim();
+        // Debounce — Levenshtein on 1000+ items is expensive; wait 200 ms after
+        // the user stops typing before running the full fuzzy scan.
+        clearTimeout(_searchDebounceTimer);
+        const captured = this.value;
+        _searchDebounceTimer = setTimeout(() => {
+        const value = captured.toLowerCase().trim();
         if (value.length > 0) {
             // Use fuzzy scoring for suggestions so typos still show results
             const scored = allDestinations
@@ -934,6 +950,7 @@ function setupSearchSuggestions() {
         }
         // Live-filter as user types; clearing the input instantly restores all destinations
         searchDestination();
+        }, 200); // end debounce
     });
     
     searchInput.addEventListener('keypress', function(e) {
@@ -992,12 +1009,9 @@ function fillSearch(term) {
 
 // Build a flat searchable string for a destination (only core fields — no alerts/nearby)
 function buildSearchText(dest) {
-    return [
-        dest.name,
-        dest.state,
-        dest.city,
-        dest.category
-    ].filter(Boolean).join(' ').toLowerCase();
+    // Use cached value when available (set in transformDestinationData)
+    if (dest._searchText) return dest._searchText;
+    return [dest.name, dest.state, dest.city, dest.category].filter(Boolean).join(' ').toLowerCase();
 }
 
 // ========== FUZZY SEARCH ENGINE ==========
@@ -1760,7 +1774,9 @@ function initSearchableDestinationDropdown(searchInputId, listId, hiddenInputId)
         dropdownList.style.width = rect.width + 'px';
     }
     
-    // Populate all destinations initially
+    // Populate all destinations initially — capped at 50 to avoid a 1000+ node
+    // DOM dump on focus which causes visible jank on mobile devices.
+    const DROPDOWN_MAX = 50;
     function renderDropdownItems(filter = '') {
         const filterLower = filter.toLowerCase();
         const filtered = allDestinations.filter(dest => 
@@ -1768,15 +1784,17 @@ function initSearchableDestinationDropdown(searchInputId, listId, hiddenInputId)
             dest.state.toLowerCase().includes(filterLower) ||
             (dest.city && dest.city.toLowerCase().includes(filterLower))
         );
+        const capped = filtered.slice(0, DROPDOWN_MAX);
         
-        if (filtered.length === 0) {
+        if (capped.length === 0) {
             dropdownList.innerHTML = '<div class="dropdown-no-results">No destinations found</div>';
         } else {
-            dropdownList.innerHTML = filtered.map(dest => `
+            const moreCount = filtered.length - capped.length;
+            dropdownList.innerHTML = capped.map(dest => `
                 <div class="dropdown-item" data-id="${dest.id}" data-name="${dest.emoji} ${dest.name}">
                     ${dest.emoji} ${dest.name}<span class="dest-state">• ${dest.state}</span>
                 </div>
-            `).join('');
+            `).join('') + (moreCount > 0 ? `<div class="dropdown-no-results" style="opacity:0.6;pointer-events:none;">+${moreCount} more — type to narrow down</div>` : '');
         }
     }
     
