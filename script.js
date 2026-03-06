@@ -1161,7 +1161,9 @@ function searchNearMe() {
             
             // Calculate distance to all destinations and sort by nearest
             const destinationsWithDistance = allDestinations.map(dest => {
-                const coords = DESTINATION_COORDINATES[dest.id];
+                const coords = DESTINATION_COORDINATES[dest.id]
+                    || (typeof CITY_COORDINATES !== 'undefined' && CITY_COORDINATES[dest.city])
+                    || null;
                 if (coords) {
                     const distance = calculateDistance(userLat, userLon, coords.lat, coords.lon);
                     return { ...dest, distance };
