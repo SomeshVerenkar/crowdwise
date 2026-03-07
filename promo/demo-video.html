@@ -36,58 +36,59 @@
     background: #000;
   }
 
-  /* ── Portrait-mode rotate prompt (dismissible, not blocking) ── */
-  #rotateOverlay {
+  /* ── Portrait-mode landscape hint banner (non-blocking, stays visible) ── */
+  #rotateBanner {
     display: none;
     position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.93);
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(20,12,40,0.92);
+    border: 1px solid rgba(124,58,237,0.4);
+    border-radius: 40px;
+    padding: 10px 18px 10px 14px;
     z-index: 99999;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    text-align: center;
-    gap: 20px;
-    padding: 48px 28px;
+    gap: 10px;
+    font-size: 0.82rem;
+    color: #c4b5fd;
+    font-weight: 500;
+    white-space: nowrap;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    animation: bannerSlideUp 0.4s ease;
+    max-width: calc(100vw - 32px);
+    box-sizing: border-box;
   }
-  /* Only auto-show on portrait; JS can also force-show/hide */
+  @keyframes bannerSlideUp {
+    from { opacity: 0; transform: translateX(-50%) translateY(16px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+  /* Show banner automatically in portrait — does NOT block the demo */
   @media (orientation: portrait) {
-    #rotateOverlay.auto { display: flex; }
+    #rotateBanner { display: flex; }
   }
   .rotate-icon {
-    font-size: 72px;
+    font-size: 18px;
     animation: rotateAnim 2.4s ease-in-out infinite;
-    display: block;
+    display: inline-block;
   }
   @keyframes rotateAnim {
     0%, 40%, 100% { transform: rotate(0deg); }
     60%, 90%     { transform: rotate(90deg); }
   }
-  #rotateOverlay h2 {
-    font-size: clamp(1.3rem, 6vw, 1.8rem);
-    font-weight: 800; color: #f0f0ff;
-    background: linear-gradient(135deg, #a78bfa, #60a5fa);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  }
-  #rotateOverlay p {
-    font-size: clamp(0.9rem, 4vw, 1.05rem);
-    color: #6b7280; max-width: 280px; line-height: 1.6;
-  }
-  #rotateContinueBtn {
-    margin-top: 8px;
-    padding: 12px 28px;
-    background: rgba(124,58,237,0.15);
-    border: 1px solid rgba(124,58,237,0.4);
-    border-radius: 10px;
-    color: #a78bfa;
-    font-size: 0.92rem;
-    font-weight: 600;
+  #rotateDismissBtn {
+    background: none;
+    border: none;
+    color: rgba(196,181,253,0.6);
+    font-size: 1rem;
     cursor: pointer;
+    padding: 0 0 0 6px;
+    line-height: 1;
     font-family: inherit;
-    transition: background 0.2s;
   }
-  #rotateContinueBtn:hover,
-  #rotateContinueBtn:active { background: rgba(124,58,237,0.3); }
+  #rotateDismissBtn:hover,
+  #rotateDismissBtn:active { color: #c4b5fd; }
 
   /* ─── SCENE SYSTEM ─── */
   .scene {
@@ -695,12 +696,11 @@
 </head>
 <body>
 
-<!-- ─── Portrait rotate prompt (auto-shown in portrait, dismissible) ─── -->
-<div id="rotateOverlay" class="auto">
+<!-- ─── Portrait landscape hint banner (non-blocking — demo plays behind it) ─── -->
+<div id="rotateBanner">
   <span class="rotate-icon">📱</span>
-  <h2>Rotate your phone</h2>
-  <p>This demo is designed for landscape view. Rotate for the best experience.</p>
-  <button id="rotateContinueBtn" onclick="dismissRotateOverlay()">Continue in Portrait →</button>
+  <span>Rotate for best experience</span>
+  <button id="rotateDismissBtn" onclick="this.closest('#rotateBanner').style.display='none'" aria-label="Dismiss">✕</button>
 </div>
 
 <!-- ─── 1280×720 stage (scaled to fit by JS) ─── -->
@@ -986,10 +986,15 @@
 
 <script>
   // ── Responsive stage scaling (phone & tablet) ──
+  // Uses visualViewport API when available (Android Chrome dynamic toolbar),
+  // falls back to clientWidth/clientHeight (more stable than innerWidth/Height
+  // on Android where window.inner* changes as the address bar shows/hides).
   var stage = document.getElementById('stage');
+
   function scaleStage() {
-    var vw = window.innerWidth;
-    var vh = window.innerHeight;
+    var vp = window.visualViewport;
+    var vw = vp ? vp.width  : (document.documentElement.clientWidth  || window.innerWidth);
+    var vh = vp ? vp.height : (document.documentElement.clientHeight || window.innerHeight);
     var scale = Math.min(vw / 1280, vh / 720);
     var ml = (vw - 1280 * scale) / 2;
     var mt = (vh - 720 * scale) / 2;
@@ -997,29 +1002,28 @@
     stage.style.left = Math.max(0, ml) + 'px';
     stage.style.top  = Math.max(0, mt) + 'px';
   }
-  scaleStage();
-  window.addEventListener('resize', scaleStage);
-  window.addEventListener('orientationchange', function() {
-    // Re-calculate after the browser finishes the orientation animation
-    setTimeout(scaleStage, 300);
-  });
 
-  // Portrait overlay logic
-  var portraitDismissed = false;
-  function dismissRotateOverlay() {
-    portraitDismissed = true;
-    document.getElementById('rotateOverlay').style.display = 'none';
+  // Run immediately, then re-run after layout settles.
+  // Android Chrome needs multiple passes: the address bar animates in/out
+  // after the first paint, shifting window.inner* values unpredictably.
+  scaleStage();
+  requestAnimationFrame(function() {
+    requestAnimationFrame(scaleStage); // after 2 paint frames
+  });
+  setTimeout(scaleStage, 200);
+  setTimeout(scaleStage, 600);
+
+  // Subscribe to Visual Viewport resize (handles Android address bar hide/show)
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', scaleStage);
+    window.visualViewport.addEventListener('scroll', scaleStage);
   }
-  // Re-show overlay if user swings back to portrait (unless they already dismissed)
+  window.addEventListener('resize', scaleStage);
+
+  // Single orientationchange handler — 600ms is enough for all Android models
   window.addEventListener('orientationchange', function() {
-    setTimeout(function() {
-      var overlay = document.getElementById('rotateOverlay');
-      if (!portraitDismissed && window.innerHeight > window.innerWidth) {
-        overlay.style.display = 'flex';
-      } else {
-        overlay.style.display = 'none';
-      }
-    }, 350);
+    setTimeout(scaleStage, 300);
+    setTimeout(scaleStage, 600);
   });
   const SCENES = ['s1','s2','s3','s4','s5','s6','s7','s8'];
   const DURATIONS = [6000, 6000, 8000, 7000, 8000, 8000, 8000, 7000]; // ms per scene
