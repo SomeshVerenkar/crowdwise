@@ -3732,3 +3732,87 @@ body {
         grid-template-columns: repeat(2, 1fr);
     }
 }
+
+/* ============================================================
+   BOTTOM SHEET — DESKTOP COMPACT HEADER
+   On laptop/desktop the header has full-size spacings (~330px)
+   which leaves very little room for destination cards.
+   These rules trim it to ~270px so ≥2 full rows of cards show.
+   ============================================================ */
+@media (min-width: 769px) {
+    /* Shrink overall header padding */
+    .sheet-header {
+        padding: 2px 20px 10px;
+    }
+    .sheet-title-row { margin-bottom: 8px; }
+
+    /* Country row: has its own 10px top-padding — reduce to 4px */
+    .sheet-country-row {
+        padding: 4px 0 2px;
+    }
+
+    /* Search bar */
+    .sheet-search-wrap {
+        padding: 8px 12px;
+        margin-bottom: 7px;
+    }
+
+    /* All pill rows — reduce bottom margin */
+    .sheet-pills-row         { margin-bottom: 5px; }
+    .category-pills-row      { margin-bottom: 5px; padding-bottom: 3px; }
+    .discover-pills-row      { margin-bottom: 4px; padding-bottom: 3px; }
+}
+
+/* ============================================================
+   SHORT-SCREEN LAPTOPS (height ≤ 850px, width ≥ 769px)
+   e.g. 1280×768, 1366×768, 1440×900 — common laptop sizes.
+   Compact further so cards area gets ≥380px.
+   ============================================================ */
+@media (max-height: 850px) and (min-width: 769px) {
+    .destinations-sheet { height: 92vh; }
+
+    .sheet-header {
+        padding: 2px 20px 8px;
+    }
+    .sheet-title { font-size: 17px; }
+    .sheet-title-row { margin-bottom: 5px; }
+
+    .sheet-country-row { padding: 2px 0 2px; gap: 6px; }
+    .country-pill { padding: 5px 12px; font-size: 12px; }
+
+    .sheet-search-wrap { padding: 7px 12px; margin-bottom: 5px; }
+    .sheet-search-input { font-size: 14px; }
+
+    .sheet-pills-row        { margin-bottom: 4px; }
+    .sheet-pills-row .crowd-pill { padding: 5px 10px; font-size: 12px; }
+    .category-pills-row     { margin-bottom: 4px; padding-bottom: 2px; }
+    .category-pill          { padding: 5px 10px; font-size: 12px; }
+    .discover-pills-row     { margin-bottom: 4px; padding-bottom: 2px; }
+    .discover-pill          { padding: 5px 10px; font-size: 12px; }
+
+    .sheet-state-wrap .state-select { padding: 7px 32px 7px 12px; font-size: 13px; }
+    .clear-filters { padding: 6px 12px; font-size: 12px; }
+
+    .sheet-body { padding: 16px 20px 80px; }
+}
+
+/* ============================================================
+   WIDE DESKTOP (width ≥ 1200px)
+   Centre the sheet as a panel with max-width so it doesn't
+   stretch awkwardly on 27" monitors.
+   ============================================================ */
+@media (min-width: 1200px) {
+    .destinations-sheet {
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%) translateY(100%);
+        width: 900px;
+        border-radius: 24px 24px 0 0;
+    }
+    .destinations-sheet.open {
+        transform: translateX(-50%) translateY(0);
+    }
+    .destinations-sheet.dragging {
+        transition: none;
+    }
+}
