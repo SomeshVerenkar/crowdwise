@@ -1,11 +1,3 @@
 name = "crowdwise"
-compatibility_date = "2026-02-10"
-
-[assets]
-directory = "dist"
-html_handling = "force-trailing-slash"
-
-# Deploy built static assets from dist
-
-[build]
-command = "npm run build"
+compatibility_date = "2026-03-10"
+pages_build_output_dir = "dist"
