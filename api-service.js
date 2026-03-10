@@ -133,9 +133,10 @@ class APIService {
                 this.stats.errors++;
             }
             
-            // Try backup WeatherAPI
+            // Fallback 1: Try WeatherAPI.com
             if (API_CONFIG.WEATHERAPI_KEY !== 'YOUR_WEATHERAPI_KEY') {
                 try {
+                    console.log(`🌤️ Trying WeatherAPI.com fallback for ${coords.city}...`);
                     const weather = await this.fetchWeatherAPI(coords, destinationId);
                     if (weather) {
                         this.dataStatus.weather = {
@@ -145,16 +146,40 @@ class APIService {
                         };
                         API_CONFIG._weatherSource = 'weatherapi';
                         this.updateDataStatus();
+                        console.log(`✅ Live weather from WeatherAPI.com for ${coords.city}`);
                         return weather;
                     }
                 } catch (error) {
-                    console.error('WeatherAPI error:', error);
+                    console.error('WeatherAPI.com error:', error);
                     this.stats.errors++;
                 }
             }
+
         }
 
-        // Fallback to mock data - only update status if not already live
+        // Fallback 2: Open-Meteo (free, no API key required — always attempted when USE_REAL_WEATHER is true)
+        if (API_CONFIG.USE_REAL_WEATHER) {
+            try {
+                console.log(`🌤️ Trying Open-Meteo fallback for ${coords.city}...`);
+                const weather = await this.fetchOpenMeteo(coords, destinationId);
+                if (weather) {
+                    this.dataStatus.weather = {
+                        source: 'open-meteo',
+                        lastUpdate: new Date(),
+                        isLive: true
+                    };
+                    API_CONFIG._weatherSource = 'open-meteo';
+                    this.updateDataStatus();
+                    console.log(`✅ Live weather from Open-Meteo for ${coords.city}`);
+                    return weather;
+                }
+            } catch (error) {
+                console.error('Open-Meteo error:', error);
+                this.stats.errors++;
+            }
+        }
+
+        // Final fallback: mock data — only update status if not already live
         console.warn(`⚠️ Using mock weather for destination ${destinationId}`);
         if (!this.dataStatus.weather.isLive) {
             this.dataStatus.weather = {
@@ -215,6 +240,46 @@ class APIService {
         return weather;
     }
     
+    async fetchOpenMeteo(coords, destinationId) {
+        this.stats.weatherApiCalls++;
+        // WMO weather interpretation codes → human-readable condition
+        const WMO_CONDITIONS = {
+            0: 'Clear', 1: 'Mainly Clear', 2: 'Partly Cloudy', 3: 'Overcast',
+            45: 'Fog', 48: 'Fog',
+            51: 'Drizzle', 53: 'Drizzle', 55: 'Drizzle',
+            61: 'Rain', 63: 'Rain', 65: 'Heavy Rain',
+            71: 'Snow', 73: 'Snow', 75: 'Heavy Snow',
+            80: 'Rain Shower', 81: 'Rain Shower', 82: 'Heavy Rain',
+            95: 'Thunderstorm', 96: 'Thunderstorm', 99: 'Thunderstorm'
+        };
+        const url = `${API_CONFIG.OPEN_METEO_URL}?latitude=${coords.lat}&longitude=${coords.lon}` +
+            `&current_weather=true&hourly=relativehumidity_2m,apparent_temperature` +
+            `&forecast_days=1&timezone=auto`;
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Open-Meteo HTTP ${response.status}`);
+        }
+        const data = await response.json();
+        const cw = data.current_weather;
+        const condition = WMO_CONDITIONS[cw.weathercode] || 'Clear';
+        // humidity is from hourly[0]
+        const humidity = data.hourly?.relativehumidity_2m?.[0] ?? 60;
+        const feelsLike = data.hourly?.apparent_temperature?.[0] ?? Math.round(cw.temperature);
+        const weather = {
+            temperature: Math.round(cw.temperature),
+            condition: condition,
+            description: condition.toLowerCase(),
+            humidity: humidity,
+            feelsLike: Math.round(feelsLike),
+            windSpeed: cw.windspeed,
+            formatted: `${Math.round(cw.temperature)}°C, ${condition}`,
+            isLive: true
+        };
+        this.weatherCache[destinationId] = weather;
+        this.lastWeatherUpdate[destinationId] = Date.now();
+        return weather;
+    }
+
     async fetchWeatherFromBackend(destinationId) {
         const response = await fetch(`${API_CONFIG.BACKEND_API_URL}/weather/${destinationId}`);
         if (!response.ok) return null;

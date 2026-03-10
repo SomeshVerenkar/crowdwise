@@ -16,10 +16,14 @@ const API_CONFIG = {
     WEATHER_API_KEY: '01d84178319315636aea1579e3bac3ef',  // Live API key - weather data is now real-time
     WEATHER_API_URL: 'https://api.openweathermap.org/data/2.5/weather',
     
-    // Backup: WeatherAPI.com (Free tier: 1M calls/month)
+    // Fallback 1: WeatherAPI.com (Free tier: 1M calls/month)
     // Sign up at: https://www.weatherapi.com/
-    WEATHERAPI_KEY: 'YOUR_WEATHERAPI_KEY',
+    WEATHERAPI_KEY: '29fe4ef11ee94b81b47103946261003',
     WEATHERAPI_URL: 'https://api.weatherapi.com/v1/current.json',
+    
+    // Fallback 2: Open-Meteo (100% free, no API key required)
+    // Docs: https://open-meteo.com/en/docs
+    OPEN_METEO_URL: 'https://api.open-meteo.com/v1/forecast',
     
     // ==================== CROWD DATA APIs ====================
     // Google Places API (for popular times)
@@ -68,7 +72,7 @@ const API_CONFIG = {
     
     // ==================== DATA SOURCE TRACKING ====================
     // These are set automatically - do not modify
-    _weatherSource: 'mock',      // 'mock', 'openweathermap', 'weatherapi', 'backend'
+    _weatherSource: 'mock',      // 'mock', 'openweathermap', 'weatherapi', 'open-meteo', 'backend'
     _crowdSource: 'mock',        // 'mock', 'google', 'backend', 'aggregated'
     _lastUpdate: null,
     _dataQuality: 'demo',        // 'demo', 'partial', 'live'
