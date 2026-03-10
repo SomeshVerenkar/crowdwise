@@ -3,5 +3,9 @@ compatibility_date = "2026-02-10"
 
 [assets]
 directory = "dist"
+html_handling = "force-trailing-slash"
 
 # Deploy built static assets from dist
+
+[build]
+command = "npm run build"
