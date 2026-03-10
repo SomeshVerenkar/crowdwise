@@ -90,6 +90,25 @@
         return category.charAt(0).toUpperCase() + category.slice(1).replace('-', ' ');
     }
 
+    function trimText(value, maxLength) {
+        const normalized = String(value).replace(/\s+/g, ' ').trim();
+        if (normalized.length <= maxLength) return normalized;
+
+        const sliced = normalized.slice(0, Math.max(0, maxLength - 1));
+        const lastSpace = sliced.lastIndexOf(' ');
+        return `${(lastSpace > 40 ? sliced.slice(0, lastSpace) : sliced).trim()}…`;
+    }
+
+    function buildDestinationTitle(destination) {
+        const primary = `${destination.name}, ${destination.state} Crowd Forecast & Best Time to Visit | CrowdWise India`;
+        if (primary.length <= 68) return primary;
+
+        const secondary = `${destination.name} Crowd Forecast & Best Time to Visit | CrowdWise India`;
+        if (secondary.length <= 68) return secondary;
+
+        return `${destination.name} Crowd Forecast | CrowdWise India`;
+    }
+
     function fmtVisitors(value) {
         if (value >= 1000000) return (value / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
         if (value >= 1000) return Math.round(value / 1000) + 'k';
@@ -97,8 +116,10 @@
     }
 
     function buildMetaDescription(destination) {
-        return `Live crowd forecast for ${destination.name} in ${destination.state}. Check best time to visit, peak hours, crowd level, nearby attractions, and plan a smarter trip with CrowdWise India.`
-            .slice(0, 158);
+        return trimText(
+            `Check live crowd levels, best time to visit, peak hours, weather, and nearby attractions for ${destination.name} in ${destination.state}, India with CrowdWise India.`,
+            158
+        );
     }
 
     function updateSeo(destination) {
@@ -106,17 +127,25 @@
         const canonicalPath = getDestinationPath(slug);
         const canonicalUrl = getAbsoluteUrl(canonicalPath);
         const description = buildMetaDescription(destination);
-        const title = `${destination.name} Crowd Forecast & Best Time to Visit | CrowdWise India`;
+        const title = buildDestinationTitle(destination);
 
         document.title = title;
         ensureCanonical().setAttribute('href', canonicalUrl);
+        ensureMeta('meta[name="title"]', { name: 'title' }).setAttribute('content', title);
         ensureMeta('meta[name="description"]', { name: 'description' }).setAttribute('content', description);
+        ensureMeta('meta[name="robots"]', { name: 'robots' }).setAttribute('content', 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1');
         ensureMeta('meta[property="og:title"]', { property: 'og:title' }).setAttribute('content', title);
         ensureMeta('meta[property="og:description"]', { property: 'og:description' }).setAttribute('content', description);
         ensureMeta('meta[property="og:url"]', { property: 'og:url' }).setAttribute('content', canonicalUrl);
         ensureMeta('meta[property="og:type"]', { property: 'og:type' }).setAttribute('content', 'website');
+        ensureMeta('meta[property="og:site_name"]', { property: 'og:site_name' }).setAttribute('content', 'CrowdWise India');
+        ensureMeta('meta[property="og:locale"]', { property: 'og:locale' }).setAttribute('content', 'en_IN');
+        ensureMeta('meta[property="og:image"]', { property: 'og:image' }).setAttribute('content', 'https://crowdwise.in/og-image.jpg');
+        ensureMeta('meta[name="twitter:card"]', { name: 'twitter:card' }).setAttribute('content', 'summary_large_image');
         ensureMeta('meta[name="twitter:title"]', { name: 'twitter:title' }).setAttribute('content', title);
         ensureMeta('meta[name="twitter:description"]', { name: 'twitter:description' }).setAttribute('content', description);
+        ensureMeta('meta[name="twitter:url"]', { name: 'twitter:url' }).setAttribute('content', canonicalUrl);
+        ensureMeta('meta[name="twitter:image"]', { name: 'twitter:image' }).setAttribute('content', 'https://crowdwise.in/og-image.jpg');
     }
 
     function createJsonLd(destination, dynamicCrowdLevel) {

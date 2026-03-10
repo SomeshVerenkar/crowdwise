@@ -33,6 +33,15 @@ function htmlEscape(value) {
         .replace(/"/g, '&quot;');
 }
 
+function trimText(value, maxLength) {
+    const normalized = String(value).replace(/\s+/g, ' ').trim();
+    if (normalized.length <= maxLength) return normalized;
+
+    const sliced = normalized.slice(0, Math.max(0, maxLength - 1));
+    const lastSpace = sliced.lastIndexOf(' ');
+    return `${(lastSpace > 40 ? sliced.slice(0, lastSpace) : sliced).trim()}…`;
+}
+
 function toSlug(name) {
     return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
@@ -144,9 +153,21 @@ function formatCategory(category) {
     return category.charAt(0).toUpperCase() + category.slice(1).replace(/-/g, ' ');
 }
 
+function buildDestinationTitle(destination) {
+    const primary = `${destination.name}, ${destination.state} Crowd Forecast & Best Time to Visit | CrowdWise India`;
+    if (primary.length <= 68) return primary;
+
+    const secondary = `${destination.name} Crowd Forecast & Best Time to Visit | CrowdWise India`;
+    if (secondary.length <= 68) return secondary;
+
+    return `${destination.name} Crowd Forecast | CrowdWise India`;
+}
+
 function buildMetaDescription(destination) {
-    return `Live crowd forecast for ${destination.name} in ${destination.state}. Check best time to visit, peak hours, crowd level, nearby attractions, and plan a smarter trip with CrowdWise India.`
-        .slice(0, 158);
+    return trimText(
+        `Check live crowd levels, best time to visit, peak hours, weather, and nearby attractions for ${destination.name} in ${destination.state}, India with CrowdWise India.`,
+        158
+    );
 }
 
 function buildWeather(destination) {
@@ -215,6 +236,7 @@ function buildDestinationJsonLd(destination, destinationUrl, description) {
         name: destination.name,
         url: destinationUrl,
         description,
+        mainEntityOfPage: destinationUrl,
         address: {
             '@type': 'PostalAddress',
             addressLocality: destination.city || destination.state,
@@ -237,13 +259,43 @@ function buildDestinationJsonLd(destination, destinationUrl, description) {
     };
 }
 
+function buildBreadcrumbJsonLd(destination, destinationUrl) {
+    return {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+            {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Home',
+                item: BASE_URL
+            },
+            {
+                '@type': 'ListItem',
+                position: 2,
+                name: destination.state,
+                item: `${BASE_URL}/`
+            },
+            {
+                '@type': 'ListItem',
+                position: 3,
+                name: destination.name,
+                item: destinationUrl
+            }
+        ]
+    };
+}
+
 function buildPrerenderedDestinationPage(destination) {
     const slug = toSlug(destination.name);
     const destinationPath = `/destinations/${slug}/`;
     const destinationUrl = `${BASE_URL}${destinationPath}`;
-    const title = `${destination.name} Crowd Forecast & Best Time to Visit | CrowdWise India`;
+    const title = buildDestinationTitle(destination);
     const description = buildMetaDescription(destination);
-    const jsonLd = JSON.stringify(buildDestinationJsonLd(destination, destinationUrl, description)).replace(/</g, '\\u003c');
+    const jsonLd = JSON.stringify([
+        buildDestinationJsonLd(destination, destinationUrl, description),
+        buildBreadcrumbJsonLd(destination, destinationUrl)
+    ]).replace(/</g, '\\u003c');
     const preloadedData = JSON.stringify(destination).replace(/</g, '\\u003c');
 
     return `<!DOCTYPE html>
@@ -252,14 +304,25 @@ function buildPrerenderedDestinationPage(destination) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>${htmlEscape(title)}</title>
+    <meta name="title" content="${htmlEscape(title)}">
     <meta name="description" content="${htmlEscape(description)}">
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+    <meta name="author" content="CrowdWise India">
+    <meta name="geo.region" content="IN">
+    <meta name="geo.placename" content="${htmlEscape(destination.state)}">
     <link rel="canonical" href="${htmlEscape(destinationUrl)}">
     <meta property="og:type" content="website">
     <meta property="og:title" content="${htmlEscape(title)}">
     <meta property="og:description" content="${htmlEscape(description)}">
     <meta property="og:url" content="${htmlEscape(destinationUrl)}">
+    <meta property="og:site_name" content="CrowdWise India">
+    <meta property="og:locale" content="en_IN">
+    <meta property="og:image" content="https://crowdwise.in/og-image.jpg">
+    <meta property="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="${htmlEscape(title)}">
     <meta name="twitter:description" content="${htmlEscape(description)}">
+    <meta name="twitter:url" content="${htmlEscape(destinationUrl)}">
+    <meta name="twitter:image" content="https://crowdwise.in/og-image.jpg">
     <link rel="stylesheet" href="../../styles.css?v=5.0">
     <link rel="stylesheet" href="../../destination-page.css?v=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
