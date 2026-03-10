@@ -2,7 +2,6 @@ name = "crowdwise"
 compatibility_date = "2026-02-10"
 
 [assets]
-directory = "."
+directory = "dist"
 
-# Deploy all files in root directory as static assets
-# Serves index.html, styles.css, etc. directly
+# Deploy built static assets from dist

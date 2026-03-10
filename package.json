@@ -1,0 +1,19 @@
+{
+  "name": "crowdwise-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Frontend build pipeline for CrowdWise India",
+  "scripts": {
+    "build:sitemaps": "node scripts/generate-sitemaps.js",
+    "build": "node scripts/build-frontend.js"
+  },
+  "devDependencies": {
+    "clean-css": "^5.3.3",
+    "html-minifier-terser": "^7.2.0",
+    "javascript-obfuscator": "^4.1.1",
+    "terser": "^5.39.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
