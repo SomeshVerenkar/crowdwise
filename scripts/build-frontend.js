@@ -12,6 +12,7 @@ const GENERATE_SITEMAPS = path.join(ROOT, 'scripts', 'generate-sitemaps.js');
 
 const ROOT_FILES = [
     'BingSiteAuth.xml',
+    'og-image.jpg',
     'index.html',
     'blog.html',
     'destination.html',
