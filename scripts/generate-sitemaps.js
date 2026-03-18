@@ -387,7 +387,7 @@ function main() {
             priority: 1.0
         },
         {
-            loc: `${BASE_URL}/blog.html`,
+            loc: `${BASE_URL}/blog/`,
             lastmod: getFileDate(path.join(ROOT, 'blog.html')),
             changefreq: 'weekly',
             priority: 0.9
