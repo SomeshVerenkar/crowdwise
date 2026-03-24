@@ -287,6 +287,40 @@ class ClientCrowdAlgorithm {
                API_CONFIG.FEATURE_FLAGS.WEATHER_REFINEMENT === true;
     }
 
+    _getFestivalSummary(destinationContext, date) {
+        if (!this._isFestivalsEnabled() || !destinationContext || typeof FestivalService === 'undefined') {
+            return null;
+        }
+
+        const festivalInfo = typeof FestivalService.getRelevantFestivalDetailsForContext === 'function'
+            ? FestivalService.getRelevantFestivalDetailsForContext(destinationContext, date)
+            : FestivalService.getFestivalImpactDetails(destinationContext.destinationId || destinationContext.id, date);
+
+        if (!festivalInfo.hasActiveFestival || !festivalInfo.festivals || festivalInfo.festivals.length === 0) {
+            return null;
+        }
+
+        return {
+            impact: Math.round(festivalInfo.impact * 100) / 100,
+            count: festivalInfo.festivals.length,
+            primaryName: festivalInfo.festivals[0].name,
+            matchType: festivalInfo.matchType || festivalInfo.festivals[0].matchType || null,
+            matchLabel: festivalInfo.matchLabel || festivalInfo.festivals[0].matchLabel || null,
+            festivals: festivalInfo.festivals.map(festival => ({
+                id: festival.id,
+                name: festival.name,
+                startDate: festival.startDate,
+                endDate: festival.endDate,
+                impact: festival.impact,
+                impactLevel: festival.impactLevel,
+                description: festival.description,
+                region: festival.region,
+                matchType: festival.matchType || null,
+                matchLabel: festival.matchLabel || null
+            }))
+        };
+    }
+
     checkHoliday(date) {
         const dateStr = date.toISOString().split('T')[0];
         const holiday = this.holidays2026.find(h => h.date === dateStr);
@@ -485,7 +519,9 @@ class ClientCrowdAlgorithm {
         const {
             baseCrowdLevel = 50,
             category = 'default',
-            destinationId = null
+            destinationId = null,
+            destinationState = null,
+            destinationName = null
         } = params;
 
         const dayMap = {};
@@ -505,6 +541,12 @@ class ClientCrowdAlgorithm {
             const avg = scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
             const crowdInfo = this.scoreToCrowdLevel(avg);
             const holidayInfo = this.checkHoliday(targetDate);
+            const festivalInfo = this._getFestivalSummary({
+                destinationId,
+                destinationState,
+                destinationCategory: category,
+                destinationName
+            }, targetDate);
 
             dayMap[dateKey] = {
                 score: Math.round(avg * 100) / 100,
@@ -515,6 +557,7 @@ class ClientCrowdAlgorithm {
                 color: crowdInfo.color,
                 isWeekend: targetDate.getDay() === 0 || targetDate.getDay() === 6,
                 holiday: holidayInfo.isHoliday ? holidayInfo.name : null,
+                festival: festivalInfo,
                 dayOfWeek: targetDate.getDay()
             };
         }

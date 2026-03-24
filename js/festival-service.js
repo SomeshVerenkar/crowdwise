@@ -114,6 +114,108 @@ const FestivalService = (function() {
             return festival.destinations && festival.destinations.includes(destinationId);
         });
     }
+
+    function buildFestivalContext(destinationOrContext) {
+        if (!destinationOrContext) return null;
+
+        return {
+            id: destinationOrContext.id || destinationOrContext.destinationId || null,
+            state: destinationOrContext.state || destinationOrContext.region || destinationOrContext.destinationState || null,
+            category: destinationOrContext.category || destinationOrContext.destinationCategory || null,
+            name: destinationOrContext.name || destinationOrContext.destinationName || null
+        };
+    }
+
+    function classifyFestivalMatch(festival, context) {
+        if (!festival || !context) return null;
+
+        const matchesDestination = context.id && Array.isArray(festival.destinations) && festival.destinations.includes(context.id);
+        if (matchesDestination) {
+            return { matchType: 'destination', matchLabel: 'Destination-specific', priority: 3 };
+        }
+
+        const matchesState = context.state && festival.region === context.state;
+        const matchesCategory = context.category && Array.isArray(festival.categories) && festival.categories.includes(context.category);
+
+        if (matchesState && matchesCategory) {
+            return { matchType: 'state-category', matchLabel: `${context.state} ${context.category} travel pattern`, priority: 2 };
+        }
+
+        if (matchesState) {
+            return { matchType: 'state', matchLabel: `${context.state} travel pattern`, priority: 1 };
+        }
+
+        return null;
+    }
+
+    function selectRelevantFestivals(festivals, context) {
+        if (!Array.isArray(festivals) || festivals.length === 0 || !context) {
+            return [];
+        }
+
+        const matched = festivals
+            .map(festival => {
+                const match = classifyFestivalMatch(festival, context);
+                return match ? { ...festival, ...match } : null;
+            })
+            .filter(Boolean);
+
+        if (!matched.length) {
+            return [];
+        }
+
+        const highestPriority = Math.max(...matched.map(festival => festival.priority));
+        return matched
+            .filter(festival => festival.priority === highestPriority)
+            .sort((left, right) => left.startDate.localeCompare(right.startDate));
+    }
+
+    function getRelevantFestivalsForContext(destinationOrContext, date = new Date()) {
+        if (!festivalsData) {
+            return [];
+        }
+
+        const context = buildFestivalContext(destinationOrContext);
+        if (!context) {
+            return [];
+        }
+
+        return selectRelevantFestivals(getActiveFestivals(date), context);
+    }
+
+    function getRelevantFestivalDetailsForContext(destinationOrContext, date = new Date()) {
+        const festivals = getRelevantFestivalsForContext(destinationOrContext, date);
+        if (!festivals.length) {
+            return {
+                impact: 1.0,
+                festivals: [],
+                hasActiveFestival: false,
+                matchType: null,
+                matchLabel: null
+            };
+        }
+
+        return {
+            impact: Math.min(Math.max(...festivals.map(festival => festival.impact || 1.0)), 2.5),
+            festivals,
+            hasActiveFestival: true,
+            matchType: festivals[0].matchType,
+            matchLabel: festivals[0].matchLabel
+        };
+    }
+
+    function getRelevantUpcomingFestivalsForContext(destinationOrContext, days = 30) {
+        if (!festivalsData || !festivalsData.festivals) {
+            return [];
+        }
+
+        const context = buildFestivalContext(destinationOrContext);
+        if (!context) {
+            return [];
+        }
+
+        return selectRelevantFestivals(getUpcomingFestivals(days), context);
+    }
     
     /**
      * Get the highest impact multiplier for a destination on a date
@@ -233,6 +335,9 @@ const FestivalService = (function() {
         getFestivalsForDestination,
         getFestivalImpact,
         getFestivalImpactDetails,
+        getRelevantFestivalsForContext,
+        getRelevantFestivalDetailsForContext,
+        getRelevantUpcomingFestivalsForContext,
         getUpcomingFestivals,
         isDateDuringFestival,
         isLoaded: () => festivalsData !== null

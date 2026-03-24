@@ -115,6 +115,34 @@
         return value.toLocaleString();
     }
 
+    function formatFestivalDate(dateStr) {
+        const date = new Date(dateStr + 'T12:00:00');
+        return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+    }
+
+    function formatFestivalDateRange(startDate, endDate) {
+        if (!startDate) return 'Dates to be announced';
+        if (!endDate || startDate === endDate) return formatFestivalDate(startDate);
+
+        const start = new Date(startDate + 'T12:00:00');
+        const end = new Date(endDate + 'T12:00:00');
+        const sameMonth = start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear();
+
+        if (sameMonth) {
+            return `${start.getDate()}-${end.getDate()} ${start.toLocaleDateString('en-IN', { month: 'short' })}`;
+        }
+
+        return `${formatFestivalDate(startDate)} - ${formatFestivalDate(endDate)}`;
+    }
+
+    function formatImpactLevel(level, impact) {
+        if (level) return String(level).replace(/_/g, ' ');
+        if (impact >= 2.2) return 'EXTREME';
+        if (impact >= 1.6) return 'VERY HIGH';
+        if (impact >= 1.3) return 'HIGH';
+        return 'ELEVATED';
+    }
+
     function buildMetaDescription(destination) {
         return trimText(
             `Check live crowd levels, best time to visit, peak hours, weather, and nearby attractions for ${destination.name} in ${destination.state}, India with CrowdWise India.`,
@@ -250,7 +278,7 @@
             ? null
             : window.VisitorEstimateService.buildCurrentEstimate(destination, predictedPercentage);
         const estimateLabel = estimateMeta?.detailLabel || 'Typical Daily Visitors (est.)';
-        const estimateValue = estimateMeta?.currentEstimate || visitorRange;
+        const estimateValue = visitorRange;
 
         let confidence = 65;
         if (predictedFactors) {
@@ -382,16 +410,55 @@
         let yearData = null;
         let currentCalMonth = new Date().getMonth();
         let currentCalYear = new Date().getFullYear();
+        let selectedCalDate = null;
+        let isFestivalRefreshQueued = false;
 
         function getYearData() {
             if (!yearData && window.clientCrowdAlgorithm && typeof window.clientCrowdAlgorithm.predictYear === 'function') {
                 yearData = window.clientCrowdAlgorithm.predictYear({
                     baseCrowdLevel,
                     category: destination.category || 'default',
-                    destinationId: destination.id
+                    destinationId: destination.id,
+                    destinationState: destination.state || null,
+                    destinationName: destination.name || null
                 });
             }
             return yearData;
+        }
+
+        function getFestivalScopeLabel(festival) {
+            const matchType = festival?.matchType || '';
+            if (matchType === 'destination') return 'Destination-specific';
+            if (matchType === 'state-category') return 'Regional match';
+            if (matchType === 'state') return 'Statewide travel pattern';
+            return 'Relevant festival period';
+        }
+
+        function refreshFestivalCalendar() {
+            yearData = null;
+
+            if (window._cwCalendarRendered) {
+                renderCalendar();
+                if (selectedCalDate) {
+                    const selectedCell = document.querySelector(`#calendarContainer .cal-day[data-date="${selectedCalDate}"]`);
+                    if (selectedCell) {
+                        window.showCalDetail(selectedCalDate, selectedCell);
+                    }
+                }
+            }
+        }
+
+        function ensureFestivalDataReady() {
+            if (isFestivalRefreshQueued || typeof FestivalService === 'undefined' || typeof FestivalService.loadFestivals !== 'function') {
+                return;
+            }
+
+            isFestivalRefreshQueued = true;
+            Promise.resolve(FestivalService.loadFestivals())
+                .then(() => {
+                    refreshFestivalCalendar();
+                })
+                .catch(() => {});
         }
 
         function colorForScore(score) {
@@ -426,7 +493,7 @@
             const monthName = firstOfMonth.toLocaleString('en-US', { month: 'long', year: 'numeric' });
             const todayStr = new Date().toISOString().split('T')[0];
 
-            let html = `<div class="cal-header"><div class="cal-month-nav"><button onclick="changeCalMonth(-1)" aria-label="Previous month">&#8249;</button><div class="cal-month-title">${monthName}</div><button onclick="changeCalMonth(1)" aria-label="Next month">&#8250;</button></div><div class="cal-legend"><div class="cal-legend-item"><div class="cal-legend-dot" style="background:#dcfce7;"></div> Low</div><div class="cal-legend-item"><div class="cal-legend-dot" style="background:#fef9c3;"></div> Moderate</div><div class="cal-legend-item"><div class="cal-legend-dot" style="background:#fed7aa;"></div> Heavy</div><div class="cal-legend-item"><div class="cal-legend-dot" style="background:#fca5a5;"></div> Packed</div></div></div><div class="cal-grid">`;
+            let html = `<div class="cal-header"><div class="cal-month-nav"><button onclick="changeCalMonth(-1)" aria-label="Previous month">&#8249;</button><div class="cal-month-title">${monthName}</div><button onclick="changeCalMonth(1)" aria-label="Next month">&#8250;</button></div><div class="cal-legend"><div class="cal-legend-item"><div class="cal-legend-dot" style="background:#dcfce7;"></div> Low</div><div class="cal-legend-item"><div class="cal-legend-dot" style="background:#fef9c3;"></div> Moderate</div><div class="cal-legend-item"><div class="cal-legend-dot" style="background:#fed7aa;"></div> Heavy</div><div class="cal-legend-item"><div class="cal-legend-dot" style="background:#fca5a5;"></div> Packed</div><div class="cal-legend-item cal-legend-note">🎊 Festival</div><div class="cal-legend-item cal-legend-note">🎉 Holiday</div></div></div><div class="cal-grid">`;
             ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => { html += `<div class="cal-day-header">${day}</div>`; });
             for (let index = 0; index < startDow; index++) html += '<div class="cal-day empty"></div>';
             for (let day = 1; day <= daysInMonth; day++) {
@@ -436,8 +503,9 @@
                 if (info) {
                     const bg = colorForScore(info.score);
                     const fg = textForScore(info.score);
-                    const holidayDot = info.holiday ? '<span class="cal-day-holiday">🎉</span>' : '';
-                    html += `<div class="cal-day ${isToday ? 'today' : ''}" style="background:${bg}; color:${fg};" onclick="showCalDetail('${dateStr}', this)">${holidayDot}<span class="cal-day-num">${day}</span><span class="cal-day-pct">${info.percentFull}%</span></div>`;
+                    const festivalMarker = info.festival ? '<span class="cal-day-marker festival">🎊</span>' : '';
+                    const holidayMarker = info.holiday ? '<span class="cal-day-marker holiday">🎉</span>' : '';
+                    html += `<div class="cal-day ${isToday ? 'today' : ''}" data-date="${dateStr}" style="background:${bg}; color:${fg};" onclick="showCalDetail('${dateStr}', this)"><span class="cal-day-markers">${festivalMarker}${holidayMarker}</span><span class="cal-day-num">${day}</span><span class="cal-day-pct">${info.percentFull}%</span></div>`;
                 } else {
                     html += `<div class="cal-day empty" style="background:#f9fafb; color:#d1d5db;"><span class="cal-day-num">${day}</span></div>`;
                 }
@@ -465,6 +533,7 @@
             if (!data) return;
             const info = data[dateStr];
             if (!info) return;
+            selectedCalDate = dateStr;
             document.querySelectorAll('#calendarContainer .cal-day.selected').forEach(element => element.classList.remove('selected'));
             if (cell) cell.classList.add('selected');
             const card = document.getElementById('calDayDetail');
@@ -472,7 +541,10 @@
             const date = new Date(dateStr + 'T12:00:00');
             const dayName = date.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
             const dayType = info.isWeekend ? 'Weekend' : 'Weekday';
-            card.innerHTML = `<div class="cal-day-detail-date">📅 ${dayName}</div><div class="cal-day-detail-row"><span>Crowd Level</span><span>${info.emoji} ${info.label}</span></div><div class="cal-day-detail-row"><span>Expected Fill</span><span>${info.percentFull}% full</span></div><div class="cal-day-detail-row"><span>Day Type</span><span>${dayType}</span></div>${info.holiday ? `<div class="cal-day-detail-row"><span>🎉 Holiday</span><span>${info.holiday}</span></div>` : ''}`;
+            const festivalNames = info.festival ? info.festival.festivals.map(festival => festival.name).join(', ') : '';
+            const festivalImpact = info.festival ? `${formatImpactLevel(info.festival.festivals[0]?.impactLevel, info.festival.impact)} (${info.festival.impact}x)` : '';
+            const festivalScope = info.festival ? (info.festival.matchLabel || getFestivalScopeLabel(info.festival.festivals[0])) : '';
+            card.innerHTML = `<div class="cal-day-detail-date">📅 ${dayName}</div><div class="cal-day-detail-row"><span>Crowd Level</span><span>${info.emoji} ${info.label}</span></div><div class="cal-day-detail-row"><span>Expected Fill</span><span>${info.percentFull}% full</span></div><div class="cal-day-detail-row"><span>Day Type</span><span>${dayType}</span></div>${info.festival ? `<div class="cal-day-detail-row"><span>🎊 Festival</span><span>${festivalNames}</span></div><div class="cal-day-detail-row"><span>Festival Scope</span><span>${festivalScope}</span></div><div class="cal-day-detail-row"><span>Festival Impact</span><span>${festivalImpact}</span></div>` : ''}${info.holiday ? `<div class="cal-day-detail-row"><span>🎉 Holiday</span><span>${info.holiday}</span></div>` : ''}`;
             card.classList.add('show');
             card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         };
@@ -493,6 +565,8 @@
                 renderCalendar();
             }
         };
+
+        ensureFestivalDataReady();
     }
 
     function init() {
