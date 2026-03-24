@@ -212,11 +212,8 @@ function buildStaticDestinationMarkup(destination) {
             <button class="dest-tab" type="button">📅 Crowd Calendar</button>
         </div>
         <div class="dest-tab-panel active">
-            <div class="dest-intro">
-                CrowdWise India predicts live crowd conditions for <strong>${htmlEscape(destination.name)}</strong> using day-of-week, seasonal, holiday, and category-specific travel patterns. This pre-rendered page gives search engines and visitors immediate destination details before live crowd enhancements load.
-            </div>
             <div class="dest-quick-stats">
-                <div class="dest-stat-card"><div class="dest-stat-icon">👥</div><div class="dest-stat-label">Daily Visitors</div><div class="dest-stat-value">${htmlEscape(visitorRange)}</div></div>
+                <div class="dest-stat-card"><div class="dest-stat-icon">👥</div><div class="dest-stat-label">Typical Daily Visitors (est.)</div><div class="dest-stat-value">${htmlEscape(visitorRange)}</div></div>
                 <div class="dest-stat-card"><div class="dest-stat-icon">🔥</div><div class="dest-stat-label">Peak Hours</div><div class="dest-stat-value">${htmlEscape(destination.peakHours || 'N/A')}</div></div>
                 <div class="dest-stat-card"><div class="dest-stat-icon">🌡️</div><div class="dest-stat-label">Weather</div><div class="dest-stat-value">${htmlEscape(buildWeather(destination))}</div></div>
                 <div class="dest-stat-card"><div class="dest-stat-icon">🏷️</div><div class="dest-stat-label">Category</div><div class="dest-stat-value">${htmlEscape(formatCategory(destination.category))}</div></div>
@@ -341,6 +338,7 @@ function buildPrerenderedDestinationPage(destination) {
     <script src="../../js/destination-photos.js"></script>
     <script src="../../js/gamification/points-engine.js"></script>
     <script src="../../js/gamification/badge-system.js"></script>
+    <script src="../../js/visitor-estimate-service.js"></script>
     <script src="../../api-service.js"></script>
     <script src="../../client-algorithm.js?v=3.0"></script>
     <script src="../../js/destination-page.js?v=1.0"></script>

@@ -23,7 +23,7 @@ class ClientCrowdAlgorithm {
             palace:      { open: 9,  close: 17 },
             museum:      { open: 10, close: 17 },
             heritage:    { open: 8,  close: 18 }, // ASI & ticketed heritage sites
-            beach:       { open: 0,  close: 24, allDay: true },
+            beach:       { open: 5,  close: 22 },
             nature:      { open: 6,  close: 18 }, // forests, valleys, rivers
             waterfall:   { open: 7,  close: 17 }, // most controlled falls close 5 PM
             hillstation: { open: 0,  close: 24, allDay: true },
@@ -34,13 +34,31 @@ class ClientCrowdAlgorithm {
             market:      { open: 10, close: 22 },
             nightlife:   { open: 20, close: 4, overnight: true },
             resort:      { open: 0,  close: 24, allDay: true },
-            lake:        { open: 0,  close: 24, allDay: true },
-            dam:         { open: 0,  close: 24, allDay: true },
-            viewpoint:   { open: 0,  close: 24, allDay: true },
+            lake:        { open: 5,  close: 20 },
+            dam:         { open: 6,  close: 18 },
+            viewpoint:   { open: 5,  close: 20 },
             urban:       { open: 0,  close: 24, allDay: true },
             cultural:    { open: 8,  close: 18 }, // cultural centres / villages
             adventure:   { open: 7,  close: 17 }, // treks/passes close early
             entertainment:{ open: 9, close: 22 }
+        };
+
+        // Known exceptions that stay active later than their broad category default.
+        this.destinationOperatingOverrides = {
+            14: { close: 23 },
+            56: { open: 3 },
+            199: { close: 23 },
+            309: { open: 3, close: 20 },
+            345: { close: 23 },
+            614: { close: 23 },
+            617: { close: 23 },
+            1189: { open: 17, close: 23 },
+            1190: { open: 10, close: 23 },
+            1191: { open: 9, close: 23 },
+            1192: { open: 10, close: 23 },
+            1195: { open: 11, close: 23 },
+            1196: { open: 11, close: 23 },
+            1197: { open: 16, close: 23 }
         };
         
         // Time of day patterns (hourly multipliers)
@@ -168,7 +186,7 @@ class ClientCrowdAlgorithm {
         } = params;
 
         // Check if place is open
-        const openStatus = this.checkIfOpen(hour, category);
+        const openStatus = this.checkIfOpen(hour, category, destinationId);
         if (!openStatus.isOpen) {
             return {
                 score: 0,
@@ -296,8 +314,14 @@ class ClientCrowdAlgorithm {
     }
     
     // Check if place is open at given hour
-    checkIfOpen(hour, category) {
-        const hours = this.operatingHours[category] || this.operatingHours.default;
+    getOperatingHours(category, destinationId = null) {
+        const categoryHours = this.operatingHours[category] || this.operatingHours.default;
+        const override = destinationId ? this.destinationOperatingOverrides[destinationId] : null;
+        return override ? { ...categoryHours, ...override } : categoryHours;
+    }
+
+    checkIfOpen(hour, category, destinationId = null) {
+        const hours = this.getOperatingHours(category, destinationId);
         
         // Handle all-day places
         if (hours.allDay) {

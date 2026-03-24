@@ -1,284 +1,1238 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
+        <loc>https://crowdwise.in/destinations/rameshwaram/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.75</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/rose-garden-ooty/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/samanar-hills/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/santhome-basilica/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/sathuragiri-temple-trek/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/semmozhi-poonga/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/silver-cascade-falls/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.70</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/singanallur-lake/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/sirumalai-hills/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/siruvani-dam-viewpoint/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/siruvani-waterfalls/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.70</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/sunset-hidden-cliffs/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/suruli-falls/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/thalaiyar-falls/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/thanjavur/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.70</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/theosophical-society-campus/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/thirparappu-falls/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.70</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/thirumalai-nayakar-palace-corners/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/thirumalai-nayakkar-palace/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/tiruvannamalai/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.75</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/topslip-wildlife-trails/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/valparai-tea-estate-routes/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/vandiyur-mariamman-teppakulam/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/vattakanal-village/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/vattakottai-fort/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/velliangiri-foothills/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/vellore-fort/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/wenlock-downs/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/yelagiri/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/yelagiri-swamimalai-trek/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/yercaud/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/amrabad-tiger-reserve/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/birla-mandir-hyderabad/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.70</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/bogatha-waterfall/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/charminar/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.75</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/chowmahalla-palace/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/durgam-cheruvu/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/elgandal-fort/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/ethipothala-waterfalls/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/eturnagaram-wildlife-sanctuary/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/golconda-fort/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.70</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/himayat-sagar/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/hussain-sagar-lake/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.75</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/kaleshwaram-river-viewpoints/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/kawal-tiger-reserve-trails/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/khajaguda-hills/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/kinnerasani-wildlife-sanctuary/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/laknavaram-lake/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/lower-manair-dam/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/mallaram-forest-reserve/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/mallur-narasimha-temple/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/medak-cathedral/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/medaram-forest/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/nagarjuna-sagar-dam/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/nagarjunakonda-island-museum/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/nehru-zoological-park/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.70</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/old-city-lanes-hyderabad/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.70</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/osman-sagar/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/pakhal-lake/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/pocharam-wildlife-sanctuary/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/qutb-shahi-tombs/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/ramappa-temple/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/ramoji-film-city/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.70</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/salar-jung-museum/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.70</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/shamirpet-lake/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/thousand-pillar-temple/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/ujwala-park/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/warangal-fort/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/yadadri-temple/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.75</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/betlingchhip-peak/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/chabimura-rock-sculptures/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/devtamura-rock-carvings/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/gumti-river-forest/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/jampui-hills/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/kamalasagar-lake/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/neermahal/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/rowa-wildlife-sanctuary/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/sepahijala-wildlife-sanctuary/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/trishna-wildlife-sanctuary/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/ujjayanta-palace/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/unakoti/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/agra-fort/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.70</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/assi-ghat/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.75</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/ayodhya/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.85</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/banke-bihari-temple/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/chitrakoot/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.70</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/dashashwamedh-ghat/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/dudhwa-national-park/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/fatehpur-sikri/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.70</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/hanuman-garhi/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/kanak-bhawan/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.75</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/kashi-vishwanath-temple/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.85</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/krishna-janmabhoomi/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.75</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/lucknow/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.75</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/mathura-vrindavan/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/mehtab-bagh/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/prayagraj/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.75</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/prem-mandir/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.75</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/ram-janmabhoomi-temple/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.85</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/sarnath/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.70</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/taj-mahal/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.85</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/varanasi-ghats/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/auli/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/auli-ski-resort/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/badrinath/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.75</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/bhowali-hill-town/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/binsar-wildlife-sanctuary/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/binsar-zero-point/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/birthi-falls/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/buda-kedar-temple/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/camel-s-back-road/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/chandrashila-peak/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/chaukori-tea-gardens/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/chopta/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/darkot-village/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/dehradun/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.70</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/deoria-tal/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/dodital-trek/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/eco-cave-garden/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/gartang-gali-wooden-bridge/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/gun-hill/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.70</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/gurso-bugyal/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/haridwar/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/harsil-apple-valley/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/jageshwar-temples/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/jim-corbett-national-park/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/joshimath/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/kainchi-dham/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.70</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/kanatal/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/kanvashram/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/kartik-swami-temple/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/kasar-devi/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/kedar-tal-trek/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/kedarkantha-base-village/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/kedarnath/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.70</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/kempty-falls/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.70</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/khait-parvat/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/khaliya-top-trek/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/khirsu-hill-station/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/kwani-bugyal/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/lakshman-jhula/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.70</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/lal-tibba/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/lansdowne/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/martoli-village/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/milam-glacier-base/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/mukteshwar/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/munsiyari-glacier-views/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/mussoorie/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.75</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/naina-devi-temple/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.70</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/naini-lake/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.70</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/nainital/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.75</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/neer-garh-waterfall/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/nelong-valley/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/pangot-bird-sanctuary/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/peora-village/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/ram-jhula/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.70</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/ramgarh-fruit-orchards/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/ranikhet/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.65</priority>
+    </url>
+    <url>
+        <loc>https://crowdwise.in/destinations/rishikesh/</loc>
+        <lastmod>2026-03-24</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.75</priority>
+    </url>
+    <url>
         <loc>https://crowdwise.in/destinations/river-rafting-rishikesh/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.70</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/sattal-lakes/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/shitlakhet-hill-station/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/sitla-village/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/snow-view-point/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.70</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/tiffin-top/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/triveni-ghat/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.70</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/tungnath-trek/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.70</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/valley-of-flowers/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/batasia-loop/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/bishnupur/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/buxa-fort/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/chatakpur-eco-village/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/dakshineswar-kali-temple/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.80</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/darjeeling/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.75</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/darjeeling-himalayan-railway/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/digha-beach/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.70</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/dobanki-canopy-walk/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/dooars/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/eco-park-new-town/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.70</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/gorkhey-village/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/howrah-bridge/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.85</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/indian-museum-kolkata/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.70</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/jaldapara-national-park/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/kalighat-temple/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.75</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/kalimpong/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/kolkata/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.85</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/kurseong-hill-town/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/lepchajagat-village/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/marble-palace/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/murshidabad/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/padmaja-naidu-himalayan-zoo/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/peace-pagoda-darjeeling/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/phalut-ridge-trek/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/rimbik-village/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/sajnekhali-watch-tower/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/samsing-village/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/sandakphu-trek/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/shantiniketan/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.70</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/singalila-national-park/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/sudhanyakhali-watch-tower/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/sundarbans/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/sundarbans-national-park/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/tiger-hill/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/tonglu-ridge/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/tumling-village/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.65</priority>
     </url>
     <url>
         <loc>https://crowdwise.in/destinations/victoria-memorial/</loc>
-        <lastmod>2026-03-10</lastmod>
+        <lastmod>2026-03-24</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.70</priority>
     </url>

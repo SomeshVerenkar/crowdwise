@@ -372,14 +372,14 @@ class APIService {
         const data = await response.json();
         
         // Calculate currentEstimate if not provided by backend
-        if (!data.currentEstimate && data.percentageFull !== undefined) {
-            // Get base visitor count from destination data
+        if (data.percentageFull !== undefined) {
             const dest = destinations.find(d => d.id === parseInt(destinationId));
-            const baseVisitors = dest?.avgVisitors || 5000;
-            const crowdMultiplier = data.percentageFull / 100;
-            const estimatedMin = Math.round(baseVisitors * crowdMultiplier * 0.8);
-            const estimatedMax = Math.round(baseVisitors * crowdMultiplier * 1.2);
-            data.currentEstimate = `${this.formatNumber(estimatedMin)}-${this.formatNumber(estimatedMax)}`;
+            const estimateMeta = this.buildEstimateMeta(dest, data.percentageFull);
+            if (!data.currentEstimate) {
+                data.currentEstimate = estimateMeta.currentEstimate;
+            }
+            data.currentEstimateLabel = data.currentEstimateLabel || estimateMeta.estimateLabel;
+            data.currentEstimateDescription = data.currentEstimateDescription || estimateMeta.estimateDescription;
         }
         
         return data;
@@ -391,9 +391,66 @@ class APIService {
         return num.toString();
     }
 
+    buildEstimateMeta(destination, percentageFull) {
+        if (destination && window.VisitorEstimateService) {
+            return window.VisitorEstimateService.buildCurrentEstimate(destination, percentageFull);
+        }
+
+        const baseVisitors = destination?.avgVisitors || 5000;
+        const crowdMultiplier = (percentageFull || 0) / 100;
+        const estimatedMin = Math.round(baseVisitors * crowdMultiplier * 0.6);
+        const estimatedMax = Math.round(baseVisitors * crowdMultiplier * 1.5);
+        return {
+            currentEstimate: `${this.formatNumber(estimatedMin)}-${this.formatNumber(estimatedMax)}`,
+            estimateLabel: 'Est. Count',
+            estimateDescription: 'Modeled from typical daily visitors and current crowd conditions.'
+        };
+    }
+
     estimateCrowdWithAlgorithm(destinationId) {
         const destination = destinations.find(d => d.id === destinationId);
         if (!destination) return null;
+
+        if (window.clientCrowdAlgorithm && typeof window.clientCrowdAlgorithm.calculateCrowdScore === 'function') {
+            const prediction = window.clientCrowdAlgorithm.calculateCrowdScore({
+                baseCrowdLevel: typeof destination.crowdLevel === 'number' ? destination.crowdLevel : 50,
+                category: destination.category || 'default',
+                destinationId: destination.id
+            });
+
+            if (prediction.status === 'closed') {
+                return {
+                    crowdLevel: 'closed',
+                    crowdLabel: '⚫ Closed Now',
+                    currentEstimate: '0',
+                    currentEstimateLabel: 'Status',
+                    currentEstimateDescription: prediction.message || 'Currently closed',
+                    rawEstimate: { min: 0, max: 0 },
+                    multiplier: 0,
+                    factors: [prediction.message || 'Currently closed'],
+                    confidence: 100,
+                    percentageFull: 0,
+                    calculatedAt: new Date().toISOString()
+                };
+            }
+
+            const adjustedCrowdPercent = prediction.percentageFull || 0;
+            const estimateMeta = this.buildEstimateMeta(destination, adjustedCrowdPercent);
+
+            return {
+                crowdLevel: prediction.level,
+                crowdLabel: `${prediction.emoji} ${prediction.label}`,
+                currentEstimate: estimateMeta.currentEstimate,
+                currentEstimateLabel: estimateMeta.estimateLabel,
+                currentEstimateDescription: estimateMeta.estimateDescription,
+                rawEstimate: estimateMeta.rawEstimate || null,
+                multiplier: prediction.score,
+                factors: prediction.factors,
+                confidence: API_CONFIG.ENABLE_DYNAMIC_MOCK ? 75 : 50,
+                percentageFull: adjustedCrowdPercent,
+                calculatedAt: new Date().toISOString()
+            };
+        }
 
         const now = new Date();
         const hour = now.getHours();
@@ -491,10 +548,13 @@ class APIService {
             crowdLevel: newLevel,
             crowdLabel: newLabel,
             currentEstimate: `${this.formatNumber(estimatedMin)}-${this.formatNumber(estimatedMax)}`,
+            currentEstimateLabel: 'Est. Count',
+            currentEstimateDescription: 'Modeled from typical daily visitors and current crowd conditions.',
             rawEstimate: { min: estimatedMin, max: estimatedMax },
             multiplier: crowdMultiplier,
             factors: factors,
             confidence: API_CONFIG.ENABLE_DYNAMIC_MOCK ? 75 : 50,
+            percentageFull: adjustedCrowdPercent,
             calculatedAt: new Date().toISOString()
         };
     }
@@ -607,11 +667,15 @@ class APIService {
                     destination.crowdLevel = 'closed';
                     destination.crowdLabel = '⚫ Closed Now';
                     destination.currentEstimate = null;
+                    destination.currentEstimateLabel = 'Status';
+                    destination.currentEstimateDescription = closedMsg;
                     destination.closedMessage = closedMsg;
                 } else {
                     destination.crowdLevel = crowdData.crowdLevel;
                     destination.crowdLabel = crowdData.crowdLabel;
                     destination.currentEstimate = crowdData.currentEstimate;
+                    destination.currentEstimateLabel = crowdData.currentEstimateLabel || 'Est. Count';
+                    destination.currentEstimateDescription = crowdData.currentEstimateDescription || 'Modeled from typical daily visitors and current crowd conditions.';
                     destination.closedMessage = null;
                 }
             }

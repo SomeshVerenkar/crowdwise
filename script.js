@@ -21,6 +21,7 @@ function transformDestinationData(dest) {
     let normalizedLevel;
     let closedMessage = null;
     let confidence = 65; // default: matches documented 65% accuracy floor
+    let percentageFull = baseCrowdLevel;
     if (window.clientCrowdAlgorithm) {
         try {
             const predicted = window.clientCrowdAlgorithm.calculateCrowdScore({
@@ -33,6 +34,7 @@ function transformDestinationData(dest) {
                 closedMessage = predicted.message || 'Currently closed';
             } else {
                 normalizedLevel = predicted.level || 'moderate';
+                percentageFull = predicted.percentageFull || percentageFull;
             }
             // Confidence = documented system accuracy (Agents.MD: 65–75% baseline)
             // Base 65% reflects the floor accuracy from time + day + seasonal signals.
@@ -68,17 +70,21 @@ function transformDestinationData(dest) {
         weatherStr = `${dest.weather.temp}°C, ${dest.weather.condition}`;
     }
     
-    // Generate estimated visitors based on avgVisitors and time
-    // Generate estimated visitors — deterministic per destination+hour to prevent
-    // flickering when transformDestinationData is called twice (before & after API await)
-    const hour = new Date().getHours();
-    const multiplier = (hour >= 10 && hour <= 16) ? 1.3 : 0.7;
-    // Seed variance with dest.id + hour so the number is stable across re-renders
-    const seed = ((dest.id * 9301 + hour * 49297) % 233280) / 233280; // deterministic 0–1
-    const variance = 0.2;
-    const base = dest.avgVisitors || 5000;
-    const estimated = Math.round(base * multiplier * (1 + (seed - 0.5) * variance));
-    const currentEstimate = formatVisitorCount(estimated);
+    let estimateMeta = null;
+    if (normalizedLevel !== 'closed' && window.VisitorEstimateService) {
+        estimateMeta = window.VisitorEstimateService.buildCurrentEstimate(dest, percentageFull);
+    }
+
+    let currentEstimate = estimateMeta ? estimateMeta.currentEstimate : null;
+    if (!currentEstimate && normalizedLevel !== 'closed') {
+        const hour = new Date().getHours();
+        const multiplier = (hour >= 10 && hour <= 16) ? 1.3 : 0.7;
+        const seed = ((dest.id * 9301 + hour * 49297) % 233280) / 233280;
+        const variance = 0.2;
+        const base = dest.avgVisitors || 5000;
+        const estimated = Math.round(base * multiplier * (1 + (seed - 0.5) * variance));
+        currentEstimate = formatVisitorCount(estimated);
+    }
     
     // Pre-compute search text once so per-keypress scans never recompute it
     const _searchText = [dest.name, dest.state, dest.city, dest.category]
@@ -92,6 +98,8 @@ function transformDestinationData(dest) {
         confidence,
         weather: weatherStr,
         currentEstimate: normalizedLevel === 'closed' ? null : currentEstimate,
+        currentEstimateLabel: normalizedLevel === 'closed' ? null : (estimateMeta?.estimateLabel || 'Est. Count'),
+        currentEstimateDescription: normalizedLevel === 'closed' ? null : (estimateMeta?.estimateDescription || 'Modeled from typical daily visitors and current crowd conditions.'),
         _searchText,
         bestTimeToVisit: dest.bestTime || 'October to March'
     };
@@ -306,7 +314,7 @@ function renderFeaturedDestinations() {
                                 <div class="estimate-value" style="font-size:11px;color:#6b7280;">⚫ ${dest.closedMessage || 'Closed Now'}</div>
                                </div>`
                             : `<div class="current-estimate">
-                                <div class="estimate-label">Live Count</div>
+                                    <div class="estimate-label">${dest.currentEstimateLabel || 'Est. Count'}</div>
                                 <div class="estimate-value">👥 ${dest.currentEstimate}</div>
                                </div>`
                         }
@@ -647,7 +655,7 @@ function buildCardHTML(dest) {
                             <div class="estimate-value" style="font-size:11px;color:#6b7280;">⚫ ${dest.closedMessage || 'Closed Now'}</div>
                            </div>`
                         : `<div class="current-estimate">
-                            <div class="estimate-label">Live Count</div>
+                            <div class="estimate-label">${dest.currentEstimateLabel || 'Est. Count'}</div>
                             <div class="estimate-value">👥 ${dest.currentEstimate}</div>
                            </div>`
                     }

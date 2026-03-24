@@ -202,6 +202,7 @@
         let dynamicCrowdLevel = normalizeCrowdLevel(destination.crowdLevel);
         let closedMessage = null;
         let predictedFactors = null;
+        let predictedPercentage = baseCrowdLevel;
 
         if (window.clientCrowdAlgorithm) {
             try {
@@ -215,6 +216,7 @@
                     closedMessage = predicted.message || 'Currently closed';
                 } else {
                     dynamicCrowdLevel = predicted.level || dynamicCrowdLevel;
+                    predictedPercentage = predicted.percentageFull || predictedPercentage;
                 }
                 predictedFactors = predicted.factors || null;
             } catch (_) {}
@@ -244,6 +246,11 @@
             : destination.weather || 'N/A';
         const averageVisitors = destination.avgVisitors || 5000;
         const visitorRange = `${fmtVisitors(Math.round(averageVisitors * 0.6))} – ${fmtVisitors(Math.round(averageVisitors * 1.5))}`;
+        const estimateMeta = dynamicCrowdLevel === 'closed' || !window.VisitorEstimateService
+            ? null
+            : window.VisitorEstimateService.buildCurrentEstimate(destination, predictedPercentage);
+        const estimateLabel = estimateMeta?.detailLabel || 'Typical Daily Visitors (est.)';
+        const estimateValue = estimateMeta?.currentEstimate || visitorRange;
 
         let confidence = 65;
         if (predictedFactors) {
@@ -310,11 +317,6 @@
         const alertsHtml = destination.alerts && destination.alerts.length > 0
             ? destination.alerts.map(alert => `<li>⚠️ ${alert}</li>`).join('')
             : '<li>No special alerts</li>';
-        const introHtml = `
-            <div class="dest-intro">
-                CrowdWise India predicts live crowd conditions for <strong>${destination.name}</strong> using day-of-week, seasonal, holiday, and category-specific trends. Use this page to check the current crowd outlook, best visiting time, nearby attractions, and the full crowd calendar before you travel.
-            </div>
-        `;
 
         const destPage = document.getElementById('destPage');
         if (!destPage) return;
@@ -339,9 +341,8 @@
                     <button class="dest-tab" id="dtab-cal" onclick="switchDestTab('calendar')">📅 Crowd Calendar</button>
                 </div>
                 <div class="dest-tab-panel active" id="dpanel-ov">
-                    ${introHtml}
                     <div class="dest-quick-stats">
-                        ${dynamicCrowdLevel === 'closed' ? `<div class="dest-stat-card"><div class="dest-stat-icon">⚫</div><div class="dest-stat-label">Status</div><div class="dest-stat-value" style="font-size:12px;color:#6b7280;">${closedMessage || 'Currently Closed'}</div></div>` : `<div class="dest-stat-card"><div class="dest-stat-icon">👥</div><div class="dest-stat-label">Daily Visitors</div><div class="dest-stat-value" style="font-size:13px">${visitorRange}</div></div>`}
+                        ${dynamicCrowdLevel === 'closed' ? `<div class="dest-stat-card"><div class="dest-stat-icon">⚫</div><div class="dest-stat-label">Status</div><div class="dest-stat-value" style="font-size:12px;color:#6b7280;">${closedMessage || 'Currently Closed'}</div></div>` : `<div class="dest-stat-card"><div class="dest-stat-icon">👥</div><div class="dest-stat-label">${estimateLabel}</div><div class="dest-stat-value" style="font-size:13px">${estimateValue}</div></div>`}
                         <div class="dest-stat-card"><div class="dest-stat-icon">🔥</div><div class="dest-stat-label">Peak Hours</div><div class="dest-stat-value">${destination.peakHours || 'N/A'}</div></div>
                         <div class="dest-stat-card"><div class="dest-stat-icon">🌡️</div><div class="dest-stat-label">Weather</div><div class="dest-stat-value">${weather}</div></div>
                         <div class="dest-stat-card"><div class="dest-stat-icon">🏷️</div><div class="dest-stat-label">Category</div><div class="dest-stat-value">${formatCategory(destination.category)}</div></div>
