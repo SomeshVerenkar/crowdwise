@@ -41,7 +41,8 @@ class CrowdScoringAlgorithm {
             resort: { open: 0, close: 24, allDay: true },
             lake: { open: 6, close: 19 },              // 6 AM - 7 PM
             dam: { open: 8, close: 18 },               // 8 AM - 6 PM
-            viewpoint: { open: 5, close: 20 }          // 5 AM - 8 PM
+            viewpoint: { open: 5, close: 20 },          // 5 AM - 8 PM
+            mall: { open: 10, close: 22 }               // 10 AM - 10 PM
         };
 
         // Time of day patterns (hourly multipliers)
@@ -87,6 +88,13 @@ class CrowdScoringAlgorithm {
                 6: 0.05, 7: 0.10, 8: 0.15, 9: 0.20, 10: 0.25, 11: 0.30,
                 12: 0.35, 13: 0.40, 14: 0.45, 15: 0.50, 16: 0.55, 17: 0.65,
                 18: 0.75, 19: 0.85, 20: 0.95, 21: 1.00, 22: 0.95, 23: 0.80
+            },
+            // Malls — peak afternoon & evening, busiest on weekends 4-8 PM
+            mall: {
+                0: 0.02, 1: 0.02, 2: 0.02, 3: 0.02, 4: 0.02, 5: 0.02,
+                6: 0.02, 7: 0.05, 8: 0.10, 9: 0.20, 10: 0.40, 11: 0.55,
+                12: 0.70, 13: 0.80, 14: 0.85, 15: 0.90, 16: 0.95, 17: 1.00,
+                18: 0.95, 19: 0.90, 20: 0.75, 21: 0.50, 22: 0.20, 23: 0.05
             }
         };
 

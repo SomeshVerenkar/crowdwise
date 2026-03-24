@@ -40,7 +40,8 @@ class ClientCrowdAlgorithm {
             urban:       { open: 0,  close: 24, allDay: true },
             cultural:    { open: 8,  close: 18 }, // cultural centres / villages
             adventure:   { open: 7,  close: 17 }, // treks/passes close early
-            entertainment:{ open: 9, close: 22 }
+            entertainment:{ open: 9, close: 22 },
+            mall:        { open: 10, close: 22 }  // Indian malls typically 10 AM – 10 PM
         };
 
         // Known exceptions that stay active later than their broad category default.
@@ -140,6 +141,13 @@ class ClientCrowdAlgorithm {
                 6: 0.05, 7: 0.10, 8: 0.20, 9: 0.50, 10: 0.75, 11: 0.90,
                 12: 0.95, 13: 1.00, 14: 0.95, 15: 0.90, 16: 0.85, 17: 0.80,
                 18: 0.70, 19: 0.55, 20: 0.35, 21: 0.20, 22: 0.10, 23: 0.05
+            },
+            // Malls — peak afternoon & evening, busiest on weekends 4-8 PM
+            mall: {
+                0: 0.02, 1: 0.02, 2: 0.02, 3: 0.02, 4: 0.02, 5: 0.02,
+                6: 0.02, 7: 0.05, 8: 0.10, 9: 0.20, 10: 0.40, 11: 0.55,
+                12: 0.70, 13: 0.80, 14: 0.85, 15: 0.90, 16: 0.95, 17: 1.00,
+                18: 0.95, 19: 0.90, 20: 0.75, 21: 0.50, 22: 0.20, 23: 0.05
             }
         };
 
