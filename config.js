@@ -43,6 +43,11 @@ const API_CONFIG = {
     // Holiday API for India (Free, no key needed)
     HOLIDAY_API_URL: 'https://date.nager.at/api/v3/PublicHolidays/2026/IN',
     
+    // ==================== GOOGLE SHEETS FEEDBACK ====================
+    // Google Apps Script Web App URL for storing user feedback
+    // Deploy your own: see FEEDBACK_SHEETS_SETUP below
+    GOOGLE_SHEETS_FEEDBACK_URL: 'https://script.google.com/macros/s/AKfycbws3IUZUayyJkeGOAOo6f9Vjg9vha0qQUqCyDiT_DuHTpvwoOZcjFkeNhraHLlfNwbw3g/exec',
+
     // ==================== REFRESH INTERVALS ====================
     WEATHER_REFRESH_INTERVAL: 600000,  // 10 minutes
     CROWD_REFRESH_INTERVAL: 300000,    // 5 minutes

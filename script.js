@@ -2863,6 +2863,46 @@ function clearFeedbackForm() {
     showToast('Form cleared', 'info');
 }
 
+function getDeviceDetails() {
+    const ua = navigator.userAgent;
+    let browser = 'Unknown', os = 'Unknown';
+
+    // Detect browser
+    if (ua.includes('Firefox/')) browser = 'Firefox ' + ua.split('Firefox/')[1].split(' ')[0];
+    else if (ua.includes('Edg/')) browser = 'Edge ' + ua.split('Edg/')[1].split(' ')[0];
+    else if (ua.includes('Chrome/')) browser = 'Chrome ' + ua.split('Chrome/')[1].split(' ')[0];
+    else if (ua.includes('Safari/') && ua.includes('Version/')) browser = 'Safari ' + ua.split('Version/')[1].split(' ')[0];
+
+    // Detect OS
+    if (ua.includes('Windows NT 10')) os = 'Windows 10/11';
+    else if (ua.includes('Windows')) os = 'Windows';
+    else if (ua.includes('Mac OS X')) os = 'macOS ' + (ua.match(/Mac OS X ([\d_]+)/) || [])[1]?.replace(/_/g, '.') || '';
+    else if (ua.includes('Android')) os = 'Android ' + (ua.match(/Android ([\d.]+)/) || [])[1] || '';
+    else if (ua.includes('iPhone') || ua.includes('iPad')) os = 'iOS ' + (ua.match(/OS ([\d_]+)/) || [])[1]?.replace(/_/g, '.') || '';
+    else if (ua.includes('Linux')) os = 'Linux';
+
+    const width = screen.width;
+    let deviceType = 'Desktop';
+    if (width <= 480) deviceType = 'Mobile';
+    else if (width <= 1024) deviceType = 'Tablet';
+
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+
+    return {
+        browser: browser.trim(),
+        os: os.trim(),
+        deviceType,
+        screenResolution: `${screen.width}x${screen.height}`,
+        viewportSize: `${window.innerWidth}x${window.innerHeight}`,
+        language: navigator.language || 'Unknown',
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'Unknown',
+        touchEnabled: 'ontouchstart' in window || navigator.maxTouchPoints > 0,
+        connectionType: conn ? (conn.effectiveType || conn.type || 'Unknown') : 'Unknown',
+        referrer: document.referrer || 'Direct',
+        cookiesEnabled: navigator.cookieEnabled
+    };
+}
+
 async function submitUserFeedback(event) {
     event.preventDefault();
     
@@ -2870,13 +2910,14 @@ async function submitUserFeedback(event) {
     const btnText = submitBtn.querySelector('.btn-text');
     const btnLoading = submitBtn.querySelector('.btn-loading');
     
-    // Get form data
+    // Get form data + device details
+    const device = getDeviceDetails();
     const feedbackData = {
         message: document.getElementById('feedbackMessage').value.trim(),
         rating: parseInt(document.getElementById('feedbackRating').value) || 0,
         timestamp: new Date().toISOString(),
-        userAgent: navigator.userAgent,
-        page: window.location.href
+        page: window.location.href,
+        ...device
     };
     
     // Validate
@@ -2894,65 +2935,51 @@ async function submitUserFeedback(event) {
     btnText.style.display = 'none';
     btnLoading.style.display = 'inline';
     
+    let savedToSheets = false;
+    
     try {
-        // Try to send to backend with timeout
-        const backendUrl = API_CONFIG.BACKEND_URL || 'http://localhost:8080';
-        
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 second timeout
-        
-        try {
-            const response = await fetch(`${backendUrl}/api/user-feedback`, {
+        // Send to Google Sheets
+        const sheetsUrl = API_CONFIG.GOOGLE_SHEETS_FEEDBACK_URL;
+        if (sheetsUrl && !sheetsUrl.includes('PASTE_YOUR')) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 8000);
+            
+            const response = await fetch(sheetsUrl, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(feedbackData),
                 signal: controller.signal
             });
-            
             clearTimeout(timeoutId);
-            
-            if (response.ok) {
-                // Show success
-                document.getElementById('userFeedbackForm').style.display = 'none';
-                document.getElementById('feedbackSuccess').style.display = 'block';
-                
-                // Track event
-                if (typeof trackEvent === 'function') {
-                    trackEvent('feedback_submitted', 'feedback', feedbackData.rating);
-                }
-                
-                showToast('Thank you for your feedback! 🎉', 'success');
-            } else {
-                throw new Error('Failed to submit');
-            }
-        } catch (fetchError) {
-            clearTimeout(timeoutId);
-            throw fetchError;
+            savedToSheets = true;
         }
     } catch (error) {
-        console.error('Feedback submission error:', error);
-        
-        // Save locally if backend fails - store in localStorage with timestamp
-        const localFeedback = JSON.parse(localStorage.getItem('crowdwise_feedbacks') || '[]');
-        localFeedback.push({
-            ...feedbackData,
-            id: `uf_${Date.now()}`,
-            status: 'pending_sync'
-        });
-        localStorage.setItem('crowdwise_feedbacks', JSON.stringify(localFeedback));
-        
-        // Still show success (saved locally)
-        document.getElementById('userFeedbackForm').style.display = 'none';
-        document.getElementById('feedbackSuccess').style.display = 'block';
-        
-        showToast('Thank you for your feedback! 🎉', 'success');
-    } finally {
-        submitBtn.disabled = false;
-        btnText.style.display = 'inline';
-        btnLoading.style.display = 'none';
+        console.warn('Google Sheets submission failed, saving locally:', error.message);
     }
+    
+    // Always save to localStorage as backup
+    const localFeedback = JSON.parse(localStorage.getItem('crowdwise_feedbacks') || '[]');
+    localFeedback.push({
+        ...feedbackData,
+        id: `uf_${Date.now()}`,
+        syncedToSheets: savedToSheets
+    });
+    localStorage.setItem('crowdwise_feedbacks', JSON.stringify(localFeedback));
+    
+    // Show success
+    document.getElementById('userFeedbackForm').style.display = 'none';
+    document.getElementById('feedbackSuccess').style.display = 'block';
+    
+    if (typeof trackEvent === 'function') {
+        trackEvent('feedback_submitted', 'feedback', feedbackData.rating);
+    }
+    
+    showToast('Thank you for your feedback! 🎉', 'success');
+    
+    submitBtn.disabled = false;
+    btnText.style.display = 'inline';
+    btnLoading.style.display = 'none';
 }
 
 // Close feedback modal when clicking outside
