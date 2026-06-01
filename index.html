@@ -728,6 +728,11 @@
             
             <form id="userFeedbackForm" onsubmit="submitUserFeedback(event)">
                 <div class="feedback-form-group">
+                    <label for="feedbackEmail">Email (optional)</label>
+                    <input type="email" id="feedbackEmail" class="feedback-input" placeholder="your@email.com (so we can follow up)">
+                </div>
+
+                <div class="feedback-form-group">
                     <label for="feedbackMessage">Description *</label>
                     <textarea id="feedbackMessage" class="feedback-textarea" rows="5" placeholder="Tell us what's on your mind..." required></textarea>
                 </div>
