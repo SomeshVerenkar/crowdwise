@@ -46,7 +46,7 @@ const API_CONFIG = {
     // ==================== GOOGLE SHEETS FEEDBACK ====================
     // Google Apps Script Web App URL for storing user feedback
     // Deploy your own: see FEEDBACK_SHEETS_SETUP below
-    GOOGLE_SHEETS_FEEDBACK_URL: 'https://script.google.com/macros/s/AKfycbws3IUZUayyJkeGOAOo6f9Vjg9vha0qQUqCyDiT_DuHTpvwoOZcjFkeNhraHLlfNwbw3g/exec',
+    GOOGLE_SHEETS_FEEDBACK_URL: 'https://script.google.com/macros/s/AKfycby0vNMP4Q0yZ7SNOF6gc9i7x1j-kg773uQFxcyBIyNugxbV-POS2E1Si0sm_DfEojqsgQ/exec',
 
     // ==================== REFRESH INTERVALS ====================
     WEATHER_REFRESH_INTERVAL: 600000,  // 10 minutes
