@@ -2907,14 +2907,26 @@ function submitUserFeedback(event) {
     event.preventDefault();
     
     // Get form data + device details
+    // Property order must match Google Sheet column order (A–P):
+    // Timestamp | Message | Rating | Page | Browser | OS | Device Type | Email | Screen Resolution | Viewport Size | Language | Timezone | Touch Enabled | Connection Type | Referrer | Cookies Enabled
     const device = getDeviceDetails();
     const feedbackData = {
-        email: document.getElementById('feedbackEmail').value.trim(),
+        timestamp: new Date().toISOString(),
         message: document.getElementById('feedbackMessage').value.trim(),
         rating: parseInt(document.getElementById('feedbackRating').value) || 0,
-        timestamp: new Date().toISOString(),
         page: window.location.href,
-        ...device
+        browser: device.browser,
+        os: device.os,
+        deviceType: device.deviceType,
+        email: document.getElementById('feedbackEmail').value.trim(),
+        screenResolution: device.screenResolution,
+        viewportSize: device.viewportSize,
+        language: device.language,
+        timezone: device.timezone,
+        touchEnabled: device.touchEnabled,
+        connectionType: device.connectionType,
+        referrer: device.referrer,
+        cookiesEnabled: device.cookiesEnabled
     };
     
     // Validate
